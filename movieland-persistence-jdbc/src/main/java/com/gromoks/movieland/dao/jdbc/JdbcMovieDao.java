@@ -6,6 +6,8 @@ import com.gromoks.movieland.dao.entity.MovieToGenre;
 import com.gromoks.movieland.entity.Country;
 import com.gromoks.movieland.entity.Genre;
 import com.gromoks.movieland.entity.Movie;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,6 +18,8 @@ import java.util.List;
 
 @Service
 public class JdbcMovieDao implements MovieDao {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -29,7 +33,13 @@ public class JdbcMovieDao implements MovieDao {
     @Autowired
     private String getAllMovieToGenre;
 
+    @Autowired
+    private String getRandomMovieSQL;
+
     public List<Movie> getAll() {
+
+        log.info("Start query to get all movies from DB");
+        long startTime = System.currentTimeMillis();
 
         List<Movie> movies  = jdbcTemplate.query(getAllMovieSQL,
                 new BeanPropertyRowMapper(Movie.class));
@@ -39,34 +49,55 @@ public class JdbcMovieDao implements MovieDao {
         List<MovieToGenre> movieToGenres = jdbcTemplate.query(getAllMovieToGenre,
                 new BeanPropertyRowMapper<>(MovieToGenre.class));
 
-        for (int i = 0; i < movies.size(); i++) {
-            Movie movie = movies.get(i);
-            List<Country> countries = getCountryByMovieId(movieToCountries, movies.get(i).getId());
-            movie.setCountries(countries);
-            List<Genre> genres = getGenreByMovieId(movieToGenres, movies.get(i).getId());
-            movie.setGenres(genres);
+        for (Movie movie : movies) {
+            enrichMovieWithCountry(movie, movieToCountries);
+            enrichMovieWithGenre(movie, movieToGenres);
         }
-        System.out.println(movies.size());
+
+        log.info("Finish query to get all movies from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
     }
 
-    private List<Country> getCountryByMovieId(List<MovieToCountry> movie2Countries, int movieId) {
-        List<Country> countries = new ArrayList<>();
-        for (int i = 0; i < movie2Countries.size(); i++) {
-            if (movie2Countries.get(i).getMovieId() == movieId) {
-                countries.add(new Country(movie2Countries.get(i).getCountryId(), movie2Countries.get(i).getCountry()));
-            }
+    @Override
+    public List<Movie> getRandom() {
+        log.info("Start query to get 3 random movies from DB");
+        long startTime = System.currentTimeMillis();
+        List<Movie> movies  = jdbcTemplate.query(getRandomMovieSQL,
+                new BeanPropertyRowMapper(Movie.class));
+
+        List<MovieToCountry> movieToCountries = jdbcTemplate.query(getAllMovieToCountry,
+                new BeanPropertyRowMapper<>(MovieToCountry.class));
+
+        List<MovieToGenre> movieToGenres = jdbcTemplate.query(getAllMovieToGenre,
+                new BeanPropertyRowMapper<>(MovieToGenre.class));
+
+        for (Movie movie : movies) {
+            enrichMovieWithCountry(movie, movieToCountries);
+            enrichMovieWithGenre(movie, movieToGenres);
         }
-        return countries;
+
+        log.info("Finish query to get 3 random movies from DB. It took {} ms", System.currentTimeMillis() - startTime);
+        return movies;
     }
 
-    private List<Genre> getGenreByMovieId(List<MovieToGenre> movie2Genres, int movieId) {
-        List<Genre> genres = new ArrayList<>();
-        for (int i = 0; i < movie2Genres.size(); i++) {
-            if (movie2Genres.get(i).getMovieId() == movieId) {
-                genres.add(new Genre(movie2Genres.get(i).getGenreId(), movie2Genres.get(i).getGenre()));
+    private void enrichMovieWithCountry(Movie movie, List<MovieToCountry> movieToCountries) {
+        List<Country> countries = new ArrayList<>();
+        for (MovieToCountry movieToCountry : movieToCountries) {
+            if (movieToCountry.getMovieId() == movie.getId()) {
+                countries.add(new Country(movieToCountry.getCountryId(), movieToCountry.getCountry()));
             }
         }
-        return genres;
+        movie.setCountries(countries);
     }
+
+    private void enrichMovieWithGenre(Movie movie, List<MovieToGenre> movieToGenres) {
+        List<Genre> genres = new ArrayList<>();
+        for (MovieToGenre movieToGenre : movieToGenres) {
+            if (movieToGenre.getMovieId() == movie.getId()) {
+                genres.add(new Genre(movieToGenre.getGenreId(), movieToGenre.getGenre()));
+            }
+        }
+        movie.setGenres(genres);
+    }
+
 }

@@ -22,4 +22,11 @@
         WHERE g.genreId = mg.genreId;"/>
     </bean>
 
+    <bean id="getRandomMovieSQL" class="java.lang.String">
+        <constructor-arg value="SELECT m.id, m.nameRussian, m.nameNative, m.yearOfRelease,
+                                       m.rating, m.price, m.picturePath
+        FROM movie m
+        ORDER BY RAND() LIMIT 3;"/>
+    </bean>
+
 </beans>
