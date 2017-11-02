@@ -1,6 +1,5 @@
 package com.gromoks.movieland.web.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.service.MovieService;
 import com.gromoks.movieland.web.entity.MovieDto;
@@ -15,11 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = "/movie", produces = "text/plain;charset=UTF-8")
+@RequestMapping(value = "/v1/movie", produces = "text/plain;charset=UTF-8")
 public class MovieController {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -29,7 +27,7 @@ public class MovieController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public String getAll() throws IOException {
+    public String getAll() {
 
         log.info("Sending request to get all movies");
         long startTime = System.currentTimeMillis();
@@ -42,9 +40,9 @@ public class MovieController {
         return json;
     }
 
-    @RequestMapping("/random")
+    @RequestMapping(value = "/random", method = RequestMethod.GET)
     @ResponseBody
-    public String getRandom() throws IOException {
+    public String getRandom() {
 
         log.info("Sending request to get 3 random movies");
         long startTime = System.currentTimeMillis();

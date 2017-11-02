@@ -1,22 +1,22 @@
 package com.gromoks.movieland.entity;
 
 public class Country {
-    private int countryId;
+    private int id;
     private String country;
 
     public Country() {}
 
-    public Country(int countryId, String country) {
-        this.countryId = countryId;
+    public Country(int id, String country) {
+        this.id = id;
         this.country = country;
     }
 
-    public int getCountryId() {
-        return countryId;
+    public int getId() {
+        return id;
     }
 
-    public void setCountryId(int countryId) {
-        this.countryId = countryId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCountry() {
@@ -30,7 +30,7 @@ public class Country {
     @Override
     public String toString() {
         return "Country{" +
-                "countryId=" + countryId +
+                "id=" + id +
                 ", country='" + country + '\'' +
                 '}';
     }

@@ -3,15 +3,17 @@ package com.gromoks.movieland.dao.jdbc;
 import com.gromoks.movieland.dao.MovieDao;
 import com.gromoks.movieland.dao.entity.MovieToCountry;
 import com.gromoks.movieland.dao.entity.MovieToGenre;
+import com.gromoks.movieland.dao.jdbc.mapper.MovieRowMapper;
 import com.gromoks.movieland.entity.Country;
 import com.gromoks.movieland.entity.Genre;
 import com.gromoks.movieland.entity.Movie;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,17 +44,7 @@ public class JdbcMovieDao implements MovieDao {
         long startTime = System.currentTimeMillis();
 
         List<Movie> movies  = jdbcTemplate.query(getAllMovieSQL,
-                new BeanPropertyRowMapper(Movie.class));
-        List<MovieToCountry> movieToCountries = jdbcTemplate.query(getAllMovieToCountry,
-                new BeanPropertyRowMapper<>(MovieToCountry.class));
-
-        List<MovieToGenre> movieToGenres = jdbcTemplate.query(getAllMovieToGenre,
-                new BeanPropertyRowMapper<>(MovieToGenre.class));
-
-        for (Movie movie : movies) {
-            enrichMovieWithCountry(movie, movieToCountries);
-            enrichMovieWithGenre(movie, movieToGenres);
-        }
+                new MovieRowMapper());
 
         log.info("Finish query to get all movies from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
@@ -63,21 +55,27 @@ public class JdbcMovieDao implements MovieDao {
         log.info("Start query to get 3 random movies from DB");
         long startTime = System.currentTimeMillis();
         List<Movie> movies  = jdbcTemplate.query(getRandomMovieSQL,
-                new BeanPropertyRowMapper(Movie.class));
-
-        List<MovieToCountry> movieToCountries = jdbcTemplate.query(getAllMovieToCountry,
-                new BeanPropertyRowMapper<>(MovieToCountry.class));
-
-        List<MovieToGenre> movieToGenres = jdbcTemplate.query(getAllMovieToGenre,
-                new BeanPropertyRowMapper<>(MovieToGenre.class));
+                new MovieRowMapper());
 
         for (Movie movie : movies) {
-            enrichMovieWithCountry(movie, movieToCountries);
-            enrichMovieWithGenre(movie, movieToGenres);
+            enrichMovieWithCountry(movie, getMovieToCountryList());
+            enrichMovieWithGenre(movie, getMovieToGenreList());
         }
 
         log.info("Finish query to get 3 random movies from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
+    }
+
+    private List<MovieToCountry> getMovieToCountryList() {
+        List<MovieToCountry> movieToCountries = jdbcTemplate.query(getAllMovieToCountry,
+                new BeanPropertyRowMapper<>(MovieToCountry.class));
+        return movieToCountries;
+    }
+
+    private List<MovieToGenre> getMovieToGenreList() {
+        List<MovieToGenre> movieToGenres = jdbcTemplate.query(getAllMovieToGenre,
+                new BeanPropertyRowMapper<>(MovieToGenre.class));
+        return movieToGenres;
     }
 
     private void enrichMovieWithCountry(Movie movie, List<MovieToCountry> movieToCountries) {

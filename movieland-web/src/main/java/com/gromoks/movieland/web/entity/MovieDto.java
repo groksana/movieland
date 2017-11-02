@@ -19,6 +19,9 @@ public class MovieDto {
     @JsonView(MovieViews.Normal.class)
     private int yearOfRelease;
 
+    @JsonView(MovieViews.Extended.class)
+    private String description;
+
     @JsonView(MovieViews.Normal.class)
     private double rating;
 
@@ -106,6 +109,14 @@ public class MovieDto {
         this.picturePath = picturePath;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return "MovieDto{" +
@@ -113,6 +124,7 @@ public class MovieDto {
                 ", nameRussian='" + nameRussian + '\'' +
                 ", nameNative='" + nameNative + '\'' +
                 ", yearOfRelease=" + yearOfRelease +
+                ", description='" + description + '\'' +
                 ", rating=" + rating +
                 ", price=" + price +
                 ", picturePath='" + picturePath + '\'' +
