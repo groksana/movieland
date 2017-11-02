@@ -2,25 +2,36 @@ package com.gromoks.movieland.web.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.web.entity.MovieDto;
 import com.gromoks.movieland.web.entity.MovieViews;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class JsonJacksonConverter {
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    public static String toJson(List<MovieDto> dtoMovies) throws JsonProcessingException {
+    final static Logger log = LoggerFactory.getLogger(JsonJacksonConverter.class);
 
-        return objectMapper.writerWithView(MovieViews.Normal.class).writeValueAsString(dtoMovies);
+    public static String toJson(List<MovieDto> dtoMovies) {
+
+        try {
+            return objectMapper.writerWithView(MovieViews.Normal.class).writeValueAsString(dtoMovies);
+        } catch (JsonProcessingException e) {
+            log.error(e.toString());
+        }
+        return null;
     }
 
-    public static String toExtendedJson(List<MovieDto> dtoMovies) throws JsonProcessingException {
+    public static String toExtendedJson(List<MovieDto> dtoMovies) {
 
-        return objectMapper.writerWithView(MovieViews.Extended.class).writeValueAsString(dtoMovies);
+        try {
+            return objectMapper.writerWithView(MovieViews.Extended.class).writeValueAsString(dtoMovies);
+        } catch (JsonProcessingException e) {
+            log.error(e.toString());
+        }
+        return null;
     }
 
 }

@@ -2,7 +2,6 @@ package com.gromoks.movieland.web.util;
 
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.web.entity.MovieDto;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,7 @@ public class DtoConverter {
             movieDto.setNameRussian(movie.getNameRussian());
             movieDto.setNameNative(movie.getNameNative());
             movieDto.setYearOfRelease(movie.getYearOfRelease());
+            movieDto.setDescription(movie.getDescription());
             movieDto.setRating(movie.getRating());
             movieDto.setPrice(movie.getPrice());
             movieDto.setPicturePath(movie.getPicturePath());

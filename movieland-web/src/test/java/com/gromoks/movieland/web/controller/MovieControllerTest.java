@@ -48,6 +48,11 @@ public class MovieControllerTest {
         movie.setId(1);
         movie.setNameRussian("Тест");
         movie.setNameNative("Test");
+        movie.setYearOfRelease(2016);
+        movie.setDescription("Description for Test");
+        movie.setRating(9.8);
+        movie.setPrice(1000000.5);
+        movie.setPicturePath("https");
         List<Country> countries = new ArrayList<>();
         countries.add(new Country(1,"США"));
         movie.setCountries(countries);
@@ -60,30 +65,35 @@ public class MovieControllerTest {
     @Test
     public void testGetAllMovies() throws Exception {
         when(mockMovieService.getAll()).thenReturn(movies);
-        mockMvc.perform(get("/movie"))
+        mockMvc.perform(get("/v1/movie"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[0].nameRussian", is("Тест")))
-                .andExpect(jsonPath("$[0].nameNative", is("Test")));
+                .andExpect(jsonPath("$[0].nameNative", is("Test")))
+                .andExpect(jsonPath("$[0].yearOfRelease", is(2016)))
+                .andExpect(jsonPath("$[0].rating", is(9.8)))
+                .andExpect(jsonPath("$[0].price", is(1000000.5)))
+                .andExpect(jsonPath("$[0].picturePath", is("https")));
     }
 
     @Test
     public void testGetRandomMovies() throws Exception {
         when(mockMovieService.getRandom()).thenReturn(movies);
-        MvcResult mvcResult = mockMvc.perform(get("/movie/random"))
+        mockMvc.perform(get("/v1/movie/random"))
                 .andExpect(status().isOk())
-                .andReturn();
-
-        String json = mvcResult.getResponse().getContentAsString();
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode tree = mapper.readTree(json);
-
-        assertEquals(tree.get(0).get("id").asInt(), 1);
-        assertEquals(tree.get(0).get("countries").get(0).get("countryId").asInt(), 1);
-        assertEquals(tree.get(0).get("countries").get(0).get("country").asText(), "США");
-        assertEquals(tree.get(0).get("genres").get(0).get("genreId").asInt(), 1);
-        assertEquals(tree.get(0).get("genres").get(0).get("genre").asText(), "детектив");
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].nameRussian", is("Тест")))
+                .andExpect(jsonPath("$[0].nameNative", is("Test")))
+                .andExpect(jsonPath("$[0].yearOfRelease", is(2016)))
+                .andExpect(jsonPath("$[0].rating", is(9.8)))
+                .andExpect(jsonPath("$[0].price", is(1000000.5)))
+                .andExpect(jsonPath("$[0].picturePath", is("https")))
+                .andExpect(jsonPath("$[0].description", is("Description for Test")))
+                .andExpect(jsonPath("$[0].countries[0].id", is(1)))
+                .andExpect(jsonPath("$[0].countries[0].country", is("США")))
+                .andExpect(jsonPath("$[0].genres[0].id", is(1)))
+                .andExpect(jsonPath("$[0].genres[0].genre", is("детектив")));
     }
+
 
 }

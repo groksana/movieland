@@ -8,10 +8,21 @@ public class Movie {
     private String nameRussian;
     private String nameNative;
     private int yearOfRelease;
+    private String description;
     private double rating;
     private double price;
     private String picturePath;
     private List<Country> countries;
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     private List<Genre> genres;
     public List<Genre> getGenres() {
         return genres;
@@ -92,6 +103,7 @@ public class Movie {
                 ", nameRussian='" + nameRussian + '\'' +
                 ", nameNative='" + nameNative + '\'' +
                 ", yearOfRelease=" + yearOfRelease +
+                ", description='" + description + '\'' +
                 ", rating=" + rating +
                 ", price=" + price +
                 ", picturePath='" + picturePath + '\'' +

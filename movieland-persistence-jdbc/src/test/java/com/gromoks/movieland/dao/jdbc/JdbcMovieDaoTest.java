@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration(locations = "classpath:spring/jdbc-context.xml")
@@ -24,27 +25,23 @@ public class JdbcMovieDaoTest {
     public void testGetAll() {
         List<Movie> movies = movieDao.getAll();
         for (Movie movie : movies) {
-            assertNotNull(movie.getId());
             assertNotNull(movie.getNameRussian());
             assertNotNull(movie.getNameNative());
-            assertNotNull(movie.getYearOfRelease());
-            assertNotNull(movie.getPrice());
-            assertNotNull(movie.getRating());
+            assertNotNull(movie.getPicturePath());
         }
+
     }
 
     @Test
     public void testGetRandom() {
         List<Movie> movies = movieDao.getRandom();
         for (Movie movie : movies) {
-            assertNotNull(movie.getId());
             assertNotNull(movie.getNameRussian());
             assertNotNull(movie.getNameNative());
-            assertNotNull(movie.getYearOfRelease());
-            assertNotNull(movie.getPrice());
-            assertNotNull(movie.getRating());
+            assertNotNull(movie.getPicturePath());
+            assertNotNull(movie.getCountries());
+            assertNotNull(movie.getGenres());
         }
-        assertEquals(3, movies.size());
     }
 
     @Test

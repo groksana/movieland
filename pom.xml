@@ -37,12 +37,12 @@
         <spring.version>4.2.5.RELEASE</spring.version>
     </properties>
 
+    <!-- Logs -->
     <dependencies>
-        <!-- Logs -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.2</version>
+            <version>1.2.3</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
