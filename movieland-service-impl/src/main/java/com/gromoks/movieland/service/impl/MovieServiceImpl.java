@@ -17,4 +17,10 @@ public class MovieServiceImpl implements MovieService {
     public List<Movie> getAll() {
         return movieDao.getAll();
     }
+
+    @Override
+    public List<Movie> getRandom() {
+        return movieDao.getRandom();
+    }
 }
+

@@ -106,19 +106,6 @@ public class MovieDto {
         this.picturePath = picturePath;
     }
 
-    public void movieToMovieDtoTransform(Movie movie) {
-        MovieDto movieDto = new MovieDto();
-        movieDto.id = movie.getId();
-        movieDto.nameRussian = movie.getNameRussian();
-        movieDto.nameNative = movie.getNameNative();
-        movieDto.yearOfRelease = movie.getYearOfRelease();
-        movieDto.rating = movie.getRating();
-        movieDto.price = movie.getPrice();
-        movieDto.picturePath = movie.getPicturePath();
-        movieDto.countries = movie.getCountries();
-        movieDto.genres = movieDto.getGenres();
-    }
-
     @Override
     public String toString() {
         return "MovieDto{" +

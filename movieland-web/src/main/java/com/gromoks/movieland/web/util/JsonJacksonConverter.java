@@ -8,26 +8,19 @@ import com.gromoks.movieland.web.entity.MovieViews;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Service
 public class JsonJacksonConverter {
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    private DtoConverter dtoConverter;
+    public static String toJson(List<MovieDto> dtoMovies) throws JsonProcessingException {
 
-    public String toJson(List<Movie> movies) throws JsonProcessingException {
-
-        String json = null;
-        List<MovieDto> movieDtos = new ArrayList<MovieDto>();
-        //DtoConverter dtoConverter = new DtoConverter();
-        movieDtos = dtoConverter.toMovieDtoList(movies);
-
-        json = objectMapper.writerWithView(MovieViews.Normal.class).writeValueAsString(movieDtos);
-        //json = objectMapper.writeValueAsString(movieDtos);
-
-        return json;
+        return objectMapper.writerWithView(MovieViews.Normal.class).writeValueAsString(dtoMovies);
     }
+
+    public static String toExtendedJson(List<MovieDto> dtoMovies) throws JsonProcessingException {
+
+        return objectMapper.writerWithView(MovieViews.Extended.class).writeValueAsString(dtoMovies);
+    }
+
 }
