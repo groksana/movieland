@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
 
-@Controller
-@RequestMapping(value = "/v1/movie", produces = "text/plain;charset=UTF-8")
+@RestController
+@RequestMapping(value = "/v1/movie", produces = "text/plain;charset=UTF-8", method = RequestMethod.GET)
 public class MovieController {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -25,32 +26,24 @@ public class MovieController {
     @Autowired
     private MovieService movieService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    @ResponseBody
+    @RequestMapping
     public String getAll() {
-
         log.info("Sending request to get all movies");
         long startTime = System.currentTimeMillis();
-
         List<Movie> movies = movieService.getAll();
         List<MovieDto> dtoMovies = DtoConverter.toMovieDtoList(movies);
-        String json = JsonJacksonConverter.toJson(dtoMovies);
-
+        String json = JsonJacksonConverter.toJsonNormalMovie(dtoMovies);
         log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
         return json;
     }
 
-    @RequestMapping(value = "/random", method = RequestMethod.GET)
-    @ResponseBody
+    @RequestMapping(value = "/random")
     public String getRandom() {
-
         log.info("Sending request to get 3 random movies");
         long startTime = System.currentTimeMillis();
-
         List<Movie> movies = movieService.getRandom();
         List<MovieDto> dtoMovies = DtoConverter.toMovieDtoList(movies);
-        String json = JsonJacksonConverter.toExtendedJson(dtoMovies);
-
+        String json = JsonJacksonConverter.toJsonExtendedMovie(dtoMovies);
         log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
         return json;
     }

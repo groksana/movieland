@@ -39,13 +39,10 @@ public class JdbcMovieDao implements MovieDao {
     private String getRandomMovieSQL;
 
     public List<Movie> getAll() {
-
         log.info("Start query to get all movies from DB");
         long startTime = System.currentTimeMillis();
-
         List<Movie> movies  = jdbcTemplate.query(getAllMovieSQL,
                 new MovieRowMapper());
-
         log.info("Finish query to get all movies from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
     }
@@ -56,12 +53,10 @@ public class JdbcMovieDao implements MovieDao {
         long startTime = System.currentTimeMillis();
         List<Movie> movies  = jdbcTemplate.query(getRandomMovieSQL,
                 new MovieRowMapper());
-
         for (Movie movie : movies) {
             enrichMovieWithCountry(movie, getMovieToCountryList());
             enrichMovieWithGenre(movie, getMovieToGenreList());
         }
-
         log.info("Finish query to get 3 random movies from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
     }

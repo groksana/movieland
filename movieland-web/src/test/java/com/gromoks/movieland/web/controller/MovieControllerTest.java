@@ -1,8 +1,6 @@
 package com.gromoks.movieland.web.controller;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gromoks.movieland.entity.Country;
 import com.gromoks.movieland.entity.Genre;
 import com.gromoks.movieland.entity.Movie;
@@ -19,7 +17,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
