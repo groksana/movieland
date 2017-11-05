@@ -52,16 +52,19 @@ public class MovieControllerTest {
         movie.setPicturePath("https");
         List<Country> countries = new ArrayList<>();
         countries.add(new Country(1,"США"));
+        countries.add(new Country(2,"Украина"));
         movie.setCountries(countries);
         List<Genre> genres = new ArrayList<>();
         genres.add(new Genre(1,"детектив"));
+        genres.add(new Genre(2,"драма"));
         movie.setGenres(genres);
         movies.add(movie);
+        when(mockMovieService.getAll()).thenReturn(movies);
+        when(mockMovieService.getRandom()).thenReturn(movies);
     }
 
     @Test
     public void testGetAllMovies() throws Exception {
-        when(mockMovieService.getAll()).thenReturn(movies);
         mockMvc.perform(get("/v1/movie"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(1)))
@@ -75,7 +78,6 @@ public class MovieControllerTest {
 
     @Test
     public void testGetRandomMovies() throws Exception {
-        when(mockMovieService.getRandom()).thenReturn(movies);
         mockMvc.perform(get("/v1/movie/random"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(1)))
@@ -87,9 +89,13 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].picturePath", is("https")))
                 .andExpect(jsonPath("$[0].description", is("Description for Test")))
                 .andExpect(jsonPath("$[0].countries[0].id", is(1)))
-                .andExpect(jsonPath("$[0].countries[0].country", is("США")))
+                .andExpect(jsonPath("$[0].countries[0].name", is("США")))
+                .andExpect(jsonPath("$[0].countries[1].id", is(2)))
+                .andExpect(jsonPath("$[0].countries[1].name", is("Украина")))
                 .andExpect(jsonPath("$[0].genres[0].id", is(1)))
-                .andExpect(jsonPath("$[0].genres[0].genre", is("детектив")));
+                .andExpect(jsonPath("$[0].genres[0].name", is("детектив")))
+                .andExpect(jsonPath("$[0].genres[1].id", is(2)))
+                .andExpect(jsonPath("$[0].genres[1].name", is("драма")));
     }
 
 

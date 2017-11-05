@@ -1,6 +1,5 @@
 package com.gromoks.movieland.dao.jdbc;
 
-import com.gromoks.movieland.dao.MovieDao;
 import com.gromoks.movieland.entity.Movie;
 import org.junit.Test;
 import org.junit.runner.RunWith;

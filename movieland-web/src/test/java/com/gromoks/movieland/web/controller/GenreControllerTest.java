@@ -1,17 +1,13 @@
 package com.gromoks.movieland.web.controller;
 
-import com.gromoks.movieland.entity.Country;
 import com.gromoks.movieland.entity.Genre;
-import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.service.GenreService;
-import com.gromoks.movieland.service.MovieService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
@@ -42,17 +38,17 @@ public class GenreControllerTest {
         genres = new ArrayList<>();
         Genre genre = new Genre();
         genre.setId(1);
-        genre.setGenre("детектив");
+        genre.setName("детектив");
         genres.add(genre);
+        when(mockGenreService.getAll()).thenReturn(genres);
     }
 
     @Test
     public void testGetAllGenres() throws Exception {
-        when(mockGenreService.getAll()).thenReturn(genres);
         mockMvc.perform(get("/v1/genre"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].genre", is("детектив")));
+                .andExpect(jsonPath("$[0].name", is("детектив")));
 
     }
 

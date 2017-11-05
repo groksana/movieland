@@ -1,6 +1,6 @@
 package com.gromoks.movieland.service.impl;
 
-import com.gromoks.movieland.dao.MovieDao;
+import com.gromoks.movieland.dao.jdbc.MovieDao;
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
