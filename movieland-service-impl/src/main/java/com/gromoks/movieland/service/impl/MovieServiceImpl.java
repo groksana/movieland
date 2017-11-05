@@ -14,6 +14,7 @@ public class MovieServiceImpl implements MovieService {
     @Autowired
     private MovieDao movieDao;
 
+    @Override
     public List<Movie> getAll() {
         return movieDao.getAll();
     }

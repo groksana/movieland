@@ -29,4 +29,8 @@
         ORDER BY RAND() LIMIT 3;"/>
     </bean>
 
+    <bean id="getAllGenreSQL" class="java.lang.String">
+        <constructor-arg value=" SELECT g.id, g.genre
+        FROM genre g;"/>
+    </bean>
 </beans>

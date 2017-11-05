@@ -2,6 +2,8 @@ package com.gromoks.movieland.web.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gromoks.movieland.entity.Genre;
+import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.web.entity.MovieDto;
 import com.gromoks.movieland.web.entity.MovieViews;
 import org.slf4j.Logger;
@@ -14,24 +16,34 @@ public class JsonJacksonConverter {
 
     final static Logger log = LoggerFactory.getLogger(JsonJacksonConverter.class);
 
-    public static String toJson(List<MovieDto> dtoMovies) {
-
+    public static <T>String toJson(List list, Class<T> clazz){
         try {
-            return objectMapper.writerWithView(MovieViews.Normal.class).writeValueAsString(dtoMovies);
+            return objectMapper.writerWithView(clazz).writeValueAsString(list);
         } catch (JsonProcessingException e) {
-            log.error(e.toString());
+            log.error("Error", e);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
-    public static String toExtendedJson(List<MovieDto> dtoMovies) {
-
+    public static <T>String toJson(List list){
         try {
-            return objectMapper.writerWithView(MovieViews.Extended.class).writeValueAsString(dtoMovies);
+            return objectMapper.writeValueAsString(list);
         } catch (JsonProcessingException e) {
-            log.error(e.toString());
+            log.error("Error", e);
+            throw new RuntimeException(e);
         }
-        return null;
+    }
+
+    public static String toJsonNormalMovie(List<MovieDto> dtoMovies) {
+       return toJson(dtoMovies, MovieViews.Normal.class);
+    }
+
+    public static String toJsonExtendedMovie(List<MovieDto> dtoMovies) {
+        return toJson(dtoMovies, MovieViews.Extended.class);
+    }
+
+    public static String toJsonGenre(List<Genre> genres) {
+        return toJson(genres);
     }
 
 }
