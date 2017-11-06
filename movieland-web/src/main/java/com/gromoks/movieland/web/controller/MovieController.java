@@ -7,12 +7,9 @@ import com.gromoks.movieland.web.util.DtoConverter;
 import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,6 +41,17 @@ public class MovieController {
         List<Movie> movies = movieService.getRandom();
         List<MovieDto> dtoMovies = DtoConverter.toMovieDtoList(movies);
         String json = JsonJacksonConverter.toJsonExtendedMovie(dtoMovies);
+        log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
+        return json;
+    }
+
+    @RequestMapping(value = "/genre/{genreId}")
+    public String getByGenreId(@PathVariable int genreId) {
+        log.info("Sending request to get movies by genre with id = {}", genreId);
+        long startTime = System.currentTimeMillis();
+        List<Movie> movies = movieService.getByGenreId(genreId);
+        List<MovieDto> dtoMovies = DtoConverter.toMovieDtoList(movies);
+        String json = JsonJacksonConverter.toJsonNormalMovie(dtoMovies);
         log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
         return json;
     }

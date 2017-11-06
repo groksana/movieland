@@ -18,7 +18,7 @@ public class GenreController {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    GenreService genreService;
+    private GenreService genreService;
 
     @RequestMapping
     public String getAll() {

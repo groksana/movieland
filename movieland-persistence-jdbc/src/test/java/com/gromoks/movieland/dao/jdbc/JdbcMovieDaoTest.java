@@ -1,6 +1,5 @@
 package com.gromoks.movieland.dao.jdbc;
 
-import com.gromoks.movieland.dao.MovieDao;
 import com.gromoks.movieland.entity.Movie;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,5 +46,16 @@ public class JdbcMovieDaoTest {
     public void testRandomCount() {
         List<Movie> movies = movieDao.getRandom();
         assertEquals(3, movies.size());
+    }
+
+    @Test
+    public void testGetByGenreId() {
+        int genreId = 1;
+        List<Movie> movies = movieDao.getByGenreId(genreId);
+        for (Movie movie : movies) {
+            assertNotNull(movie.getNameRussian());
+            assertNotNull(movie.getNameNative());
+            assertNotNull(movie.getPicturePath());
+        }
     }
 }
