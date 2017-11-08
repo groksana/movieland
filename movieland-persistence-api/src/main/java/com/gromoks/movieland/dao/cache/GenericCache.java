@@ -4,8 +4,7 @@ import com.gromoks.movieland.entity.Genre;
 
 import java.util.List;
 
-public interface GenreCache {
-    List<Genre> getAll();
-    void cleanup();
-    void fill();
+public interface GenericCache<T> {
+    List<T> getAll();
+    void invalidate();
 }

@@ -1,6 +1,6 @@
 package com.gromoks.movieland.dao.jdbc;
 
-import com.gromoks.movieland.dao.cache.GenreCache;
+import com.gromoks.movieland.dao.cache.GenericCache;
 import com.gromoks.movieland.entity.Genre;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 public class GenreCacheImplTest {
 
     @Mock
-    private GenreCache mockGenreCache;
+    private GenericCache<Genre> mockGenericCache;
 
     @InjectMocks
     private JdbcGenreDao jdbcGenreDao;
@@ -36,7 +36,7 @@ public class GenreCacheImplTest {
 
     @Test
     public void testGetAllGenres() {
-        when(mockGenreCache.getAll()).thenReturn(genres);
+        when(mockGenericCache.getAll()).thenReturn(genres);
         assertEquals(genres.get(0).getId(), 1);
         assertEquals(genres.get(0).getName(), "детектив");
     }
