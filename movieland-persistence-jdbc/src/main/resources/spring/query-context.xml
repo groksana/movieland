@@ -7,23 +7,23 @@
     <bean id="getAllMovieSQL" class="java.lang.String">
         <constructor-arg value="SELECT m.id, m.nameRussian, m.nameNative, m.yearOfRelease, m.description,
                                        m.rating, m.price, m.picturePath
-        FROM movie m;"/>
+        FROM movie m"/>
     </bean>
 
-    <bean id="getAllMovieToCountry" class="java.lang.String">
+    <bean id="getAllMovieToCountrySQL" class="java.lang.String">
         <constructor-arg value=" SELECT mc.movieId, c.id, c.country
         FROM country c, movie2country mc
         WHERE c.id = mc.countryId;"/>
     </bean>
 
-    <bean id="getAllMovieToGenre" class="java.lang.String">
+    <bean id="getAllMovieToGenreSQL" class="java.lang.String">
         <constructor-arg value=" SELECT mg.movieId, g.id, g.genre
         FROM genre g, movie2genre mg
         WHERE g.id = mg.genreId;"/>
     </bean>
 
     <bean id="getRandomMovieSQL" class="java.lang.String">
-        <constructor-arg value="SELECT m.id, m.nameRussian, m.nameNative, m.yearOfRelease, m.description,
+        <constructor-arg value=" SELECT m.id, m.nameRussian, m.nameNative, m.yearOfRelease, m.description,
                                        m.rating, m.price, m.picturePath
         FROM movie m
         ORDER BY RAND() LIMIT 3;"/>
@@ -32,5 +32,12 @@
     <bean id="getAllGenreSQL" class="java.lang.String">
         <constructor-arg value=" SELECT g.id, g.genre
         FROM genre g;"/>
+    </bean>
+
+    <bean id="getMoviesByGenreIdSQL" class="java.lang.String">
+        <constructor-arg value=" SELECT m.id, m.nameRussian, m.nameNative, m.yearOfRelease, m.description,
+                                       m.rating, m.price, m.picturePath
+        FROM movie m, movie2genre mg
+        WHERE m.id = mg.movieId and mg.genreId = ?;"/>
     </bean>
 </beans>

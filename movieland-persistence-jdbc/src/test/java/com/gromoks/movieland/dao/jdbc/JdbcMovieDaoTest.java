@@ -1,6 +1,5 @@
 package com.gromoks.movieland.dao.jdbc;
 
-import com.gromoks.movieland.dao.MovieDao;
 import com.gromoks.movieland.entity.Movie;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +22,8 @@ public class JdbcMovieDaoTest {
 
     @Test
     public void testGetAll() {
-        List<Movie> movies = movieDao.getAll();
+        HashMap<String,String> requestParamMap = new HashMap<>();
+        List<Movie> movies = movieDao.getAll(requestParamMap);
         for (Movie movie : movies) {
             assertNotNull(movie.getNameRussian());
             assertNotNull(movie.getNameNative());
@@ -47,5 +48,16 @@ public class JdbcMovieDaoTest {
     public void testRandomCount() {
         List<Movie> movies = movieDao.getRandom();
         assertEquals(3, movies.size());
+    }
+
+    @Test
+    public void testGetByGenreId() {
+        int genreId = 1;
+        List<Movie> movies = movieDao.getByGenreId(genreId);
+        for (Movie movie : movies) {
+            assertNotNull(movie.getNameRussian());
+            assertNotNull(movie.getNameNative());
+            assertNotNull(movie.getPicturePath());
+        }
     }
 }

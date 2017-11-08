@@ -1,6 +1,5 @@
 package com.gromoks.movieland.dao.jdbc;
 
-import com.gromoks.movieland.dao.GenreDao;
 import com.gromoks.movieland.entity.Genre;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,12 +18,16 @@ public class JdbcGenreDaoTest {
     @Autowired
     private GenreDao genreDao;
 
+
+
     @Test
     public void testGetAll() {
         List<Genre> genres = genreDao.getAll();
         for (Genre genre : genres) {
-            assertNotNull(genre.getGenre());
+            assertNotNull(genre.getName());
         }
 
     }
+
+
 }
