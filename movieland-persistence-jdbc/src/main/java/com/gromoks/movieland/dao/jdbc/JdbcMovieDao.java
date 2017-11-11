@@ -40,13 +40,16 @@ public class JdbcMovieDao implements MovieDao {
     private String getAllMovieSQL;
 
     @Autowired
-    private String getAllMovieToCountry;
+    private String getAllMovieToCountrySQL;
 
     @Autowired
-    private String getAllMovieToGenre;
+    private String getAllMovieToGenreSQL;
 
     @Autowired
     private String getRandomMovieSQL;
+
+    @Autowired
+    private String getMoviesByGenreIdSQL;
 
     public List<Movie> getAll() {
         log.info("Start query to get all movies from DB");
@@ -69,15 +72,23 @@ public class JdbcMovieDao implements MovieDao {
         return movies;
     }
 
+    @Override
+    public List<Movie> getByGenreId(int id) {
+        log.info("Start query to get movies by genre");
+        long startTime = System.currentTimeMillis();
+        List<Movie> movies  = jdbcTemplate.query(getMoviesByGenreIdSQL, new Object[]{id}, movieRowMapper);
+        log.info("Finish query to get movies by genre from DB. It took {} ms", System.currentTimeMillis() - startTime);
+        return movies;
+    }
+
     private List<MovieToCountry> getMovieToCountryList() {
-        List<MovieToCountry> movieToCountries = jdbcTemplate.query(getAllMovieToCountry,
+        List<MovieToCountry> movieToCountries = jdbcTemplate.query(getAllMovieToCountrySQL,
                 movieToCountryRowMapper);
-                //new BeanPropertyRowMapper<>(MovieToCountry.class));
         return movieToCountries;
     }
 
     private List<MovieToGenre> getMovieToGenreList() {
-        List<MovieToGenre> movieToGenres = jdbcTemplate.query(getAllMovieToGenre,
+        List<MovieToGenre> movieToGenres = jdbcTemplate.query(getAllMovieToGenreSQL,
                 movieToGenreRowMapper);
         return movieToGenres;
     }

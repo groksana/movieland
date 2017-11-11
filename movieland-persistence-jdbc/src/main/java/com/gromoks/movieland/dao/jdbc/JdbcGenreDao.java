@@ -1,6 +1,6 @@
 package com.gromoks.movieland.dao.jdbc;
 
-import com.gromoks.movieland.dao.jdbc.mapper.GenreRowMapper;
+import com.gromoks.movieland.dao.cache.GenreCache;
 import com.gromoks.movieland.entity.Genre;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,17 +18,14 @@ public class JdbcGenreDao implements GenreDao{
     private final GenreRowMapper genreRowMapper = new GenreRowMapper();
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private String getAllGenreSQL;
+    private GenreCache genreCache;
 
     @Override
     public List<Genre> getAll() {
-        log.info("Start query to get all genre from db");
+        log.info("Start query to get all genre from cache");
         long startTime = System.currentTimeMillis();
-        List<Genre> genres  = jdbcTemplate.query(getAllGenreSQL, genreRowMapper);
-        log.info("Finish query to get all genre from db. It took {} ms", System.currentTimeMillis() - startTime);
+        List<Genre> genres  = genreCache.getAll();
+        log.info("Finish query to get all genre from cache. It took {} ms", System.currentTimeMillis() - startTime);
         return genres;
     }
 }

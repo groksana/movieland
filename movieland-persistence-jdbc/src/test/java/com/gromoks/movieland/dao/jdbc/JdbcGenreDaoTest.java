@@ -20,6 +20,8 @@ public class JdbcGenreDaoTest {
     @Qualifier("jdbcGenreDao")
     private GenreDao genreDao;
 
+
+
     @Test
     public void testGetAll() {
         List<Genre> genres = genreDao.getAll();

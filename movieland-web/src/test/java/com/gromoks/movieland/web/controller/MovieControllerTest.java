@@ -61,6 +61,7 @@ public class MovieControllerTest {
         movies.add(movie);
         when(mockMovieService.getAll()).thenReturn(movies);
         when(mockMovieService.getRandom()).thenReturn(movies);
+        when(mockMovieService.getByGenreId(1)).thenReturn(movies);
     }
 
     @Test
@@ -96,6 +97,19 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].genres[0].name", is("детектив")))
                 .andExpect(jsonPath("$[0].genres[1].id", is(2)))
                 .andExpect(jsonPath("$[0].genres[1].name", is("драма")));
+    }
+
+    @Test
+    public void testGetByGenreId() throws Exception {
+        mockMvc.perform(get("/v1/movie/genre/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].nameRussian", is("Тест")))
+                .andExpect(jsonPath("$[0].nameNative", is("Test")))
+                .andExpect(jsonPath("$[0].yearOfRelease", is(2016)))
+                .andExpect(jsonPath("$[0].rating", is(9.8)))
+                .andExpect(jsonPath("$[0].price", is(1000000.5)))
+                .andExpect(jsonPath("$[0].picturePath", is("https")));
     }
 
 

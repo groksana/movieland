@@ -47,4 +47,15 @@ public class JdbcMovieDaoTest {
         List<Movie> movies = movieDao.getRandom();
         assertEquals(3, movies.size());
     }
+
+    @Test
+    public void testGetByGenreId() {
+        int genreId = 1;
+        List<Movie> movies = movieDao.getByGenreId(genreId);
+        for (Movie movie : movies) {
+            assertNotNull(movie.getNameRussian());
+            assertNotNull(movie.getNameNative());
+            assertNotNull(movie.getPicturePath());
+        }
+    }
 }
