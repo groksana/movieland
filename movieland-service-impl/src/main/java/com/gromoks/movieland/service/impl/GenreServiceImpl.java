@@ -1,9 +1,10 @@
 package com.gromoks.movieland.service.impl;
 
-import com.gromoks.movieland.dao.GenreDao;
+import com.gromoks.movieland.dao.jdbc.GenreDao;
 import com.gromoks.movieland.entity.Genre;
 import com.gromoks.movieland.service.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 public class GenreServiceImpl implements GenreService{
 
     @Autowired
+    @Qualifier("genericCacheImpl")
     private GenreDao genreDao;
 
     @Override

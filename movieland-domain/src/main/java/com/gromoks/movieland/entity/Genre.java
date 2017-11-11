@@ -2,13 +2,13 @@ package com.gromoks.movieland.entity;
 
 public class Genre {
     private int id;
-    private String genre;
+    private String name;
 
     public Genre() {}
 
-    public Genre(int id, String genre) {
+    public Genre(int id, String name) {
         this.id = id;
-        this.genre = genre;
+        this.name = name;
     }
 
     public int getId() {
@@ -19,19 +19,19 @@ public class Genre {
         this.id = id;
     }
 
-    public String getGenre() {
-        return genre;
+    public String getName() {
+        return name;
     }
 
-    public void setGenre(String genre) {
-        this.genre = genre;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
     public String toString() {
         return "Genre{" +
                 "id=" + id +
-                ", genre='" + genre + '\'' +
+                ", name='" + name + '\'' +
                 '}';
     }
 }
