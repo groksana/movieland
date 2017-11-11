@@ -26,7 +26,7 @@ public class GenreController {
         long startTime = System.currentTimeMillis();
         List<Genre> genres = genreService.getAll();
         String json = JsonJacksonConverter.toJsonGenre(genres);
-        log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
+        log.info("Genres are received. It tooks {} ms", System.currentTimeMillis() - startTime);
         return json;
     }
 }
