@@ -27,10 +27,6 @@ public class MovieController {
     @Autowired
     private MovieService movieService;
 
-    private OrderType orderType;
-
-    private RequestParameter requestParameter;
-
     @RequestMapping
     public String getAll(@RequestParam(required = false) HashMap<String, String> requestParamMap) {
         log.info("Sending request to get all movies");
@@ -69,12 +65,12 @@ public class MovieController {
     private void validateMovieRequest(HashMap<String,String> requestParamMap) {
         for (Map.Entry<String,String> entry : requestParamMap.entrySet()) {
             if (
-                    (!entry.getKey().toUpperCase().equals(requestParameter.PRICE.toString())
-                            && !entry.getKey().toUpperCase().equals(requestParameter.RATING.toString()))
-                            || (entry.getKey().toUpperCase().equals(requestParameter.RATING.toString())
-                            && !entry.getValue().toUpperCase().equals(orderType.DESC.toString()))
-                            || (entry.getKey().toUpperCase().equals(requestParameter.PRICE.toString())
-                            && !(entry.getValue().toUpperCase().equals(orderType.DESC.toString()) || entry.getValue().toUpperCase().equals(orderType.ASC.toString())))
+                    (!entry.getKey().toUpperCase().equals(RequestParameter.PRICE.getName())
+                            && !entry.getKey().toUpperCase().equals(RequestParameter.RATING.getName()))
+                            || (entry.getKey().toUpperCase().equals(RequestParameter.RATING.getName())
+                            && !entry.getValue().toUpperCase().equals(OrderType.DESC.getName()))
+                            || (entry.getKey().toUpperCase().equals(RequestParameter.PRICE.getName())
+                            && !(entry.getValue().toUpperCase().equals(OrderType.DESC.getName()) || entry.getValue().toUpperCase().equals(OrderType.ASC.getName())))
                     )
             {
                 throw new IllegalArgumentException("Exception with illegal argument: " + entry.getKey() + "=" + entry.getValue());
