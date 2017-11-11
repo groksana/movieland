@@ -11,7 +11,7 @@ import com.gromoks.movieland.entity.Movie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
+@Repository
 public class JdbcMovieDao implements MovieDao {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -54,26 +54,30 @@ public class JdbcMovieDao implements MovieDao {
 
     public List<Movie> getAll(HashMap<String,String> requestParamMap) {
 
-        String orderClause = "";
-        int rowNumber = 0;
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append(getAllMovieSQL);
 
-        if (requestParamMap.size() > 0) {
-            orderClause = " ORDER BY ";
-        }
+        int rowNumber = 0;
 
         for (Map.Entry<String,String> entry : requestParamMap.entrySet()) {
             if (entry.getValue() != null) {
+                if (rowNumber == 0) {
+                    sqlBuilder.append(" ORDER BY ");
+                }
                 rowNumber++;
                 if (rowNumber > 1) {
-                    orderClause = orderClause + ", ";
+                    sqlBuilder.append(", ");
                 }
-                orderClause = orderClause + entry.getKey() + " " + entry.getValue();
+                sqlBuilder.append(entry.getKey());
+                sqlBuilder.append(" ");
+                sqlBuilder.append(entry.getValue());
             }
         }
+        String resultQuery = sqlBuilder.toString();
 
         log.info("Start query to get all movies from DB");
         long startTime = System.currentTimeMillis();
-        List<Movie> movies  = jdbcTemplate.query(getAllMovieSQL+orderClause, movieRowMapper);
+        List<Movie> movies  = jdbcTemplate.query(resultQuery, movieRowMapper);
         log.info("Finish query to get all movies from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
     }
@@ -92,10 +96,11 @@ public class JdbcMovieDao implements MovieDao {
     }
 
     @Override
-    public List<Movie> getByGenreId(int id) {
+    public List<Movie> getByGenreId(int id, HashMap<String,String> requestParamMap) {
         log.info("Start query to get movies by genre");
         long startTime = System.currentTimeMillis();
-        List<Movie> movies  = jdbcTemplate.query(getMoviesByGenreIdSQL, new Object[]{id}, movieRowMapper);
+        String resultQuery = enrichQueryWithOrderRequestParam(getMoviesByGenreIdSQL, requestParamMap);
+        List<Movie> movies  = jdbcTemplate.query(resultQuery,movieRowMapper,id);
         log.info("Finish query to get movies by genre from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
     }
@@ -130,6 +135,31 @@ public class JdbcMovieDao implements MovieDao {
             }
         }
         movie.setGenres(genres);
+    }
+
+    private String enrichQueryWithOrderRequestParam(String initialQuery, HashMap<String,String> requestParamMap) {
+
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append(initialQuery);
+        int rowNumber = 0;
+
+        for (Map.Entry<String,String> entry : requestParamMap.entrySet()) {
+            if (entry.getValue() != null) {
+                if (rowNumber == 0) {
+                    sqlBuilder.append(" ORDER BY ");
+                }
+                rowNumber++;
+                if (rowNumber > 1) {
+                    sqlBuilder.append(", ");
+                }
+                sqlBuilder.append(entry.getKey());
+                sqlBuilder.append(" ");
+                sqlBuilder.append(entry.getValue());
+            }
+        }
+
+        String resultQuery = sqlBuilder.toString();
+        return resultQuery;
     }
 
 }

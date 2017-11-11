@@ -10,5 +10,5 @@ public interface MovieService {
 
     List<Movie> getRandom();
 
-    List<Movie> getByGenreId(int id);
+    List<Movie> getByGenreId(int id, HashMap<String,String> requestParamMap);
 }

@@ -26,8 +26,8 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<Movie> getByGenreId(int id) {
-        return movieDao.getByGenreId(id);
+    public List<Movie> getByGenreId(int id, HashMap<String,String> requestParamMap) {
+        return movieDao.getByGenreId(id, requestParamMap);
     }
 }
 

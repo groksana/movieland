@@ -12,6 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration(locations = "classpath:spring/jdbc-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -53,11 +54,37 @@ public class JdbcMovieDaoTest {
     @Test
     public void testGetByGenreId() {
         int genreId = 1;
-        List<Movie> movies = movieDao.getByGenreId(genreId);
+        HashMap<String,String> requestParamMap = new HashMap<>();
+        List<Movie> movies = movieDao.getByGenreId(genreId,requestParamMap);
         for (Movie movie : movies) {
             assertNotNull(movie.getNameRussian());
             assertNotNull(movie.getNameNative());
             assertNotNull(movie.getPicturePath());
         }
     }
+
+    @Test
+    public void testRatingDescOrderGetAll() {
+        HashMap<String,String> requestParamMap = new HashMap<>();
+        requestParamMap.put("rating","desc");
+        List<Movie> movies = movieDao.getAll(requestParamMap);
+        assertTrue(movies.get(1).getRating()<=movies.get(0).getRating());
+    }
+
+    @Test
+    public void testPriceAscOrderGetAll() {
+        HashMap<String,String> requestParamMap = new HashMap<>();
+        requestParamMap.put("price","asc");
+        List<Movie> movies = movieDao.getAll(requestParamMap);
+        assertTrue(movies.get(1).getPrice()>=movies.get(0).getPrice());
+    }
+
+    @Test
+    public void testPriceDescOrderGetAll() {
+        HashMap<String,String> requestParamMap = new HashMap<>();
+        requestParamMap.put("price","desc");
+        List<Movie> movies = movieDao.getAll(requestParamMap);
+        assertTrue(movies.get(1).getPrice()<=movies.get(0).getPrice());
+    }
+
 }

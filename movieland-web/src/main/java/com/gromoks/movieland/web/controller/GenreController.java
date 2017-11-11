@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/v1/genre", produces = "text/plain;charset=UTF-8", method = RequestMethod.GET)
+@RequestMapping(value = "/genre", produces = "text/plain;charset=UTF-8", method = RequestMethod.GET)
 public class GenreController {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -26,7 +26,7 @@ public class GenreController {
         long startTime = System.currentTimeMillis();
         List<Genre> genres = genreService.getAll();
         String json = JsonJacksonConverter.toJsonGenre(genres);
-        log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
+        log.info("Genres are received. It tooks {} ms", System.currentTimeMillis() - startTime);
         return json;
     }
 }

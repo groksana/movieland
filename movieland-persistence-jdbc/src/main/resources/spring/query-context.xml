@@ -38,6 +38,6 @@
         <constructor-arg value=" SELECT m.id, m.nameRussian, m.nameNative, m.yearOfRelease, m.description,
                                        m.rating, m.price, m.picturePath
         FROM movie m, movie2genre mg
-        WHERE m.id = mg.movieId and mg.genreId = ?;"/>
+        WHERE m.id = mg.movieId and mg.genreId = ?"/>
     </bean>
 </beans>
