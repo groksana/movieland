@@ -5,6 +5,7 @@ import com.gromoks.movieland.dao.entity.MovieToGenre;
 import com.gromoks.movieland.dao.jdbc.mapper.MovieRowMapper;
 import com.gromoks.movieland.dao.jdbc.mapper.MovieToCountryRowMapper;
 import com.gromoks.movieland.dao.jdbc.mapper.MovieToGenreRowMapper;
+import com.gromoks.movieland.dao.jdbc.sqlbuilder.QueryBuilder;
 import com.gromoks.movieland.entity.Country;
 import com.gromoks.movieland.entity.Genre;
 import com.gromoks.movieland.entity.Movie;
@@ -55,7 +56,7 @@ public class JdbcMovieDao implements MovieDao {
     public List<Movie> getAll(HashMap<String,String> requestParamMap) {
         log.info("Start query to get all movies from DB");
         long startTime = System.currentTimeMillis();
-        String resultQuery = enrichQueryWithOrderRequestParam(getAllMovieSQL, requestParamMap);
+        String resultQuery = QueryBuilder.enrichQueryWithOrderRequestParam(getAllMovieSQL, requestParamMap);
         List<Movie> movies  = jdbcTemplate.query(resultQuery, movieRowMapper);
         log.info("Finish query to get all movies from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
@@ -78,7 +79,7 @@ public class JdbcMovieDao implements MovieDao {
     public List<Movie> getByGenreId(int id, HashMap<String,String> requestParamMap) {
         log.info("Start query to get movies by genre");
         long startTime = System.currentTimeMillis();
-        String resultQuery = enrichQueryWithOrderRequestParam(getMoviesByGenreIdSQL, requestParamMap);
+        String resultQuery = QueryBuilder.enrichQueryWithOrderRequestParam(getMoviesByGenreIdSQL, requestParamMap);
         List<Movie> movies  = jdbcTemplate.query(resultQuery,movieRowMapper,id);
         log.info("Finish query to get movies by genre from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
@@ -114,31 +115,6 @@ public class JdbcMovieDao implements MovieDao {
             }
         }
         movie.setGenres(genres);
-    }
-
-    private String enrichQueryWithOrderRequestParam(String initialQuery, HashMap<String,String> requestParamMap) {
-
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append(initialQuery);
-        int rowNumber = 0;
-
-        for (Map.Entry<String,String> entry : requestParamMap.entrySet()) {
-            if (entry.getValue() != null) {
-                if (rowNumber == 0) {
-                    sqlBuilder.append(" ORDER BY ");
-                }
-                rowNumber++;
-                if (rowNumber > 1) {
-                    sqlBuilder.append(", ");
-                }
-                sqlBuilder.append(entry.getKey());
-                sqlBuilder.append(" ");
-                sqlBuilder.append(entry.getValue());
-            }
-        }
-
-        String resultQuery = sqlBuilder.toString();
-        return resultQuery;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.gromoks.movieland.dao.jdbc;
 
+import com.gromoks.movieland.dao.config.JdbcConfig;
 import com.gromoks.movieland.entity.Movie;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-@ContextConfiguration(locations = "classpath:spring/jdbc-context.xml")
+@ContextConfiguration(classes = {JdbcConfig.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class JdbcMovieDaoTest {
 
