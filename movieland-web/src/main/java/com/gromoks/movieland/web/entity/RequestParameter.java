@@ -10,7 +10,12 @@ public enum RequestParameter {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
+    public static Enum getByRequestParamName(String name) {
+        for(RequestParameter requestParameter : values()) {
+            if (name.toUpperCase().equals(requestParameter.name)) {
+                return requestParameter;
+            }
+        }
+        throw new IllegalArgumentException("Request parameter is not supported: " + name);
     }
 }

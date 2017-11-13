@@ -62,21 +62,15 @@ public class MovieController {
         return json;
     }
 
-    private void validateMovieRequest(HashMap<String,String> requestParamMap) {
-        for (Map.Entry<String,String> entry : requestParamMap.entrySet()) {
-            if (
-                    (!entry.getKey().toUpperCase().equals(RequestParameter.PRICE.getName())
-                            && !entry.getKey().toUpperCase().equals(RequestParameter.RATING.getName()))
-                            || (entry.getKey().toUpperCase().equals(RequestParameter.RATING.getName())
-                            && !entry.getValue().toUpperCase().equals(OrderType.DESC.getName()))
-                            || (entry.getKey().toUpperCase().equals(RequestParameter.PRICE.getName())
-                            && !(entry.getValue().toUpperCase().equals(OrderType.DESC.getName()) || entry.getValue().toUpperCase().equals(OrderType.ASC.getName())))
-                    )
-            {
+    private void validateMovieRequest(HashMap<String, String> requestParamMap) {
+        for (Map.Entry<String, String> entry : requestParamMap.entrySet()) {
+            Enum key = RequestParameter.getByRequestParamName(entry.getKey());
+            Enum value = SortingOrder.getBySortingOrderName(entry.getValue());
+            if ((!key.equals(RequestParameter.PRICE) && !key.equals(RequestParameter.RATING))
+                    || (key.equals(RequestParameter.RATING) && !value.equals(SortingOrder.DESC))
+                    || (key.equals(RequestParameter.PRICE) && !(value.equals(SortingOrder.DESC) || value.equals(SortingOrder.ASC)))) {
                 throw new IllegalArgumentException("Exception with illegal argument: " + entry.getKey() + "=" + entry.getValue());
             }
         }
     }
-
-
 }
