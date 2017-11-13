@@ -21,7 +21,7 @@ public class JsonJacksonConverter {
             return objectMapper.writerWithView(clazz).writeValueAsString(list);
         } catch (JsonProcessingException e) {
             log.error("Error in Json convert based on view", e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error in Json convert based on view",e);
         }
     }
 
@@ -30,7 +30,7 @@ public class JsonJacksonConverter {
             return objectMapper.writeValueAsString(list);
         } catch (JsonProcessingException e) {
             log.error("Error in Json converter", e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error in Json convert",e);
         }
     }
 
