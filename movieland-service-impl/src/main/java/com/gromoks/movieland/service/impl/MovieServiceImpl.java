@@ -6,7 +6,7 @@ import com.gromoks.movieland.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
@@ -16,7 +16,7 @@ public class MovieServiceImpl implements MovieService {
     private MovieDao movieDao;
 
     @Override
-    public List<Movie> getAll(HashMap<String,String> requestParamMap) {
+    public List<Movie> getAll(LinkedHashMap<String,String> requestParamMap) {
         return movieDao.getAll(requestParamMap);
     }
 
@@ -26,7 +26,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<Movie> getByGenreId(int id, HashMap<String,String> requestParamMap) {
+    public List<Movie> getByGenreId(int id, LinkedHashMap<String,String> requestParamMap) {
         return movieDao.getByGenreId(id, requestParamMap);
     }
 }

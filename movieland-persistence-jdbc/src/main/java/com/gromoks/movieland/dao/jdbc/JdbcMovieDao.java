@@ -17,10 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class JdbcMovieDao implements MovieDao {
@@ -53,7 +50,7 @@ public class JdbcMovieDao implements MovieDao {
     @Autowired
     private String getMoviesByGenreIdSQL;
 
-    public List<Movie> getAll(HashMap<String,String> requestParamMap) {
+    public List<Movie> getAll(LinkedHashMap<String,String> requestParamMap) {
         log.info("Start query to get all movies from DB");
         long startTime = System.currentTimeMillis();
         String resultQuery = QueryBuilder.enrichQueryWithOrderRequestParam(getAllMovieSQL, requestParamMap);
@@ -76,7 +73,7 @@ public class JdbcMovieDao implements MovieDao {
     }
 
     @Override
-    public List<Movie> getByGenreId(int id, HashMap<String,String> requestParamMap) {
+    public List<Movie> getByGenreId(int id, LinkedHashMap<String,String> requestParamMap) {
         log.info("Start query to get movies by genre");
         long startTime = System.currentTimeMillis();
         String resultQuery = QueryBuilder.enrichQueryWithOrderRequestParam(getMoviesByGenreIdSQL, requestParamMap);

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class MovieController {
     private MovieService movieService;
 
     @RequestMapping
-    public String getAll(@RequestParam(required = false) HashMap<String, String> requestParamMap) {
+    public String getAll(@RequestParam(required = false) LinkedHashMap<String, String> requestParamMap) {
         log.info("Sending request to get all movies");
         long startTime = System.currentTimeMillis();
         validateMovieRequest(requestParamMap);
@@ -51,7 +52,7 @@ public class MovieController {
     }
 
     @RequestMapping(value = "/genre/{genreId}")
-    public String getByGenreId(@PathVariable int genreId, @RequestParam(required = false) HashMap<String, String> requestParamMap) {
+    public String getByGenreId(@PathVariable int genreId, @RequestParam(required = false) LinkedHashMap<String, String> requestParamMap) {
         log.info("Sending request to get movies by genre with id = {}", genreId);
         long startTime = System.currentTimeMillis();
         validateMovieRequest(requestParamMap);
@@ -62,21 +63,17 @@ public class MovieController {
         return json;
     }
 
-    private void validateMovieRequest(HashMap<String,String> requestParamMap) {
-        for (Map.Entry<String,String> entry : requestParamMap.entrySet()) {
-            if (
-                    (!entry.getKey().toUpperCase().equals(RequestParameter.PRICE.getName())
-                            && !entry.getKey().toUpperCase().equals(RequestParameter.RATING.getName()))
-                            || (entry.getKey().toUpperCase().equals(RequestParameter.RATING.getName())
-                            && !entry.getValue().toUpperCase().equals(OrderType.DESC.getName()))
-                            || (entry.getKey().toUpperCase().equals(RequestParameter.PRICE.getName())
-                            && !(entry.getValue().toUpperCase().equals(OrderType.DESC.getName()) || entry.getValue().toUpperCase().equals(OrderType.ASC.getName())))
-                    )
-            {
-                throw new IllegalArgumentException("Exception with illegal argument: " + entry.getKey() + "=" + entry.getValue());
+    private void validateMovieRequest(LinkedHashMap<String, String> requestParamMap) {
+        for (Map.Entry<String, String> entry : requestParamMap.entrySet()) {
+            RequestParameter requestParameter = RequestParameter.getByName(entry.getKey());
+            SortingOrder sortingOrder = SortingOrder.getByName(entry.getValue());
+
+            if ((requestParameter == requestParameter.RATING && sortingOrder == SortingOrder.DESC)
+                || (requestParameter == requestParameter.PRICE && sortingOrder != null)) {
+
+            } else {
+                throw new IllegalArgumentException("Exception with illegal argument: " + requestParameter + "=" + sortingOrder);
             }
         }
     }
-
-
 }

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -24,7 +24,7 @@ public class JdbcMovieDaoTest {
 
     @Test
     public void testGetAll() {
-        HashMap<String,String> requestParamMap = new HashMap<>();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
         List<Movie> movies = movieDao.getAll(requestParamMap);
         for (Movie movie : movies) {
             assertNotNull(movie.getNameRussian());
@@ -55,7 +55,7 @@ public class JdbcMovieDaoTest {
     @Test
     public void testGetByGenreId() {
         int genreId = 1;
-        HashMap<String,String> requestParamMap = new HashMap<>();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
         List<Movie> movies = movieDao.getByGenreId(genreId,requestParamMap);
         for (Movie movie : movies) {
             assertNotNull(movie.getNameRussian());
@@ -66,7 +66,7 @@ public class JdbcMovieDaoTest {
 
     @Test
     public void testRatingDescOrderGetAll() {
-        HashMap<String,String> requestParamMap = new HashMap<>();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
         requestParamMap.put("rating","desc");
         List<Movie> movies = movieDao.getAll(requestParamMap);
         assertTrue(movies.get(1).getRating()<=movies.get(0).getRating());
@@ -74,7 +74,7 @@ public class JdbcMovieDaoTest {
 
     @Test
     public void testPriceAscOrderGetAll() {
-        HashMap<String,String> requestParamMap = new HashMap<>();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
         requestParamMap.put("price","asc");
         List<Movie> movies = movieDao.getAll(requestParamMap);
         assertTrue(movies.get(1).getPrice()>=movies.get(0).getPrice());
@@ -82,7 +82,7 @@ public class JdbcMovieDaoTest {
 
     @Test
     public void testPriceDescOrderGetAll() {
-        HashMap<String,String> requestParamMap = new HashMap<>();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
         requestParamMap.put("price","desc");
         List<Movie> movies = movieDao.getAll(requestParamMap);
         assertTrue(movies.get(1).getPrice()<=movies.get(0).getPrice());

@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -65,7 +65,7 @@ public class MovieControllerTest {
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        HashMap<String,String> requestParamMap = new HashMap<>();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
         when(mockMovieService.getAll(requestParamMap)).thenReturn(movies);
 
         mockMvc.perform(get("/movie"))
@@ -101,7 +101,7 @@ public class MovieControllerTest {
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        HashMap<String,String> requestParamMap = new HashMap<>();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
         requestParamMap.put("price","asc");
         when(mockMovieService.getAll(requestParamMap)).thenReturn(movies);
 
@@ -132,7 +132,7 @@ public class MovieControllerTest {
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        HashMap<String,String> requestParamMap = new HashMap<>();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
         requestParamMap.put("rating","asc");
         when(mockMovieService.getAll(requestParamMap)).thenReturn(movies);
 
@@ -163,7 +163,7 @@ public class MovieControllerTest {
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        HashMap<String,String> requestParamMap = new HashMap<>();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
 
         when(mockMovieService.getRandom()).thenReturn(movies);
 
@@ -209,7 +209,7 @@ public class MovieControllerTest {
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        HashMap<String,String> requestParamMap = new HashMap<>();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
 
         when(mockMovieService.getByGenreId(1, requestParamMap)).thenReturn(movies);
 
@@ -246,7 +246,7 @@ public class MovieControllerTest {
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        HashMap<String,String> requestParamMap = new HashMap<>();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
         requestParamMap.put("price","asc");
 
         when(mockMovieService.getByGenreId(1, requestParamMap)).thenReturn(movies);
@@ -284,7 +284,7 @@ public class MovieControllerTest {
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        HashMap<String,String> requestParamMap = new HashMap<>();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
         requestParamMap.put("rating","asc");
 
         when(mockMovieService.getByGenreId(1, requestParamMap)).thenReturn(movies);
