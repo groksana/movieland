@@ -30,4 +30,3 @@ public class MovieServiceImpl implements MovieService {
         return movieDao.getByGenreId(id, requestParamMap);
     }
 }
-
