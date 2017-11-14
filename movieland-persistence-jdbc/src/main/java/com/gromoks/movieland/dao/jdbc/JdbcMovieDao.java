@@ -5,6 +5,7 @@ import com.gromoks.movieland.dao.entity.MovieToGenre;
 import com.gromoks.movieland.dao.jdbc.mapper.MovieRowMapper;
 import com.gromoks.movieland.dao.jdbc.mapper.MovieToCountryRowMapper;
 import com.gromoks.movieland.dao.jdbc.mapper.MovieToGenreRowMapper;
+import com.gromoks.movieland.dao.jdbc.sqlbuilder.QueryBuilder;
 import com.gromoks.movieland.entity.Country;
 import com.gromoks.movieland.entity.Genre;
 import com.gromoks.movieland.entity.Movie;
@@ -12,13 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class JdbcMovieDao implements MovieDao {
@@ -51,10 +50,11 @@ public class JdbcMovieDao implements MovieDao {
     @Autowired
     private String getMoviesByGenreIdSQL;
 
-    public List<Movie> getAll() {
+    public List<Movie> getAll(LinkedHashMap<String,String> requestParamMap) {
         log.info("Start query to get all movies from DB");
         long startTime = System.currentTimeMillis();
-        List<Movie> movies  = jdbcTemplate.query(getAllMovieSQL, movieRowMapper);
+        String resultQuery = QueryBuilder.enrichQueryWithOrderRequestParam(getAllMovieSQL, requestParamMap);
+        List<Movie> movies  = jdbcTemplate.query(resultQuery, movieRowMapper);
         log.info("Finish query to get all movies from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
     }
@@ -73,10 +73,11 @@ public class JdbcMovieDao implements MovieDao {
     }
 
     @Override
-    public List<Movie> getByGenreId(int id) {
+    public List<Movie> getByGenreId(int id, LinkedHashMap<String,String> requestParamMap) {
         log.info("Start query to get movies by genre");
         long startTime = System.currentTimeMillis();
-        List<Movie> movies  = jdbcTemplate.query(getMoviesByGenreIdSQL, new Object[]{id}, movieRowMapper);
+        String resultQuery = QueryBuilder.enrichQueryWithOrderRequestParam(getMoviesByGenreIdSQL, requestParamMap);
+        List<Movie> movies  = jdbcTemplate.query(resultQuery,movieRowMapper,id);
         log.info("Finish query to get movies by genre from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
     }

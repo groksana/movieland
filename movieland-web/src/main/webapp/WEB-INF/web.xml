@@ -12,7 +12,7 @@
 
     <servlet-mapping>
         <servlet-name>movieland</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern>/v1/*</url-pattern>
     </servlet-mapping>
 
     <listener>
@@ -20,7 +20,14 @@
     </listener>
 
     <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:/spring/service-context.xml</param-value>
+        <param-name>contextClass</param-name>
+        <param-value>
+            org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+        </param-value>
     </context-param>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>com.gromoks.movieland.service.impl.config.ServiceConfig</param-value>
+    </context-param>
+
 </web-app>

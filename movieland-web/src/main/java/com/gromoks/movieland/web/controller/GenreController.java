@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/v1/genre", produces = "text/plain;charset=UTF-8", method = RequestMethod.GET)
+@RequestMapping(value = "/genre", produces = "text/plain;charset=UTF-8", method = RequestMethod.GET)
 public class GenreController {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
