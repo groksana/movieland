@@ -37,6 +37,9 @@ public class MovieDto {
     @JsonView(MovieViews.Extended.class)
     private List<Genre> genres;
 
+    @JsonView(MovieViews.Full.class)
+    private List<Review> reviews;
+
     public List<Genre> getGenres() {
         return genres;
     }
@@ -117,6 +120,14 @@ public class MovieDto {
         this.description = description;
     }
 
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
     @Override
     public String toString() {
         return "MovieDto{" +
@@ -130,6 +141,7 @@ public class MovieDto {
                 ", picturePath='" + picturePath + '\'' +
                 ", countries=" + countries +
                 ", genres=" + genres +
+                ", reviews=" + reviews +
                 '}';
     }
 }

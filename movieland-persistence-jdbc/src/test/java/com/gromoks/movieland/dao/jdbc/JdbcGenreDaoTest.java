@@ -1,5 +1,6 @@
 package com.gromoks.movieland.dao.jdbc;
 
+import com.gromoks.movieland.dao.config.JdbcConfig;
 import com.gromoks.movieland.entity.Genre;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,15 +13,13 @@ import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
-@ContextConfiguration(locations = "classpath:spring/jdbc-context.xml")
+@ContextConfiguration(classes = {JdbcConfig.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class JdbcGenreDaoTest {
 
     @Autowired
     @Qualifier("jdbcGenreDao")
     private GenreDao genreDao;
-
-
 
     @Test
     public void testGetAll() {

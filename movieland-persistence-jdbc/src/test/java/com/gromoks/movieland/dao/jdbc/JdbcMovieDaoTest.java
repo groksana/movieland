@@ -1,5 +1,6 @@
 package com.gromoks.movieland.dao.jdbc;
 
+import com.gromoks.movieland.dao.config.JdbcConfig;
 import com.gromoks.movieland.entity.Movie;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-@ContextConfiguration(locations = "classpath:spring/jdbc-context.xml")
+@ContextConfiguration(classes = {JdbcConfig.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class JdbcMovieDaoTest {
 
@@ -21,7 +24,8 @@ public class JdbcMovieDaoTest {
 
     @Test
     public void testGetAll() {
-        List<Movie> movies = movieDao.getAll();
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
+        List<Movie> movies = movieDao.getAll(requestParamMap);
         for (Movie movie : movies) {
             assertNotNull(movie.getNameRussian());
             assertNotNull(movie.getNameNative());
@@ -51,11 +55,49 @@ public class JdbcMovieDaoTest {
     @Test
     public void testGetByGenreId() {
         int genreId = 1;
-        List<Movie> movies = movieDao.getByGenreId(genreId);
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
+        List<Movie> movies = movieDao.getByGenreId(genreId,requestParamMap);
         for (Movie movie : movies) {
             assertNotNull(movie.getNameRussian());
             assertNotNull(movie.getNameNative());
             assertNotNull(movie.getPicturePath());
         }
     }
+
+    @Test
+    public void testRatingDescOrderGetAll() {
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
+        requestParamMap.put("rating","desc");
+        List<Movie> movies = movieDao.getAll(requestParamMap);
+        assertTrue(movies.get(1).getRating()<=movies.get(0).getRating());
+    }
+
+    @Test
+    public void testPriceAscOrderGetAll() {
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
+        requestParamMap.put("price","asc");
+        List<Movie> movies = movieDao.getAll(requestParamMap);
+        assertTrue(movies.get(1).getPrice()>=movies.get(0).getPrice());
+    }
+
+    @Test
+    public void testPriceDescOrderGetAll() {
+        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
+        requestParamMap.put("price","desc");
+        List<Movie> movies = movieDao.getAll(requestParamMap);
+        assertTrue(movies.get(1).getPrice()<=movies.get(0).getPrice());
+    }
+
+    @Test
+    public void testGetById() {
+        int movieId = 1;
+        Movie movie = movieDao.getById(movieId);
+        assertNotNull(movie.getNameRussian());
+        assertNotNull(movie.getNameNative());
+        assertNotNull(movie.getPicturePath());
+        assertNotNull(movie.getCountries());
+        assertNotNull(movie.getGenres());
+        assertNotNull(movie.getReviews());
+    }
+
 }

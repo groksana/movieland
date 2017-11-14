@@ -2,20 +2,22 @@ package com.gromoks.movieland.web.controller;
 
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.service.MovieService;
-import com.gromoks.movieland.web.entity.MovieDto;
+import com.gromoks.movieland.web.entity.*;
 import com.gromoks.movieland.web.util.DtoConverter;
 import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 @RestController
-@RequestMapping(value = "/v1/movie", produces = "text/plain;charset=UTF-8", method = RequestMethod.GET)
+@RequestMapping(value = "/movie", produces = "text/plain;charset=UTF-8", method = RequestMethod.GET)
 public class MovieController {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -24,10 +26,11 @@ public class MovieController {
     private MovieService movieService;
 
     @RequestMapping
-    public String getAll() {
+    public String getAll(@RequestParam(required = false) LinkedHashMap<String, String> requestParamMap) {
         log.info("Sending request to get all movies");
         long startTime = System.currentTimeMillis();
-        List<Movie> movies = movieService.getAll();
+        validateMovieRequest(requestParamMap);
+        List<Movie> movies = movieService.getAll(requestParamMap);
         List<MovieDto> dtoMovies = DtoConverter.toMovieDtoList(movies);
         String json = JsonJacksonConverter.toJsonNormalMovie(dtoMovies);
         log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
@@ -46,15 +49,39 @@ public class MovieController {
     }
 
     @RequestMapping(value = "/genre/{genreId}")
-    public String getByGenreId(@PathVariable int genreId) {
+    public String getByGenreId(@PathVariable int genreId, @RequestParam(required = false) LinkedHashMap<String, String> requestParamMap) {
         log.info("Sending request to get movies by genre with id = {}", genreId);
         long startTime = System.currentTimeMillis();
-        List<Movie> movies = movieService.getByGenreId(genreId);
+        validateMovieRequest(requestParamMap);
+        List<Movie> movies = movieService.getByGenreId(genreId, requestParamMap);
         List<MovieDto> dtoMovies = DtoConverter.toMovieDtoList(movies);
         String json = JsonJacksonConverter.toJsonNormalMovie(dtoMovies);
         log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
         return json;
     }
 
+    @RequestMapping(value = "/{movieId}")
+    public String getById(@PathVariable int movieId) {
+        log.info("Sending request to get movies by id = {}", movieId);
+        long startTime = System.currentTimeMillis();
+        Movie movie = movieService.getById(movieId);
+        MovieDto dtoMovie = DtoConverter.toMovieDto(movie);
+        String json = JsonJacksonConverter.toJsonFullMovie(dtoMovie);
+        log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
+        return json;
+    }
 
+    private void validateMovieRequest(LinkedHashMap<String, String> requestParamMap) {
+        for (Map.Entry<String, String> entry : requestParamMap.entrySet()) {
+            RequestParameter requestParameter = RequestParameter.getByName(entry.getKey());
+            SortingOrder sortingOrder = SortingOrder.getByName(entry.getValue());
+
+            if ((requestParameter == requestParameter.RATING && sortingOrder == SortingOrder.DESC)
+                || (requestParameter == requestParameter.PRICE && sortingOrder != null)) {
+
+            } else {
+                throw new IllegalArgumentException("Exception with illegal argument: " + requestParameter + "=" + sortingOrder);
+            }
+        }
+    }
 }

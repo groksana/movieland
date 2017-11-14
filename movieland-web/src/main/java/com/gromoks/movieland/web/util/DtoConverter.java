@@ -22,9 +22,26 @@ public class DtoConverter {
             movieDto.setPicturePath(movie.getPicturePath());
             movieDto.setCountries(movie.getCountries());
             movieDto.setGenres(movie.getGenres());
+            movieDto.setReviews(movie.getReviews());
             movieDtoList.add(movieDto);
         }
         return movieDtoList;
+    }
+
+    public static MovieDto toMovieDto(Movie movie) {
+            MovieDto movieDto = new MovieDto();
+            movieDto.setId(movie.getId());
+            movieDto.setNameRussian(movie.getNameRussian());
+            movieDto.setNameNative(movie.getNameNative());
+            movieDto.setYearOfRelease(movie.getYearOfRelease());
+            movieDto.setDescription(movie.getDescription());
+            movieDto.setRating(movie.getRating());
+            movieDto.setPrice(movie.getPrice());
+            movieDto.setPicturePath(movie.getPicturePath());
+            movieDto.setCountries(movie.getCountries());
+            movieDto.setGenres(movie.getGenres());
+            movieDto.setReviews(movie.getReviews());
+        return movieDto;
     }
 
 }

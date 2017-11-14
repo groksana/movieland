@@ -36,16 +36,14 @@ public class GenreControllerTest {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(genreController).build();
         genres = new ArrayList<>();
-        Genre genre = new Genre();
-        genre.setId(1);
-        genre.setName("детектив");
+        Genre genre = new Genre(1,"детектив");
         genres.add(genre);
         when(mockGenreService.getAll()).thenReturn(genres);
     }
 
     @Test
     public void testGetAllGenres() throws Exception {
-        mockMvc.perform(get("/v1/genre"))
+        mockMvc.perform(get("/genre"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[0].name", is("детектив")));

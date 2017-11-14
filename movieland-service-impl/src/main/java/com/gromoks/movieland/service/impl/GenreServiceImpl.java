@@ -13,7 +13,7 @@ import java.util.List;
 public class GenreServiceImpl implements GenreService{
 
     @Autowired
-    @Qualifier("genericCacheImpl")
+    @Qualifier("genreCacheImpl")
     private GenreDao genreDao;
 
     @Override
