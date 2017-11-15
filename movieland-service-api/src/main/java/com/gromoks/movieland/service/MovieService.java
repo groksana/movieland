@@ -11,4 +11,6 @@ public interface MovieService {
     List<Movie> getRandom();
 
     List<Movie> getByGenreId(int id, LinkedHashMap<String,String> requestParamMap);
+
+    Movie getById(int id);
 }

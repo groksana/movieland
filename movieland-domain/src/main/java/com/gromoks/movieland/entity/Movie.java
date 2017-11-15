@@ -13,7 +13,7 @@ public class Movie {
     private double price;
     private String picturePath;
     private List<Country> countries;
-
+    private List<Review> reviews;
 
     public String getDescription() {
         return description;
@@ -96,6 +96,14 @@ public class Movie {
         this.picturePath = picturePath;
     }
 
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
@@ -108,8 +116,8 @@ public class Movie {
                 ", price=" + price +
                 ", picturePath='" + picturePath + '\'' +
                 ", countries=" + countries +
+                ", reviews=" + reviews +
                 ", genres=" + genres +
                 '}';
     }
-
 }

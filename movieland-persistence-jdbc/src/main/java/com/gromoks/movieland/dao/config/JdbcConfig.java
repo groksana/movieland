@@ -48,6 +48,11 @@ public class JdbcConfig {
     }
 
     @Bean
+    public NamedParameterJdbcTemplate namedJdbcTemplate(DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfig() {
         return new PropertySourcesPlaceholderConfigurer();
     }

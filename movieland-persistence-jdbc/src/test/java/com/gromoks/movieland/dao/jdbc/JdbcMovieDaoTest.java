@@ -88,4 +88,15 @@ public class JdbcMovieDaoTest {
         assertTrue(movies.get(1).getPrice()<=movies.get(0).getPrice());
     }
 
+    @Test
+    public void testGetById() {
+        int movieId = 1;
+        Movie movie = movieDao.getById(movieId);
+        assertNotNull(movie.getNameRussian());
+        assertNotNull(movie.getNameNative());
+        assertNotNull(movie.getPicturePath());
+        assertNotNull(movie.getCountries());
+        assertNotNull(movie.getGenres());
+        assertNotNull(movie.getReviews());
+    }
 }

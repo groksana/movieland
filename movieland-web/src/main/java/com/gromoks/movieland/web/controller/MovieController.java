@@ -14,10 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/movie", produces = "text/plain;charset=UTF-8", method = RequestMethod.GET)
@@ -63,6 +60,17 @@ public class MovieController {
         return json;
     }
 
+    @RequestMapping(value = "/{movieId}")
+    public String getById(@PathVariable int movieId) {
+        log.info("Sending request to get movies by id = {}", movieId);
+        long startTime = System.currentTimeMillis();
+        Movie movie = movieService.getById(movieId);
+        MovieDto dtoMovie = DtoConverter.toMovieDto(movie);
+        String json = JsonJacksonConverter.toJsonFullMovie(dtoMovie);
+        log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
+        return json;
+    }
+
     private void validateMovieRequest(LinkedHashMap<String, String> requestParamMap) {
         for (Map.Entry<String, String> entry : requestParamMap.entrySet()) {
             RequestParameter requestParameter = RequestParameter.getByName(entry.getKey());
@@ -70,7 +78,6 @@ public class MovieController {
 
             if ((requestParameter == requestParameter.RATING && sortingOrder == SortingOrder.DESC)
                 || (requestParameter == requestParameter.PRICE && sortingOrder != null)) {
-
             } else {
                 throw new IllegalArgumentException("Exception with illegal argument: " + requestParameter + "=" + sortingOrder);
             }

@@ -2,16 +2,22 @@ package com.gromoks.movieland.dao.jdbc;
 
 import com.gromoks.movieland.dao.entity.MovieToCountry;
 import com.gromoks.movieland.dao.entity.MovieToGenre;
+import com.gromoks.movieland.dao.entity.MovieToReview;
 import com.gromoks.movieland.dao.jdbc.mapper.MovieRowMapper;
 import com.gromoks.movieland.dao.jdbc.mapper.MovieToCountryRowMapper;
 import com.gromoks.movieland.dao.jdbc.mapper.MovieToGenreRowMapper;
+import com.gromoks.movieland.dao.jdbc.mapper.MovieToReviewRowMapper;
 import com.gromoks.movieland.dao.jdbc.sqlbuilder.QueryBuilder;
 import com.gromoks.movieland.entity.Country;
 import com.gromoks.movieland.entity.Genre;
 import com.gromoks.movieland.entity.Movie;
+import com.gromoks.movieland.entity.Review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +38,13 @@ public class JdbcMovieDao implements MovieDao {
 
     private final MovieToGenreRowMapper movieToGenreRowMapper = new MovieToGenreRowMapper();
 
+    private final MovieToReviewRowMapper movieToReviewRowMapper = new MovieToReviewRowMapper();
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
     private String getAllMovieSQL;
@@ -45,10 +56,16 @@ public class JdbcMovieDao implements MovieDao {
     private String getAllMovieToGenreSQL;
 
     @Autowired
+    private String getAllMovieToReviewSQL;
+
+    @Autowired
     private String getRandomMovieSQL;
 
     @Autowired
     private String getMoviesByGenreIdSQL;
+
+    @Autowired
+    private String getMoviesByIdSQL;
 
     public List<Movie> getAll(LinkedHashMap<String,String> requestParamMap) {
         log.info("Start query to get all movies from DB");
@@ -64,9 +81,11 @@ public class JdbcMovieDao implements MovieDao {
         log.info("Start query to get 3 random movies from DB");
         long startTime = System.currentTimeMillis();
         List<Movie> movies  = jdbcTemplate.query(getRandomMovieSQL, movieRowMapper);
+        List<MovieToCountry> movieToCountries = getMovieToCountryList(movies);
+        List<MovieToGenre> movieToGenres = getMovieToGenreList(movies);
         for (Movie movie : movies) {
-            enrichMovieWithCountry(movie, getMovieToCountryList());
-            enrichMovieWithGenre(movie, getMovieToGenreList());
+            enrichMovieWithCountry(movie, movieToCountries);
+            enrichMovieWithGenre(movie, movieToGenres);
         }
         log.info("Finish query to get 3 random movies from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
@@ -82,16 +101,73 @@ public class JdbcMovieDao implements MovieDao {
         return movies;
     }
 
-    private List<MovieToCountry> getMovieToCountryList() {
-        List<MovieToCountry> movieToCountries = jdbcTemplate.query(getAllMovieToCountrySQL,
-                movieToCountryRowMapper);
+    @Override
+    public Movie getById(int id) {
+        log.info("Start query to get movies by id");
+        long startTime = System.currentTimeMillis();
+        Movie movie  = jdbcTemplate.queryForObject(getMoviesByIdSQL, movieRowMapper, id);
+        List<MovieToCountry> movieToCountries = getSingleMovieToCountryList(movie);
+        List<MovieToGenre> movieToGenres = getSingleMovieToGenreList(movie);
+        List<MovieToReview> movieToReviews = getSingleMovieToReviewList(movie);
+        enrichMovieWithCountry(movie, movieToCountries);
+        enrichMovieWithGenre(movie, movieToGenres);
+        enrichMovieWithReview(movie, movieToReviews);
+        log.info("Finish query to get movies by id from DB. It took {} ms", System.currentTimeMillis() - startTime);
+        return movie;
+    }
+
+    private List<MovieToCountry> getMovieToCountryList(List<Movie> movies) {
+        List<Integer> movieIds = new ArrayList<>();
+        for (Movie movie : movies) {
+            movieIds.add(movie.getId());
+        }
+        SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
+        List<MovieToCountry> movieToCountries = namedParameterJdbcTemplate.query(getAllMovieToCountrySQL,namedParameters,movieToCountryRowMapper);
         return movieToCountries;
     }
 
-    private List<MovieToGenre> getMovieToGenreList() {
-        List<MovieToGenre> movieToGenres = jdbcTemplate.query(getAllMovieToGenreSQL,
-                movieToGenreRowMapper);
+    private List<MovieToCountry> getSingleMovieToCountryList(Movie movie) {
+        List<Integer> movieIds = new ArrayList<>();
+        movieIds.add(movie.getId());
+        SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
+        List<MovieToCountry> movieToCountries = namedParameterJdbcTemplate.query(getAllMovieToCountrySQL,namedParameters,movieToCountryRowMapper);
+        return movieToCountries;
+    }
+
+    private List<MovieToGenre> getMovieToGenreList(List<Movie> movies) {
+        List<Integer> movieIds = new ArrayList<>();
+        for (Movie movie : movies) {
+            movieIds.add(movie.getId());
+        }
+        SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
+        List<MovieToGenre> movieToGenres = namedParameterJdbcTemplate.query(getAllMovieToGenreSQL,namedParameters,movieToGenreRowMapper);
         return movieToGenres;
+    }
+
+    private List<MovieToGenre> getSingleMovieToGenreList(Movie movie) {
+        List<Integer> movieIds = new ArrayList<>();
+        movieIds.add(movie.getId());
+        SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
+        List<MovieToGenre> movieToGenres = namedParameterJdbcTemplate.query(getAllMovieToGenreSQL,namedParameters,movieToGenreRowMapper);
+        return movieToGenres;
+    }
+
+    private List<MovieToReview> getMovieToReviewList(List<Movie> movies) {
+        List<Integer> movieIds = new ArrayList<>();
+        for (Movie movie : movies) {
+            movieIds.add(movie.getId());
+        }
+        SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
+        List<MovieToReview> movieToReviews = namedParameterJdbcTemplate.query(getAllMovieToReviewSQL,namedParameters,movieToReviewRowMapper);
+        return movieToReviews;
+    }
+
+    private List<MovieToReview> getSingleMovieToReviewList(Movie movie) {
+        List<Integer> movieIds = new ArrayList<>();
+        movieIds.add(movie.getId());
+        SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
+        List<MovieToReview> movieToReviews = namedParameterJdbcTemplate.query(getAllMovieToReviewSQL,namedParameters,movieToReviewRowMapper);
+        return movieToReviews;
     }
 
     private void enrichMovieWithCountry(Movie movie, List<MovieToCountry> movieToCountries) {
@@ -112,6 +188,16 @@ public class JdbcMovieDao implements MovieDao {
             }
         }
         movie.setGenres(genres);
+    }
+
+    private void enrichMovieWithReview(Movie movie, List<MovieToReview> movieToReviews) {
+        List<Review> reviews = new ArrayList<>();
+        for (MovieToReview movieToReview : movieToReviews) {
+            if (movieToReview.getMovieId() == movie.getId()) {
+                reviews.add(new Review(movieToReview.getId(),movieToReview.getUser(),movieToReview.getText()));
+            }
+        }
+        movie.setReviews(reviews);
     }
 
 }

@@ -1,9 +1,7 @@
 package com.gromoks.movieland.web.controller;
 
 
-import com.gromoks.movieland.entity.Country;
-import com.gromoks.movieland.entity.Genre;
-import com.gromoks.movieland.entity.Movie;
+import com.gromoks.movieland.entity.*;
 import com.gromoks.movieland.service.MovieService;
 import org.junit.Before;
 import org.junit.Test;
@@ -292,6 +290,60 @@ public class MovieControllerTest {
         mockMvc.perform(get("/movie/genre/1?rating=asc"))
                 .andExpect(status().isBadRequest());
 
+    }
+
+    @Test
+    public void testGetById() throws Exception {
+        Movie movie = new Movie();
+        movie.setId(1);
+        movie.setNameRussian("Тест");
+        movie.setNameNative("Test");
+        movie.setYearOfRelease(2016);
+        movie.setDescription("Description for Test");
+        movie.setRating(9.8);
+        movie.setPrice(1000000.5);
+        movie.setPicturePath("https");
+        List<Country> countries = new ArrayList<>();
+        countries.add(new Country(1,"США"));
+        countries.add(new Country(2,"Украина"));
+        movie.setCountries(countries);
+        List<Genre> genres = new ArrayList<>();
+        genres.add(new Genre(1,"детектив"));
+        genres.add(new Genre(2,"драма"));
+        movie.setGenres(genres);
+        List<Review> reviews = new ArrayList<>();
+        reviews.add(new Review(1,new User(1,"Robin"),"Cool"));
+        reviews.add(new Review(2,new User(2,"Kate"),"The best film"));
+        movie.setReviews(reviews);
+
+        when(mockMovieService.getById(1)).thenReturn(movie);
+
+        mockMvc.perform(get("/movie/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.nameRussian", is("Тест")))
+                .andExpect(jsonPath("$.nameNative", is("Test")))
+                .andExpect(jsonPath("$.yearOfRelease", is(2016)))
+                .andExpect(jsonPath("$.rating", is(9.8)))
+                .andExpect(jsonPath("$.price", is(1000000.5)))
+                .andExpect(jsonPath("$.picturePath", is("https")))
+                .andExpect(jsonPath("$.description", is("Description for Test")))
+                .andExpect(jsonPath("$.countries[0].id", is(1)))
+                .andExpect(jsonPath("$.countries[0].name", is("США")))
+                .andExpect(jsonPath("$.countries[1].id", is(2)))
+                .andExpect(jsonPath("$.countries[1].name", is("Украина")))
+                .andExpect(jsonPath("$.genres[0].id", is(1)))
+                .andExpect(jsonPath("$.genres[0].name", is("детектив")))
+                .andExpect(jsonPath("$.genres[1].id", is(2)))
+                .andExpect(jsonPath("$.genres[1].name", is("драма")))
+                .andExpect(jsonPath("$.reviews[0].id", is(1)))
+                .andExpect(jsonPath("$.reviews[0].user.id", is(1)))
+                .andExpect(jsonPath("$.reviews[0].user.nickname", is("Robin")))
+                .andExpect(jsonPath("$.reviews[0].text", is("Cool")))
+                .andExpect(jsonPath("$.reviews[1].id", is(2)))
+                .andExpect(jsonPath("$.reviews[1].user.id", is(2)))
+                .andExpect(jsonPath("$.reviews[1].user.nickname", is("Kate")))
+                .andExpect(jsonPath("$.reviews[1].text", is("The best film")));
     }
 
 }

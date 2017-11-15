@@ -28,9 +28,7 @@ public class GenreCacheImplTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         genres = new ArrayList<>();
-        Genre genre = new Genre();
-        genre.setId(1);
-        genre.setName("детектив");
+        Genre genre = new Genre(1, "детектив");
         genres.add(genre);
     }
 

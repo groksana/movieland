@@ -29,4 +29,9 @@ public class MovieServiceImpl implements MovieService {
     public List<Movie> getByGenreId(int id, LinkedHashMap<String,String> requestParamMap) {
         return movieDao.getByGenreId(id, requestParamMap);
     }
+
+    @Override
+    public Movie getById(int id) {
+        return movieDao.getById(id);
+    }
 }

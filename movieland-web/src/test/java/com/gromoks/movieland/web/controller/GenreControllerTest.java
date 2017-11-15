@@ -36,9 +36,7 @@ public class GenreControllerTest {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(genreController).build();
         genres = new ArrayList<>();
-        Genre genre = new Genre();
-        genre.setId(1);
-        genre.setName("детектив");
+        Genre genre = new Genre(1,"детектив");
         genres.add(genre);
         when(mockGenreService.getAll()).thenReturn(genres);
     }
