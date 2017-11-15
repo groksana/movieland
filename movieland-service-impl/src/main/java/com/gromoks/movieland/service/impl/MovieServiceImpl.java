@@ -35,4 +35,3 @@ public class MovieServiceImpl implements MovieService {
         return movieDao.getById(id);
     }
 }
-

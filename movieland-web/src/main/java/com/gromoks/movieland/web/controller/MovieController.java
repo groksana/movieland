@@ -78,7 +78,6 @@ public class MovieController {
 
             if ((requestParameter == requestParameter.RATING && sortingOrder == SortingOrder.DESC)
                 || (requestParameter == requestParameter.PRICE && sortingOrder != null)) {
-
             } else {
                 throw new IllegalArgumentException("Exception with illegal argument: " + requestParameter + "=" + sortingOrder);
             }

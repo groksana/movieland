@@ -19,4 +19,3 @@ public enum SortingOrder {
         throw new IllegalArgumentException("Sorting type is not supported: " + name);
     }
 }
-
