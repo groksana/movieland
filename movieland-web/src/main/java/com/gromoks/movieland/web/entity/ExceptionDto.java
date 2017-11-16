@@ -22,4 +22,11 @@ public class ExceptionDto {
         this.message = message;
     }
 
+    @Override
+    public String toString() {
+        return "ExceptionDto{" +
+                "errorCode=" + errorCode +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

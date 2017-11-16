@@ -19,4 +19,3 @@ public enum RequestParameter {
         throw new IllegalArgumentException("Request parameter is not supported: " + name);
     }
 }
-
