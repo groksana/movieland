@@ -44,3 +44,4 @@ public class CurrencyServiceImpl implements CurrencyService{
         movie.setPrice(convertedPrice);
     }
 }
+

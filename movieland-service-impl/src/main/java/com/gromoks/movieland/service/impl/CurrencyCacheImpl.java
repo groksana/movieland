@@ -43,11 +43,7 @@ public class CurrencyCacheImpl implements CurrencyCache {
     }
 
     @Override
-<<<<<<< HEAD
     @Scheduled(cron = "${cache.cron}")
-=======
-    @Scheduled(fixedRateString="${cache.fixedRate.currency}")
->>>>>>> 5ab4d04e11636286b65cac5effdfe403c83c1411
     public void invalidate() {
         log.info("Start to fill currency to cache");
         loadCurrency();

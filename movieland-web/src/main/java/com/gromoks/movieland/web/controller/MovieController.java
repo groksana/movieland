@@ -1,6 +1,7 @@
 package com.gromoks.movieland.web.controller;
 
 import com.gromoks.movieland.entity.Movie;
+import com.gromoks.movieland.service.CurrencyCache;
 import com.gromoks.movieland.service.CurrencyService;
 import com.gromoks.movieland.service.MovieService;
 import com.gromoks.movieland.web.entity.*;
