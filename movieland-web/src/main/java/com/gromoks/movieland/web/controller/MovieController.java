@@ -1,11 +1,9 @@
 package com.gromoks.movieland.web.controller;
 
 import com.gromoks.movieland.entity.Movie;
-import com.gromoks.movieland.service.CurrencyCache;
 import com.gromoks.movieland.service.CurrencyService;
 import com.gromoks.movieland.service.MovieService;
 import com.gromoks.movieland.web.entity.*;
-import com.gromoks.movieland.web.util.CurrencyConverter;
 import com.gromoks.movieland.web.util.DtoConverter;
 import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.springframework.beans.factory.annotation.Autowired;
