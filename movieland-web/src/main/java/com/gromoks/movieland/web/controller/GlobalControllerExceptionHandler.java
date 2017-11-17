@@ -17,8 +17,7 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseBody
-    public ResponseEntity handleException(IllegalArgumentException e)
-    {
+    public ResponseEntity handleException(IllegalArgumentException e) {
         ExceptionDto exceptionDto = new ExceptionDto();
         exceptionDto.setErrorCode(HttpStatus.BAD_REQUEST);
         exceptionDto.setMessage(e.getMessage());

@@ -153,11 +153,6 @@ public class JdbcMovieDao implements MovieDao {
     }
 
     private List<MovieToReview> getSingleMovieToReviewList(Movie movie) {
-        /*List<Integer> movieIds = new ArrayList<>();
-        movieIds.add(movie.getId());
-        SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
-        List<MovieToReview> movieToReviews = namedParameterJdbcTemplate.query(getAllMovieToReviewSQL,namedParameters,movieToReviewRowMapper);
-        return movieToReviews;*/
         List<MovieToReview> movieToReviews  = jdbcTemplate.query(getMovieToReviewSQL, movieToReviewRowMapper, movie.getId());
         return movieToReviews;
     }

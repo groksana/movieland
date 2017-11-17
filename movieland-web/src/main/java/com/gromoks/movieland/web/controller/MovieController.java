@@ -3,9 +3,7 @@ package com.gromoks.movieland.web.controller;
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.service.CurrencyService;
 import com.gromoks.movieland.service.MovieService;
-import com.gromoks.movieland.service.impl.entity.*;
 import com.gromoks.movieland.web.entity.*;
-import com.gromoks.movieland.web.util.CurrencyConverter;
 import com.gromoks.movieland.web.util.DtoConverter;
 import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +72,7 @@ public class MovieController {
         Movie movie = movieService.getById(movieId);
         if (!currency.equalsIgnoreCase("UAH")) {
             Double currencyRate = currencyService.getRateByName(currency);
-            CurrencyConverter.convertMoviePrice(movie, currencyRate);
+            currencyService.convertPriceInMovie(movie, currencyRate);
         }
         MovieDto dtoMovie = DtoConverter.toMovieDto(movie);
         String json = JsonJacksonConverter.toJsonFullMovie(dtoMovie);
@@ -87,10 +85,8 @@ public class MovieController {
             RequestParameter requestParameter = RequestParameter.getByName(entry.getKey());
             SortingOrder sortingOrder = SortingOrder.getByName(entry.getValue());
 
-            if ((requestParameter == RequestParameter.RATING && sortingOrder == SortingOrder.DESC)
-                || (requestParameter == RequestParameter.PRICE && sortingOrder != null)) {
-
-            } else {
+            if (!(requestParameter == RequestParameter.RATING && sortingOrder == SortingOrder.DESC)
+                && !(requestParameter == RequestParameter.PRICE && sortingOrder != null)) {
                 throw new IllegalArgumentException("Exception with illegal argument: " + requestParameter + "=" + sortingOrder);
             }
         }
