@@ -3,8 +3,6 @@ package com.gromoks.movieland.web.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gromoks.movieland.entity.Genre;
-import com.gromoks.movieland.entity.Movie;
-import com.gromoks.movieland.web.entity.MovieDto;
 import com.gromoks.movieland.web.entity.MovieViews;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +14,7 @@ public class JsonJacksonConverter {
 
     final static Logger log = LoggerFactory.getLogger(JsonJacksonConverter.class);
 
-    public static <T,K>String toJson(K list, Class<T> clazz){
+    private static <T,K>String toJson(K list, Class<T> clazz){
         try {
             return objectMapper.writerWithView(clazz).writeValueAsString(list);
         } catch (JsonProcessingException e) {
@@ -25,7 +23,7 @@ public class JsonJacksonConverter {
         }
     }
 
-    public static <T,K>String toJson(K list){
+    private static <K>String toJson(K list){
         try {
             return objectMapper.writeValueAsString(list);
         } catch (JsonProcessingException e) {

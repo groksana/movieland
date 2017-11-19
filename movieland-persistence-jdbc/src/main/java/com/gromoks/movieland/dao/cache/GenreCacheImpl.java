@@ -24,13 +24,12 @@ public class GenreCacheImpl implements GenericCache<Genre>, GenreDao {
 
     public List<Genre> getAll() {
         List<Genre> copy = cacheGenreList;
-        List<Genre> genres = new ArrayList<>(copy);
-        return genres;
+        return new ArrayList<>(copy);
     }
 
     @Override
     @PostConstruct
-    @Scheduled(fixedRateString="${cache.fixedRate}")
+    @Scheduled(fixedRateString="${cache.fixedRate.genre}")
     public void invalidate() {
         log.info("Start to fill genres to cache");
         cacheGenreList = genreDao.getAll();

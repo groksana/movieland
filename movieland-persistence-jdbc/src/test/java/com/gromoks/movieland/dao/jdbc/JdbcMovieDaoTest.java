@@ -99,4 +99,5 @@ public class JdbcMovieDaoTest {
         assertNotNull(movie.getGenres());
         assertNotNull(movie.getReviews());
     }
+
 }

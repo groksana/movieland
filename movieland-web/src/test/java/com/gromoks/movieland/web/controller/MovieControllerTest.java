@@ -2,6 +2,7 @@ package com.gromoks.movieland.web.controller;
 
 
 import com.gromoks.movieland.entity.*;
+import com.gromoks.movieland.service.CurrencyService;
 import com.gromoks.movieland.service.MovieService;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,9 @@ public class MovieControllerTest {
 
     @Mock
     private MovieService mockMovieService;
+
+    @Mock
+    private CurrencyService mockCurrencyService;
 
     @InjectMocks
     private MovieController movieController;

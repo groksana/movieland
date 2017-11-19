@@ -28,10 +28,10 @@ public class QueryConfig {
     }
 
     @Bean
-    public String getAllMovieToReviewSQL() {
+    public String getMovieToReviewSQL() {
         return "SELECT r.id,r.movieId,r.userId,u.nickname,r.text\n" +
                 " FROM review r, user u" +
-                " WHERE r.userId = u.id AND r.movieId in (:ids);";
+                " WHERE r.userId = u.id AND r.movieId = ?;";
     }
 
     @Bean

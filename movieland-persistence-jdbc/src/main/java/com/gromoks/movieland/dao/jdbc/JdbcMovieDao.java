@@ -56,7 +56,7 @@ public class JdbcMovieDao implements MovieDao {
     private String getAllMovieToGenreSQL;
 
     @Autowired
-    private String getAllMovieToReviewSQL;
+    private String getMovieToReviewSQL;
 
     @Autowired
     private String getRandomMovieSQL;
@@ -152,21 +152,11 @@ public class JdbcMovieDao implements MovieDao {
         return movieToGenres;
     }
 
-    private List<MovieToReview> getMovieToReviewList(List<Movie> movies) {
-        List<Integer> movieIds = new ArrayList<>();
-        for (Movie movie : movies) {
-            movieIds.add(movie.getId());
-        }
-        SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
-        List<MovieToReview> movieToReviews = namedParameterJdbcTemplate.query(getAllMovieToReviewSQL,namedParameters,movieToReviewRowMapper);
-        return movieToReviews;
-    }
-
     private List<MovieToReview> getSingleMovieToReviewList(Movie movie) {
-        List<Integer> movieIds = new ArrayList<>();
-        movieIds.add(movie.getId());
-        SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
-        List<MovieToReview> movieToReviews = namedParameterJdbcTemplate.query(getAllMovieToReviewSQL,namedParameters,movieToReviewRowMapper);
+        log.info("Start query to get movie and review linkage");
+        long startTime = System.currentTimeMillis();
+        List<MovieToReview> movieToReviews  = jdbcTemplate.query(getMovieToReviewSQL, movieToReviewRowMapper, movie.getId());
+        log.info("Finish query to get movie and review linkage from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movieToReviews;
     }
 
