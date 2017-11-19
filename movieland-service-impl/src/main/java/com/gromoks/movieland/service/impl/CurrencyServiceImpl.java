@@ -1,10 +1,10 @@
 package com.gromoks.movieland.service.impl;
 
-import com.gromoks.movieland.entity.CurrencyRate;
+import com.gromoks.movieland.service.entity.CurrencyRate;
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.service.CurrencyCache;
 import com.gromoks.movieland.service.CurrencyService;
-import com.gromoks.movieland.service.impl.entity.Currency;
+import com.gromoks.movieland.service.entity.Currency;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +26,15 @@ public class CurrencyServiceImpl implements CurrencyService{
         this.currencyCache = currencyCache;
     }
 
-    @Override
-    public Double getRateByName(String currencyName) {
+    public void convertPriceInMovie(Movie movie, String currency) {
+        if (!"UAH".equalsIgnoreCase(currency)) {
+            double currencyRate = getRateByName(currency);
+            double convertedPrice = new BigDecimal(movie.getPrice() / currencyRate).setScale(2, RoundingMode.UP).doubleValue();
+            movie.setPrice(convertedPrice);
+        }
+    }
+
+    private Double getRateByName(String currencyName) {
         List<CurrencyRate> currencyRates = currencyCache.getAll();
         Currency currency = Currency.getByName(currencyName);
         for (CurrencyRate currencyRate : currencyRates) {
@@ -38,9 +45,5 @@ public class CurrencyServiceImpl implements CurrencyService{
         }
         throw new IllegalArgumentException("Currency doesn't exists. Currency = " + currencyName);
     }
-
-    public void convertPriceInMovie(Movie movie, Double currencyRate) {
-        double convertedPrice = new BigDecimal(movie.getPrice()/currencyRate).setScale(2, RoundingMode.UP).doubleValue();
-        movie.setPrice(convertedPrice);
-    }
 }
+

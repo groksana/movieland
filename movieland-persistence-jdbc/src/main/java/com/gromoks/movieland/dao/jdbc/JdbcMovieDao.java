@@ -153,7 +153,10 @@ public class JdbcMovieDao implements MovieDao {
     }
 
     private List<MovieToReview> getSingleMovieToReviewList(Movie movie) {
+        log.info("Start query to get movie and review linkage");
+        long startTime = System.currentTimeMillis();
         List<MovieToReview> movieToReviews  = jdbcTemplate.query(getMovieToReviewSQL, movieToReviewRowMapper, movie.getId());
+        log.info("Finish query to get movie and review linkage from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movieToReviews;
     }
 

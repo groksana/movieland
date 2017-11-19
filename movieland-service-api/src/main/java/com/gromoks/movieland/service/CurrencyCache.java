@@ -1,6 +1,6 @@
 package com.gromoks.movieland.service;
 
-import com.gromoks.movieland.entity.CurrencyRate;
+import com.gromoks.movieland.service.entity.CurrencyRate;
 
 import java.util.List;
 

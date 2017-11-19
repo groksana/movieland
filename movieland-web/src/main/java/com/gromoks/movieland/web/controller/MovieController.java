@@ -1,6 +1,7 @@
 package com.gromoks.movieland.web.controller;
 
 import com.gromoks.movieland.entity.Movie;
+import com.gromoks.movieland.service.CurrencyCache;
 import com.gromoks.movieland.service.CurrencyService;
 import com.gromoks.movieland.service.MovieService;
 import com.gromoks.movieland.web.entity.*;
@@ -67,13 +68,10 @@ public class MovieController {
 
     @RequestMapping(value = "/{movieId}")
     public String getById(@PathVariable int movieId, @RequestParam(value = "currency", defaultValue = "UAH") String currency) {
-        log.info("Sending request to get movies by id = {}", movieId);
+        log.info("Sending request to get movies by id = {} with currency = {}", movieId, currency);
         long startTime = System.currentTimeMillis();
         Movie movie = movieService.getById(movieId);
-        if (!currency.equalsIgnoreCase("UAH")) {
-            Double currencyRate = currencyService.getRateByName(currency);
-            currencyService.convertPriceInMovie(movie, currencyRate);
-        }
+        currencyService.convertPriceInMovie(movie, currency);
         MovieDto dtoMovie = DtoConverter.toMovieDto(movie);
         String json = JsonJacksonConverter.toJsonFullMovie(dtoMovie);
         log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);

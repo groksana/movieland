@@ -24,8 +24,7 @@ public class GenreCacheImpl implements GenericCache<Genre>, GenreDao {
 
     public List<Genre> getAll() {
         List<Genre> copy = cacheGenreList;
-        List<Genre> genres = new ArrayList<>(copy);
-        return genres;
+        return new ArrayList<>(copy);
     }
 
     @Override

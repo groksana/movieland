@@ -25,7 +25,6 @@ public class QueryBuilder {
             }
         }
 
-        String resultQuery = sqlBuilder.toString();
-        return resultQuery;
+        return sqlBuilder.toString();
     }
 }

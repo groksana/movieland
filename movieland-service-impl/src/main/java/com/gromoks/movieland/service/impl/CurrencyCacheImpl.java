@@ -1,6 +1,6 @@
 package com.gromoks.movieland.service.impl;
 
-import com.gromoks.movieland.entity.CurrencyRate;
+import com.gromoks.movieland.service.entity.CurrencyRate;
 import com.gromoks.movieland.service.CurrencyCache;
 import com.gromoks.movieland.service.impl.util.JsonCurrencyConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -31,8 +31,7 @@ public class CurrencyCacheImpl implements CurrencyCache {
     @Override
     public List<CurrencyRate> getAll() {
         List<CurrencyRate> copy = cacheCurrencyRateList;
-        List<CurrencyRate> currencyRates = new ArrayList<>(copy);
-        return currencyRates;
+        return new ArrayList<>(copy);
     }
 
     @Override
@@ -43,7 +42,7 @@ public class CurrencyCacheImpl implements CurrencyCache {
     }
 
     @Override
-    @Scheduled(fixedRateString="${cache.fixedRate.currency}")
+    @Scheduled(cron = "${cache.cron}")
     public void invalidate() {
         log.info("Start to fill currency to cache");
         loadCurrency();
@@ -56,8 +55,8 @@ public class CurrencyCacheImpl implements CurrencyCache {
             URLConnection urlConnection = currencyUrl.openConnection();
             cacheCurrencyRateList = JsonCurrencyConverter.convertJsonToCurrency(urlConnection.getInputStream());
         } catch (IOException e) {
-            log.warn("Currency loading by URL is fail. URL:" + url);
-            throw new RuntimeException(e);
+            log.warn("Currency loading by URL is fail. URL: {}", url);
+            throw new RuntimeException("Currency loading by URL is fail. URL:" + url);
         }
     }
 }

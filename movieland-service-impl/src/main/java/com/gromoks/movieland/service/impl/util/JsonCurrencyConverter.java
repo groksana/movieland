@@ -2,8 +2,8 @@ package com.gromoks.movieland.service.impl.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gromoks.movieland.entity.CurrencyRate;
-import com.gromoks.movieland.service.impl.entity.Currency;
+import com.gromoks.movieland.service.entity.CurrencyRate;
+import com.gromoks.movieland.service.entity.Currency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +24,8 @@ public class JsonCurrencyConverter {
 
             for(JsonNode node : root) {
                 currencyJson = node.get("cc").asText();
-                if (currencyJson.equalsIgnoreCase(String.valueOf(Currency.EUR))
-                        || currencyJson.equalsIgnoreCase(String.valueOf(Currency.USD))) {
+                if (currencyJson.equalsIgnoreCase(Currency.EUR.name())
+                        || currencyJson.equalsIgnoreCase(Currency.USD.name())) {
                     currencies.add(new CurrencyRate(currencyJson,node.get("rate").asDouble()));
                 }
             }

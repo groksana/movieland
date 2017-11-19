@@ -1,4 +1,4 @@
-package com.gromoks.movieland.entity;
+package com.gromoks.movieland.service.entity;
 
 public class CurrencyRate {
     private String currency;

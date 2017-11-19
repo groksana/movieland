@@ -1,4 +1,4 @@
-package com.gromoks.movieland.service.impl.entity;
+package com.gromoks.movieland.service.entity;
 
 public enum Currency {
     USD("USD"), EUR("EUR");
