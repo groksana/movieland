@@ -1,7 +1,5 @@
 package com.gromoks.movieland.service.impl;
 
-import com.gromoks.movieland.dao.jdbc.UserDao;
-import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.UserCache;
 import com.gromoks.movieland.service.UserService;
 import com.gromoks.movieland.service.entity.LoginRequest;

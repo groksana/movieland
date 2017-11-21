@@ -3,7 +3,6 @@ package com.gromoks.movieland.service.impl;
 import com.gromoks.movieland.dao.jdbc.UserDao;
 import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.UserCache;
-import com.gromoks.movieland.service.UserService;
 import com.gromoks.movieland.service.entity.LoginRequest;
 import com.gromoks.movieland.service.entity.UserToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,6 +30,14 @@ public class UserCacheImpl implements UserCache{
     @Autowired
     private UserDao userDao;
 
+    public UserCacheImpl() {
+
+    }
+
+    public UserCacheImpl(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
     @Override
     public UserToken getUserToken(LoginRequest loginRequest) {
         if (userTokenMap.containsKey(loginRequest.getEmail())) {
@@ -44,9 +50,11 @@ public class UserCacheImpl implements UserCache{
 
     @Override
     public void removeUserToken(String uuid) {
+        log.info("Start to remove user token with uuid = {}",uuid);
         for (String key : userTokenMap.keySet()) {
             if (userTokenMap.get(key).getUuid().equals(uuid)) {
                 userTokenMap.remove(key);
+                log.info("Removed user token");
                 break;
             }
         }
@@ -56,9 +64,11 @@ public class UserCacheImpl implements UserCache{
     @PostConstruct
     @Scheduled(fixedRateString="${cache.fixedRate.user.token}")
     public void invalidate() {
+        log.info("Invalidate expired uuid");
         for (String key : userTokenMap.keySet()) {
             if (System.currentTimeMillis() - userTokenMap.get(key).getInitTimeInMs() >= timeToLiveInMs) {
                 userTokenMap.remove(key);
+                log.info("Remove expired uuid with key = {}",key);
             }
         }
     }
@@ -78,7 +88,8 @@ public class UserCacheImpl implements UserCache{
         }
     }
 
-    private UserToken generateUserToken(LoginRequest loginRequest) {
+    UserToken generateUserToken(LoginRequest loginRequest) {
+        log.info("Start to generate user token uuid");
         User user;
         long initTimeInMs = System.currentTimeMillis();
         try {
@@ -91,6 +102,7 @@ public class UserCacheImpl implements UserCache{
         UUID uuid = getUuid(loginRequest, initTimeInMs);
         UserToken userToken = new UserToken(String.valueOf(uuid),user.getNickname(),user.getEmail(),initTimeInMs);
         userTokenMap.put(loginRequest.getEmail(),userToken);
+        log.info("User token has been generated for user {}",user.getNickname());
         return userToken;
     }
 

@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-
 @Controller
 @RequestMapping(produces= MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class UserController {
@@ -30,12 +28,13 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody String loginRequest) {
         log.info("Sending request to login");
         long startTime = System.currentTimeMillis();
+
         UserToken userToken = authenticationService.getAuthentication(loginRequest);
         UserTokenDto dtoUserToken = DtoConverter.toUserTokenDto(userToken);
         String json = JsonJacksonConverter.toJsonNormalUserToken(dtoUserToken);
-        log.info("Login is done. It tooks {} ms", System.currentTimeMillis() - startTime);
-        return new ResponseEntity<String>(json, HttpStatus.OK);
 
+        log.info("Login is done. It tooks {} ms", System.currentTimeMillis() - startTime);
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @ResponseBody
@@ -43,7 +42,9 @@ public class UserController {
     public ResponseEntity<?> logout(@RequestHeader(value = "uuid") String uuid) {
         log.info("Sending request to logout");
         long startTime = System.currentTimeMillis();
+
         authenticationService.logout(uuid);
+
         log.info("Logout is done. It tooks {} ms", System.currentTimeMillis() - startTime);
         return new ResponseEntity(HttpStatus.OK);
     }

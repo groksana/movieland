@@ -25,8 +25,10 @@ public class GenreController {
     public String getAll() {
         log.info("Sending request to get all genre");
         long startTime = System.currentTimeMillis();
+
         List<Genre> genres = genreService.getAll();
         String json = JsonJacksonConverter.toJsonGenre(genres);
+
         log.info("Genres are received. It tooks {} ms", System.currentTimeMillis() - startTime);
         return json;
     }

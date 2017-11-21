@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class GenreCacheImplTest {
+public class GenreCacheImplITest {
 
     @Mock
     private GenericCache<Genre> mockGenericCache;

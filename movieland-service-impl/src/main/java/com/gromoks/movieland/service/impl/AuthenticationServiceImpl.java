@@ -1,8 +1,6 @@
 package com.gromoks.movieland.service.impl;
 
-import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.AuthenticationService;
-import com.gromoks.movieland.service.UserCache;
 import com.gromoks.movieland.service.UserService;
 import com.gromoks.movieland.service.entity.LoginRequest;
 import com.gromoks.movieland.service.entity.UserToken;
@@ -20,10 +18,18 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     @Autowired
     private UserService userService;
 
+    public AuthenticationServiceImpl() {}
+
+    public AuthenticationServiceImpl(UserService userService) {
+        this.userService = userService;
+    }
+
     @Override
     public UserToken getAuthentication(String loginRequest) {
+        log.info("Start to get authentication");
         LoginRequest convertedLoginRequest = JsonUserRequestConverter.convertJsonToUserRequest(loginRequest);
         UserToken userToken = userService.getUserToken(convertedLoginRequest);
+        log.info("Authentication has been passed {}",userToken.getNickname());
         return userToken;
     }
 
