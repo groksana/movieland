@@ -24,7 +24,7 @@ public class UserCacheImpl implements UserCache{
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private volatile Map<String,UserToken> userTokenMap = new ConcurrentHashMap<>();
+    private final Map<String,UserToken> userTokenMap = new ConcurrentHashMap<>();
 
     @Value("${cache.user.token.timeToLiveInMs}")
     private long timeToLiveInMs;
@@ -34,10 +34,9 @@ public class UserCacheImpl implements UserCache{
 
     @Override
     public UserToken getUserToken(LoginRequest loginRequest) {
-        Map<String,UserToken> copyUserTokenMap = userTokenMap;
-        if (copyUserTokenMap.containsKey(loginRequest.getEmail())) {
+        if (userTokenMap.containsKey(loginRequest.getEmail())) {
             validateLoginRequestParameter(loginRequest);
-            return copyUserTokenMap.get(loginRequest.getEmail());
+            return userTokenMap.get(loginRequest.getEmail());
         } else {
             return  generateUserToken(loginRequest);
         }
@@ -58,15 +57,14 @@ public class UserCacheImpl implements UserCache{
     @Scheduled(fixedRateString="${cache.fixedRate.user.token}")
     public void invalidate() {
         for (String key : userTokenMap.keySet()) {
-            if (System.currentTimeMillis() - userTokenMap.get(key).getInitTimeInMs() >= 7200000) {
+            if (System.currentTimeMillis() - userTokenMap.get(key).getInitTimeInMs() >= timeToLiveInMs) {
                 userTokenMap.remove(key);
             }
         }
     }
 
     private UserToken validateLoginRequestParameter(LoginRequest loginRequest) {
-        Map<String,UserToken> copyUserTokenMap = userTokenMap;
-        UserToken userToken = copyUserTokenMap.get(loginRequest.getEmail());
+        UserToken userToken = userTokenMap.get(loginRequest.getEmail());
         if (System.currentTimeMillis() - userToken.getInitTimeInMs() <= timeToLiveInMs) {
             UUID uuid = getUuid(loginRequest, userToken.getInitTimeInMs());
             if (uuid.toString().equals(userToken.getUuid())) {
