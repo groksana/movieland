@@ -1,7 +1,9 @@
 package com.gromoks.movieland.web.util;
 
 import com.gromoks.movieland.entity.Movie;
+import com.gromoks.movieland.service.entity.UserToken;
 import com.gromoks.movieland.web.entity.MovieDto;
+import com.gromoks.movieland.web.entity.UserTokenDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,15 @@ public class DtoConverter {
             movieDto.setGenres(movie.getGenres());
             movieDto.setReviews(movie.getReviews());
         return movieDto;
+    }
+
+    public static UserTokenDto toUserTokenDto(UserToken userToken) {
+        UserTokenDto userTokenDto = new UserTokenDto();
+        userTokenDto.setUuid(userToken.getUuid());
+        userTokenDto.setNickname(userToken.getNickname());
+        userTokenDto.setEmail(userToken.getEmail());
+        userTokenDto.setInitTimeInMs(userToken.getInitTimeInMs());
+        return userTokenDto;
     }
 
 }
