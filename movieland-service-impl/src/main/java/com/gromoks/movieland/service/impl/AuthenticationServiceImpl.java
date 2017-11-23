@@ -28,6 +28,10 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     public UserToken getAuthentication(String loginRequest) {
         log.info("Start to get authentication");
         LoginRequest convertedLoginRequest = JsonUserRequestConverter.convertJsonToUserRequest(loginRequest);
+        if (convertedLoginRequest.getEmail().isEmpty() || convertedLoginRequest.getPassword().isEmpty()) {
+            log.warn("One ot both provided request parameters are empty");
+            throw new IllegalArgumentException("One ot both provided request parameters are empty");
+        }
         UserToken userToken = userService.getUserToken(convertedLoginRequest);
         log.info("Authentication has been passed {}",userToken.getNickname());
         return userToken;

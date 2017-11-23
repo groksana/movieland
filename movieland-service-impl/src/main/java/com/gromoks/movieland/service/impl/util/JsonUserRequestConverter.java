@@ -16,7 +16,7 @@ public class JsonUserRequestConverter {
             return objectMapper.readValue(jsonLoginRequest,LoginRequest.class);
         } catch (IOException e) {
             log.warn("Issue to get json for login request");
-            throw new RuntimeException(e);
+            throw new RuntimeException("Issue to get json for login request");
         }
     }
 

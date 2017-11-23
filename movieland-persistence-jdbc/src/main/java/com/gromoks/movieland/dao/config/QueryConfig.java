@@ -65,10 +65,10 @@ public class QueryConfig {
     }
 
     @Bean
-    public String getUserByEmailSQL() {
-        return " SELECT id, nickname, email, password" +
+    public String getUserByEmailAndPasswordSQL() {
+        return " SELECT id, nickname, email" +
                 " FROM user " +
-                " WHERE email = ?";
+                " WHERE email = ? and password = ?";
     }
 }
 

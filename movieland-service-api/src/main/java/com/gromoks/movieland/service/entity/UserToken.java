@@ -4,15 +4,15 @@ public class UserToken {
     private String uuid;
     private String nickname;
     private String email;
-    private long initTimeInMs;
+    private long expireTimeInMs;
 
     public UserToken() {}
 
-    public UserToken(String uuid, String nickname, String email, long initTimeInMs) {
+    public UserToken(String uuid, String nickname, String email, long expireTimeInMs) {
         this.uuid = uuid;
         this.nickname = nickname;
         this.email = email;
-        this.initTimeInMs = initTimeInMs;
+        this.expireTimeInMs = expireTimeInMs;
     }
 
     public String getEmail() {
@@ -23,12 +23,12 @@ public class UserToken {
         this.email = email;
     }
 
-    public long getInitTimeInMs() {
-        return initTimeInMs;
+    public long getExpireTimeInMs() {
+        return expireTimeInMs;
     }
 
-    public void setInitTimeInMs(long initTimeInMs) {
-        this.initTimeInMs = initTimeInMs;
+    public void setExpireTimeInMs(long expireTimeInMs) {
+        this.expireTimeInMs = expireTimeInMs;
     }
 
     public String getUuid() {

@@ -19,13 +19,13 @@ public class JdbcUserDao implements UserDao{
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private String getUserByEmailSQL;
+    private String getUserByEmailAndPasswordSQL;
 
     @Override
-    public User getUserByEmail(String email) {
+    public User getUserByEmailAndPassword(String email, String password) {
         log.info("Start query to get user by email from db");
         long startTime = System.currentTimeMillis();
-        User user = jdbcTemplate.queryForObject(getUserByEmailSQL,userRowMapper,email);
+        User user = jdbcTemplate.queryForObject(getUserByEmailAndPasswordSQL,userRowMapper,new Object[]{email,password});
         log.info("Finish query to get user by email from db. It took {} ms", System.currentTimeMillis() - startTime);
         return user;
     }

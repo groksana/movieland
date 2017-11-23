@@ -41,7 +41,7 @@ public class UserControllerTest {
         userToken.setUuid("12345");
         userToken.setNickname("TestNickname");
         userToken.setEmail("test@email.com");
-        userToken.setInitTimeInMs(123456);
+        userToken.setExpireTimeInMs(123456);
 
         String jsonLoginRequest = "{\"email\":\"test@email.com\",\"password\":\"testpassword\"}";
 

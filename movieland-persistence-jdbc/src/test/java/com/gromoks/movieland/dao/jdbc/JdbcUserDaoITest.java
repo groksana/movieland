@@ -17,9 +17,10 @@ public class JdbcUserDaoITest {
     UserDao userDao;
 
     @Test
-    public void testGetUserByEmail() {
+    public void testGetUserByEmailAndPassword() {
         String email = "gabriel.jackson91@example.com";
-        User user = userDao.getUserByEmail(email);
+        String password = "3e8bbd9caf510ed9a4f047bbed72d853";
+        User user = userDao.getUserByEmailAndPassword(email,password);
         assertEquals(user.getNickname(),"Габриэль Джексон");
     }
 }

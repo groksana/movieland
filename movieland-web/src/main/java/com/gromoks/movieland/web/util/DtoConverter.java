@@ -51,7 +51,7 @@ public class DtoConverter {
         userTokenDto.setUuid(userToken.getUuid());
         userTokenDto.setNickname(userToken.getNickname());
         userTokenDto.setEmail(userToken.getEmail());
-        userTokenDto.setInitTimeInMs(userToken.getInitTimeInMs());
+        userTokenDto.setInitTimeInMs(userToken.getExpireTimeInMs());
         return userTokenDto;
     }
 

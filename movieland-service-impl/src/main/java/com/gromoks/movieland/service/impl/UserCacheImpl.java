@@ -5,6 +5,7 @@ import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.UserCache;
 import com.gromoks.movieland.service.entity.LoginRequest;
 import com.gromoks.movieland.service.entity.UserToken;
+import com.gromoks.movieland.service.impl.util.PasswordEncryption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,7 +69,7 @@ public class UserCacheImpl implements UserCache{
     public void invalidate() {
         log.info("Invalidate expired uuid");
         for (String key : userTokenMap.keySet()) {
-            if (System.currentTimeMillis() - userTokenMap.get(key).getInitTimeInMs() >= timeToLiveInMs) {
+            if (System.currentTimeMillis() >= userTokenMap.get(key).getExpireTimeInMs()) {
                 userTokenMap.remove(key);
                 log.info("Remove expired uuid with key = {}",key);
             }
@@ -75,9 +78,9 @@ public class UserCacheImpl implements UserCache{
 
     private UserToken validateLoginRequestParameter(LoginRequest loginRequest) {
         UserToken userToken = userTokenMap.get(loginRequest.getEmail());
-        if (System.currentTimeMillis() - userToken.getInitTimeInMs() <= timeToLiveInMs) {
-            UUID uuid = getUuid(loginRequest, userToken.getInitTimeInMs());
-            if (uuid.toString().equals(userToken.getUuid())) {
+        if (System.currentTimeMillis() < userToken.getExpireTimeInMs()) {
+            String uuid = getUuid(loginRequest, userToken.getExpireTimeInMs());
+            if (uuid.equals(userToken.getUuid())) {
                 return userToken;
             } else {
                 throw new IllegalArgumentException("Provided request parameters are incorrect");
@@ -90,31 +93,26 @@ public class UserCacheImpl implements UserCache{
 
     UserToken generateUserToken(LoginRequest loginRequest) {
         log.info("Start to generate user token uuid");
-        User user;
-        long initTimeInMs = System.currentTimeMillis();
+        User user = null;
+        long expireTimeInMs = System.currentTimeMillis() + timeToLiveInMs;
         try {
-            user = userDao.getUserByEmail(loginRequest.getEmail());
+            String password = PasswordEncryption.encryptPassword(loginRequest.getPassword());
+            user = userDao.getUserByEmailAndPassword(loginRequest.getEmail(), password);
         } catch (IllegalArgumentException e) {
-            log.warn("Requested user doesn't exists. Email: {}", loginRequest.getEmail());
+            log.warn("Requested user doesn't exists or password is incorrect. Email: {}", loginRequest.getEmail());
             throw new IllegalArgumentException(e);
+        } catch (NoSuchAlgorithmException e) {
+            log.error("Sorry, but MD5 is not a valid message digest algorithm");
         }
-        checkUserCredential(loginRequest, user);
-        UUID uuid = getUuid(loginRequest, initTimeInMs);
-        UserToken userToken = new UserToken(String.valueOf(uuid),user.getNickname(),user.getEmail(),initTimeInMs);
+        String uuid = getUuid(loginRequest, expireTimeInMs);
+        UserToken userToken = new UserToken(uuid,user.getNickname(),user.getEmail(),expireTimeInMs);
         userTokenMap.put(loginRequest.getEmail(),userToken);
         log.info("User token has been generated for user {}",user.getNickname());
         return userToken;
     }
 
-    private void checkUserCredential(LoginRequest loginRequest, User user) {
-        if (!loginRequest.getPassword().equals(user.getPassword())) {
-            log.warn("Password is incorrect for user {}",user.getNickname());
-            throw new IllegalArgumentException("Password is incorrect for user " + user.getNickname());
-        }
-    }
-
-    private UUID getUuid(LoginRequest loginRequest, long initTimeInMs) {
-        return UUID.nameUUIDFromBytes((loginRequest.getEmail()+loginRequest.getPassword()+initTimeInMs).getBytes());
+    private String getUuid(LoginRequest loginRequest, long expireTimeInMs) {
+        return UUID.nameUUIDFromBytes((loginRequest.getEmail()+loginRequest.getPassword()+expireTimeInMs).getBytes()).toString();
     }
 
 }
