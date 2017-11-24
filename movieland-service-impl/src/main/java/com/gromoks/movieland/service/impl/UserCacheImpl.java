@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.UUID;
@@ -33,9 +32,7 @@ public class UserCacheImpl implements UserCache{
     @Autowired
     private UserDao userDao;
 
-    public UserCacheImpl() {
-
-    }
+    public UserCacheImpl() {}
 
     public UserCacheImpl(UserDao userDao) {
         this.userDao = userDao;
@@ -43,24 +40,27 @@ public class UserCacheImpl implements UserCache{
 
     @Override
     public UserToken getUserToken(LoginRequest loginRequest) {
-        if (userTokenMap.containsKey(loginRequest.getEmail())) {
-            validateLoginRequestParameter(loginRequest);
-            return userTokenMap.get(loginRequest.getEmail());
-        } else {
-            return  generateUserToken(loginRequest);
+        boolean validUserToken = false;
+        for (Map.Entry<String,UserToken> entry : userTokenMap.entrySet()) {
+            if (entry.getValue().getUser().getEmail().equals(loginRequest.getEmail())) {
+                validUserToken = true;
+                validateLoginRequestParameter(loginRequest,entry.getKey());
+                return userTokenMap.get(entry.getKey());
+            }
         }
+        return generateUserToken(loginRequest);
     }
 
     @Override
     public void removeUserToken(String uuid) {
         log.info("Start to remove user token with uuid = {}",uuid);
-        for (String key : userTokenMap.keySet()) {
-            if (userTokenMap.get(key).getUuid().equals(uuid)) {
-                userTokenMap.remove(key);
-                log.info("Removed user token");
-                break;
-            }
-        }
+        userTokenMap.remove(uuid);
+        log.info("Removed user token");
+    }
+
+    @Override
+    public UserToken getUserTokenByUuid(String uuid) {
+        return userTokenMap.get(uuid);
     }
 
     @Override
@@ -76,11 +76,11 @@ public class UserCacheImpl implements UserCache{
         }
     }
 
-    private UserToken validateLoginRequestParameter(LoginRequest loginRequest) {
-        UserToken userToken = userTokenMap.get(loginRequest.getEmail());
+    private UserToken validateLoginRequestParameter(LoginRequest loginRequest, String uuid) {
+        UserToken userToken = userTokenMap.get(uuid);
         if (System.currentTimeMillis() < userToken.getExpireTimeInMs()) {
-            String uuid = getUuid(loginRequest, userToken.getExpireTimeInMs());
-            if (uuid.equals(userToken.getUuid())) {
+            String regeneratedUuid = getUuid(loginRequest, userToken.getExpireTimeInMs());
+            if (regeneratedUuid.equals(userToken.getUuid())) {
                 return userToken;
             } else {
                 throw new IllegalArgumentException("Provided request parameters are incorrect");
@@ -105,8 +105,8 @@ public class UserCacheImpl implements UserCache{
             log.error("Sorry, but MD5 is not a valid message digest algorithm");
         }
         String uuid = getUuid(loginRequest, expireTimeInMs);
-        UserToken userToken = new UserToken(uuid,user.getNickname(),user.getEmail(),expireTimeInMs);
-        userTokenMap.put(loginRequest.getEmail(),userToken);
+        UserToken userToken = new UserToken(uuid,new User(user.getId(),user.getNickname(),user.getEmail(),user.getRole()),expireTimeInMs);
+        userTokenMap.put(uuid,userToken);
         log.info("User token has been generated for user {}",user.getNickname());
         return userToken;
     }

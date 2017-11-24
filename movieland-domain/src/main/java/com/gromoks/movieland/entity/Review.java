@@ -2,8 +2,11 @@ package com.gromoks.movieland.entity;
 
 public class Review {
     private int id;
+    private int movieId;
     private User user;
     private String text;
+
+    public Review() {}
 
     public Review(int id, User user, String text) {
         this.id = id;
@@ -17,6 +20,14 @@ public class Review {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
     }
 
     public User getUser() {
@@ -39,6 +50,7 @@ public class Review {
     public String toString() {
         return "Review{" +
                 "id=" + id +
+                ", movieId=" + movieId +
                 ", user=" + user +
                 ", text='" + text + '\'' +
                 '}';

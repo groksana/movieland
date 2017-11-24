@@ -50,7 +50,7 @@ public class UserCacheImplTest {
     public void testGetUserToken() {
         LoginRequest loginRequest = new LoginRequest("test@email.com","testpassword");
         UserToken userToken = userCache.getUserToken(loginRequest);
-        assertEquals(userToken.getNickname(),"Testnick");
+        assertEquals(userToken.getUser().getNickname(),"Testnick");
         assertNotNull(userToken.getUuid());
     }
 }

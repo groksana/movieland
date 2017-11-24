@@ -13,8 +13,9 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(classes = {JdbcConfig.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class JdbcUserDaoITest {
+
     @Autowired
-    UserDao userDao;
+    private UserDao userDao;
 
     @Test
     public void testGetUserByEmailAndPassword() {

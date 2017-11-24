@@ -7,4 +7,5 @@ import com.gromoks.movieland.service.entity.UserToken;
 public interface UserService {
     UserToken getUserToken(LoginRequest loginRequest);
     void removeUserToken(String uuid);
+    UserToken getUserTokenByUuid(String uuid);
 }

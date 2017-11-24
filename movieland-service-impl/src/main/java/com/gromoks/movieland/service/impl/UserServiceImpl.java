@@ -22,4 +22,9 @@ public class UserServiceImpl implements UserService{
     public void removeUserToken(String uuid) {
         userCache.removeUserToken(uuid);
     }
+
+    @Override
+    public UserToken getUserTokenByUuid(String uuid) {
+        return userCache.getUserTokenByUuid(uuid);
+    }
 }

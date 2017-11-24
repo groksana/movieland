@@ -66,9 +66,14 @@ public class QueryConfig {
 
     @Bean
     public String getUserByEmailAndPasswordSQL() {
-        return " SELECT id, nickname, email" +
+        return " SELECT id, nickname, email, role" +
                 " FROM user " +
                 " WHERE email = ? and password = ?";
+    }
+
+    @Bean
+    public String addReviewSQL() {
+        return "INSERT INTO REVIEW(movieId, userId, text) VALUES(:movieId, :userId, :text)";
     }
 }
 

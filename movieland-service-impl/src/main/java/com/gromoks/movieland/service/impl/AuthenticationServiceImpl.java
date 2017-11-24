@@ -33,8 +33,21 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             throw new IllegalArgumentException("One ot both provided request parameters are empty");
         }
         UserToken userToken = userService.getUserToken(convertedLoginRequest);
-        log.info("Authentication has been passed {}",userToken.getNickname());
+        log.info("Authentication has been passed for user {} with role {}",userToken.getUser().getNickname(),userToken.getUser().getRole());
         return userToken;
+    }
+
+    @Override
+    public UserToken getAuthenticationByUuid(String uuid) {
+        log.info("Start to get authentication for uuid = {}",uuid);
+        if (!uuid.isEmpty()) {
+            UserToken userToken = userService.getUserTokenByUuid(uuid);
+            log.info("Authentication has been passed for user {} with role {}",userToken.getUser().getNickname(),userToken.getUser().getRole());
+            return userToken;
+        } else {
+            log.warn("Uuid is empty");
+            throw new IllegalArgumentException("Uuid is empty");
+        }
     }
 
     @Override
