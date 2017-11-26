@@ -2,10 +2,11 @@ package com.gromoks.movieland.web.controller;
 
 import com.gromoks.movieland.entity.Review;
 import com.gromoks.movieland.entity.User;
-import com.gromoks.movieland.service.AuthenticationService;
-import com.gromoks.movieland.service.AuthorizationService;
+import com.gromoks.movieland.service.security.AuthenticationService;
+import com.gromoks.movieland.service.security.AuthorizationService;
 import com.gromoks.movieland.service.ReviewService;
 import com.gromoks.movieland.service.entity.UserToken;
+import com.gromoks.movieland.web.handler.GlobalControllerExceptionHandler;
 import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static java.time.LocalDateTime.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,7 +49,7 @@ public class ReviewControllerTest {
         UserToken userToken = new UserToken();
         userToken.setUuid("12345");
         userToken.setUser(new User(1,"TestNickname","test@email.com","USER"));
-        userToken.setExpireTimeInMs(123456);
+        userToken.setExpireDateTime(now().plusHours(2));
 
         String json = "{\"movieId\":1,\"text\":\"testText\"}";
         String uuid = "12345";

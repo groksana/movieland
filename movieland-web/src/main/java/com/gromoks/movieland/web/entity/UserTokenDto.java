@@ -2,6 +2,8 @@ package com.gromoks.movieland.web.entity;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import java.time.LocalDateTime;
+
 public class UserTokenDto {
 
     @JsonView(UserTokenViews.Normal.class)
@@ -14,7 +16,7 @@ public class UserTokenDto {
     private String email;
 
     @JsonView(UserTokenViews.Full.class)
-    private long initTimeInMs;
+    private LocalDateTime expireDateTime;
 
     public String getUuid() {
         return uuid;
@@ -40,11 +42,11 @@ public class UserTokenDto {
         this.email = email;
     }
 
-    public long getInitTimeInMs() {
-        return initTimeInMs;
+    public LocalDateTime getExpireDateTime() {
+        return expireDateTime;
     }
 
-    public void setInitTimeInMs(long initTimeInMs) {
-        this.initTimeInMs = initTimeInMs;
+    public void setExpireDateTime(LocalDateTime expireDateTime) {
+        this.expireDateTime = expireDateTime;
     }
 }

@@ -1,8 +1,9 @@
 package com.gromoks.movieland.web.controller;
 
 import com.gromoks.movieland.entity.User;
-import com.gromoks.movieland.service.AuthenticationService;
+import com.gromoks.movieland.service.security.AuthenticationService;
 import com.gromoks.movieland.service.entity.UserToken;
+import com.gromoks.movieland.web.handler.GlobalControllerExceptionHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -11,6 +12,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -41,7 +44,7 @@ public class UserControllerTest {
         UserToken userToken = new UserToken();
         userToken.setUuid("12345");
         userToken.setUser(new User(1,"TestNickname","test@email.com","USER"));
-        userToken.setExpireTimeInMs(123456);
+        userToken.setExpireDateTime(LocalDateTime.now().plusHours(2));
 
         String jsonLoginRequest = "{\"email\":\"test@email.com\",\"password\":\"testpassword\"}";
 

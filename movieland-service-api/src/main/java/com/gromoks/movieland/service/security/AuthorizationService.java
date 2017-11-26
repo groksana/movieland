@@ -1,4 +1,4 @@
-package com.gromoks.movieland.service;
+package com.gromoks.movieland.service.security;
 
 import com.gromoks.movieland.service.entity.UserToken;
 

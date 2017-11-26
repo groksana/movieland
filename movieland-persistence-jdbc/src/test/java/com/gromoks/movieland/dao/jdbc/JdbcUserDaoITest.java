@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.naming.AuthenticationException;
+
 import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration(classes = {JdbcConfig.class})
@@ -18,7 +20,7 @@ public class JdbcUserDaoITest {
     private UserDao userDao;
 
     @Test
-    public void testGetUserByEmailAndPassword() {
+    public void testGetUserByEmailAndPassword() throws AuthenticationException {
         String email = "gabriel.jackson91@example.com";
         String password = "3e8bbd9caf510ed9a4f047bbed72d853";
         User user = userDao.getUserByEmailAndPassword(email,password);

@@ -4,6 +4,7 @@ package com.gromoks.movieland.web.controller;
 import com.gromoks.movieland.entity.*;
 import com.gromoks.movieland.service.CurrencyService;
 import com.gromoks.movieland.service.MovieService;
+import com.gromoks.movieland.web.handler.GlobalControllerExceptionHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

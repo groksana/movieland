@@ -29,7 +29,7 @@ public class GenreCacheImpl implements GenericCache<Genre>, GenreDao {
 
     @Override
     @PostConstruct
-    @Scheduled(fixedRateString="${cache.fixedRate.genre}")
+    @Scheduled(fixedRateString = "${cache.fixedRate.genre}", initialDelayString = "${cache.fixedRate.genre}")
     public void invalidate() {
         log.info("Start to fill genres to cache");
         cacheGenreList = genreDao.getAll();

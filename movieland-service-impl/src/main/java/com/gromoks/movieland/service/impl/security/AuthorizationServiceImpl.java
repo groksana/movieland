@@ -1,7 +1,7 @@
-package com.gromoks.movieland.service.impl;
+package com.gromoks.movieland.service.impl.security;
 
-import com.gromoks.movieland.service.AuthorizationService;
-import com.gromoks.movieland.service.UserService;
+import com.gromoks.movieland.service.security.AuthorizationService;
+import com.gromoks.movieland.service.security.UserTokenService;
 import com.gromoks.movieland.service.entity.UserRole;
 import com.gromoks.movieland.service.entity.UserToken;
 import org.slf4j.Logger;
@@ -15,7 +15,7 @@ public class AuthorizationServiceImpl implements AuthorizationService{
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private UserService userService;
+    private UserTokenService userTokenService;
 
     @Override
     public void getAuthorizationAddReview(UserToken userToken) {
