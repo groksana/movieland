@@ -44,11 +44,12 @@ public class ReviewController {
             throw new AuthenticationException("Expired or invalid uuid");
         }
 
-        authorizationService.getAuthorizationAddReview(userToken);
+        authorizationService.authorizeToAddReview(userToken);
         Review review = JsonJacksonConverter.parseReview(json);
         review.setUser(userToken.getUser());
         reviewService.addReview(review);
 
+        log.info("Review has been added. It tooks {} ms", System.currentTimeMillis() - startTime);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

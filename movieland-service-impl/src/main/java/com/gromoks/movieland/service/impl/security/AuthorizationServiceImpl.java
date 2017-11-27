@@ -18,7 +18,7 @@ public class AuthorizationServiceImpl implements AuthorizationService{
     private UserTokenService userTokenService;
 
     @Override
-    public void getAuthorizationAddReview(UserToken userToken) {
+    public void authorizeToAddReview(UserToken userToken) {
         UserRole userRole = UserRole.getByName(userToken.getUser().getRole());
         if (userRole == UserRole.USER) {
             log.info("Authorization is passed");

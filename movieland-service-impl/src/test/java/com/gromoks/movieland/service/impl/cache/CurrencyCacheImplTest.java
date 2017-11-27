@@ -1,9 +1,10 @@
-package com.gromoks.movieland.service.impl;
+package com.gromoks.movieland.service.impl.cache;
 
 import com.gromoks.movieland.entity.*;
 import com.gromoks.movieland.service.entity.CurrencyRate;
 import com.gromoks.movieland.service.CurrencyCache;
 import com.gromoks.movieland.service.CurrencyService;
+import com.gromoks.movieland.service.impl.CurrencyServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

@@ -1,4 +1,4 @@
-package com.gromoks.movieland.service.impl;
+package com.gromoks.movieland.service.impl.cache;
 
 import com.gromoks.movieland.service.entity.CurrencyRate;
 import com.gromoks.movieland.service.CurrencyCache;

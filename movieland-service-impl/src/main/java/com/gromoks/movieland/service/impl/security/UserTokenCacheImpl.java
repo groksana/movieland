@@ -22,7 +22,7 @@ public class UserTokenCacheImpl implements UserTokenCache {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final Map<String, UserToken> userTokenMap = new ConcurrentHashMap<>();
+    private final Map<String, UserToken> uuidToUserTokenMap = new ConcurrentHashMap<>();
 
     @Value("${cache.user.token.timeToLiveInHours}")
     private long getTimeToLiveInHours;
@@ -40,7 +40,7 @@ public class UserTokenCacheImpl implements UserTokenCache {
     @Override
     public void removeCacheUserToken(String uuid) {
         log.info("Start to remove user token with uuid = {}", uuid);
-        userTokenMap.remove(uuid);
+        uuidToUserTokenMap.remove(uuid);
         log.info("Removed user token");
     }
 
@@ -49,10 +49,10 @@ public class UserTokenCacheImpl implements UserTokenCache {
     @Scheduled(fixedRateString = "${cache.fixedRate.user.token}", initialDelayString = "${cache.fixedRate.user.token}")
     public void invalidate() {
         log.info("Invalidate expired uuid");
-        for (String key : userTokenMap.keySet()) {
-            UserToken userToken = userTokenMap.get(key);
+        for (String key : uuidToUserTokenMap.keySet()) {
+            UserToken userToken = uuidToUserTokenMap.get(key);
             if (userToken.getExpireDateTime().isBefore(now())) {
-                userTokenMap.remove(key);
+                uuidToUserTokenMap.remove(key);
                 log.info("Remove expired uuid with key = {}", key);
             }
         }
@@ -61,13 +61,13 @@ public class UserTokenCacheImpl implements UserTokenCache {
     @Override
     public void cacheUserToken(UserToken userToken) {
         log.info("Start to cache user token");
-        userTokenMap.put(userToken.getUuid(), userToken);
+        uuidToUserTokenMap.put(userToken.getUuid(), userToken);
         log.info("User token has been cached for user: {}", userToken.getUser().getNickname());
     }
 
     @Override
     public UserToken getCacheUserTokenByUuid(String uuid) throws AuthenticationException {
-        UserToken userToken = userTokenMap.get(uuid);
+        UserToken userToken = uuidToUserTokenMap.get(uuid);
         if (userToken != null) {
             return userToken;
         } else {

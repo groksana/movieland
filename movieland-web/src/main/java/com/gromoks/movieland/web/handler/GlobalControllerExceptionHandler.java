@@ -19,28 +19,26 @@ public class GlobalControllerExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionDto handleException(IllegalArgumentException e) {
-        ExceptionDto exceptionDto = new ExceptionDto();
-        exceptionDto.setErrorCode(HttpStatus.BAD_REQUEST);
-        exceptionDto.setMessage(e.getMessage());
-        return exceptionDto;
+        return getExceptionDto(HttpStatus.BAD_REQUEST,e);
     }
 
     @ExceptionHandler(SecurityException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ExceptionDto handleException(SecurityException e) {
-        ExceptionDto exceptionDto = new ExceptionDto();
-        exceptionDto.setErrorCode(HttpStatus.FORBIDDEN);
-        exceptionDto.setMessage(e.getMessage());
-        return exceptionDto;
+        return getExceptionDto(HttpStatus.FORBIDDEN,e);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ExceptionDto handleException(AuthenticationException e) {
+        return getExceptionDto(HttpStatus.UNAUTHORIZED,e);
+    }
+
+    private ExceptionDto getExceptionDto(HttpStatus httpStatus, Exception e) {
         ExceptionDto exceptionDto = new ExceptionDto();
-        exceptionDto.setErrorCode(HttpStatus.UNAUTHORIZED);
+        exceptionDto.setErrorCode(httpStatus);
         exceptionDto.setMessage(e.getMessage());
         return exceptionDto;
     }

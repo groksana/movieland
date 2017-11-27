@@ -7,7 +7,7 @@ import org.springframework.context.annotation.*;
 @Configuration
 @Import(JdbcConfig.class)
 @ComponentScan(basePackages = {"com.gromoks.movieland.service.impl"})
-@PropertySource("classpath:web.properties")
+@PropertySource("classpath:service.properties")
 public class ServiceConfig {
 
 }
