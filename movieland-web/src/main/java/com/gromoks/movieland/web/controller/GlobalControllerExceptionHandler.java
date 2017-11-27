@@ -18,8 +18,10 @@ public class GlobalControllerExceptionHandler {
         ExceptionDto exceptionDto = new ExceptionDto();
         exceptionDto.setErrorCode(HttpStatus.BAD_REQUEST);
         exceptionDto.setMessage(e.getMessage());
+
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
         ResponseEntity<ExceptionDto> responseEntity = new ResponseEntity<ExceptionDto>(exceptionDto,httpHeaders,HttpStatus.BAD_REQUEST);
         return responseEntity;
     }

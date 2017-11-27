@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gromoks.movieland.entity.Genre;
 import com.gromoks.movieland.web.entity.MovieViews;
+import com.gromoks.movieland.web.entity.UserTokenViews;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,10 @@ public class JsonJacksonConverter {
 
     public static String toJsonGenre(List<Genre> genres) {
         return toJson(genres);
+    }
+
+    public static <K>String toJsonNormalUserToken(K dtoUserToken) {
+        return toJson(dtoUserToken, UserTokenViews.Normal.class);
     }
 
 }

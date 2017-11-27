@@ -63,5 +63,12 @@ public class QueryConfig {
                 " FROM movie m" +
                 " WHERE m.id = ?";
     }
+
+    @Bean
+    public String getUserByEmailAndPasswordSQL() {
+        return " SELECT id, nickname, email" +
+                " FROM user " +
+                " WHERE email = ? and password = ?";
+    }
 }
 
