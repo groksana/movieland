@@ -1,9 +1,13 @@
 package com.gromoks.movieland.web.controller;
 
+import com.gromoks.movieland.entity.Review;
 import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.security.AuthenticationService;
+import com.gromoks.movieland.service.security.AuthorizationService;
+import com.gromoks.movieland.service.ReviewService;
 import com.gromoks.movieland.service.entity.UserToken;
 import com.gromoks.movieland.web.handler.GlobalControllerExceptionHandler;
+import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -13,56 +17,52 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDateTime;
-
-import static org.hamcrest.Matchers.is;
+import static java.time.LocalDateTime.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class UserControllerTest {
+public class ReviewControllerTest {
 
     @Mock
     private AuthenticationService mockAuthenticationService;
 
+    @Mock
+    private AuthorizationService mockAuthorizationService;
+
+    @Mock
+    private ReviewService mockReviewService;
+
     @InjectMocks
-    private UserController userController;
+    private ReviewController reviewController;
 
     private MockMvc mockMvc;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(userController).setControllerAdvice(new GlobalControllerExceptionHandler()).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(reviewController).setControllerAdvice(new GlobalControllerExceptionHandler()).build();
     }
 
     @Test
-    public void testLogin() throws Exception {
-
+    public void testAddReview() throws Exception {
         UserToken userToken = new UserToken();
         userToken.setUuid("12345");
         userToken.setUser(new User(1,"TestNickname","test@email.com","USER"));
-        userToken.setExpireDateTime(LocalDateTime.now().plusHours(2));
+        userToken.setExpireDateTime(now().plusHours(2));
 
-        String jsonLoginRequest = "{\"email\":\"test@email.com\",\"password\":\"testpassword\"}";
+        String json = "{\"movieId\":1,\"text\":\"testText\"}";
+        String uuid = "12345";
 
-        when(mockAuthenticationService.getAuthentication(jsonLoginRequest)).thenReturn(userToken);
+        when(mockAuthenticationService.getAuthenticationByUuid(uuid)).thenReturn(userToken);
+        Review review = JsonJacksonConverter.parseReview(json);
+        review.setUser(userToken.getUser());
+        mockReviewService.addReview(review);
 
-        mockMvc.perform(post("/login")
+        mockMvc.perform(post("/review")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonLoginRequest))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nickname", is("TestNickname")))
-                .andExpect(jsonPath("$.uuid", is("12345")));
-    }
-
-    @Test
-    public void testLogout() throws Exception {
-        mockMvc.perform(delete("/logout")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("uuid","12345"))
+                .header("uuid","12345")
+                .content(json))
                 .andExpect(status().isOk());
 
     }

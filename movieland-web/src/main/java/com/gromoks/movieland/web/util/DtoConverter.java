@@ -49,9 +49,9 @@ public class DtoConverter {
     public static UserTokenDto toUserTokenDto(UserToken userToken) {
         UserTokenDto userTokenDto = new UserTokenDto();
         userTokenDto.setUuid(userToken.getUuid());
-        userTokenDto.setNickname(userToken.getNickname());
-        userTokenDto.setEmail(userToken.getEmail());
-        userTokenDto.setInitTimeInMs(userToken.getExpireTimeInMs());
+        userTokenDto.setNickname(userToken.getUser().getNickname());
+        userTokenDto.setEmail(userToken.getUser().getEmail());
+        userTokenDto.setExpireDateTime(userToken.getExpireDateTime());
         return userTokenDto;
     }
 

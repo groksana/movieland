@@ -1,8 +1,9 @@
-package com.gromoks.movieland.service.impl;
+package com.gromoks.movieland.service.impl.security;
 
 import com.gromoks.movieland.dao.jdbc.UserDao;
 import com.gromoks.movieland.entity.User;
-import com.gromoks.movieland.service.UserCache;
+import com.gromoks.movieland.service.security.UserTokenCache;
+import com.gromoks.movieland.service.security.UserTokenService;
 import com.gromoks.movieland.service.entity.LoginRequest;
 import com.gromoks.movieland.service.entity.UserToken;
 import com.gromoks.movieland.service.impl.util.PasswordEncryption;
@@ -14,21 +15,24 @@ import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.NoSuchAlgorithmException;
+import javax.naming.AuthenticationException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
-public class UserCacheImplTest {
+public class UserTokenCacheImplTest {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Mock
     UserDao mockUserDao;
 
+    @Mock
+    UserTokenCache mockUserTokenCache;
+
     @InjectMocks
-    UserCache userCache = new UserCacheImpl(mockUserDao);
+    UserTokenService userTokenService = new UserTokenServiceImpl(mockUserDao);
 
     @Before
     public void setup() {
@@ -38,19 +42,19 @@ public class UserCacheImplTest {
         user.setNickname("Testnick");
         user.setEmail("test@email.com");
         String password = null;
+        password = PasswordEncryption.encryptPassword("testpassword");
         try {
-            password = PasswordEncryption.encryptPassword("testpassword");
-        } catch (NoSuchAlgorithmException e) {
-            log.error("Sorry, but MD5 is not a valid message digest algorithm");
+            when(mockUserDao.getUserByEmailAndPassword("test@email.com",password)).thenReturn(user);
+        } catch (AuthenticationException e) {
+            log.warn("Requested user doesn't exists or password is incorrect. Email: {}", "test@email.com");
         }
-        when(mockUserDao.getUserByEmailAndPassword("test@email.com",password)).thenReturn(user);
     }
 
     @Test
-    public void testGetUserToken() {
+    public void testGetUserToken() throws AuthenticationException {
         LoginRequest loginRequest = new LoginRequest("test@email.com","testpassword");
-        UserToken userToken = userCache.getUserToken(loginRequest);
-        assertEquals(userToken.getNickname(),"Testnick");
+        UserToken userToken = userTokenService.getUserToken(loginRequest);
+        assertEquals(userToken.getUser().getNickname(),"Testnick");
         assertNotNull(userToken.getUuid());
     }
 }

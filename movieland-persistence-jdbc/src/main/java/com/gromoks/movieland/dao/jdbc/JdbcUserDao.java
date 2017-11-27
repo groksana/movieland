@@ -5,8 +5,11 @@ import com.gromoks.movieland.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import javax.naming.AuthenticationException;
 
 @Repository
 public class JdbcUserDao implements UserDao{
@@ -22,11 +25,16 @@ public class JdbcUserDao implements UserDao{
     private String getUserByEmailAndPasswordSQL;
 
     @Override
-    public User getUserByEmailAndPassword(String email, String password) {
-        log.info("Start query to get user by email from db");
+    public User getUserByEmailAndPassword(String email, String password) throws AuthenticationException{
+        log.info("Start query to get user by email and password from db");
         long startTime = System.currentTimeMillis();
-        User user = jdbcTemplate.queryForObject(getUserByEmailAndPasswordSQL,userRowMapper,new Object[]{email,password});
-        log.info("Finish query to get user by email from db. It took {} ms", System.currentTimeMillis() - startTime);
-        return user;
+        try {
+            User user = jdbcTemplate.queryForObject(getUserByEmailAndPasswordSQL, userRowMapper, new Object[]{email, password});
+            log.info("Finish query to get user by email and password from db. It took {} ms", System.currentTimeMillis() - startTime);
+            return user;
+        } catch (EmptyResultDataAccessException e) {
+            log.warn("Requested user doesn't exists or password is incorrect. Email: {}",email);
+            throw new AuthenticationException("Requested user doesn't exists or password is incorrect. Email: " + email);
+        }
     }
 }

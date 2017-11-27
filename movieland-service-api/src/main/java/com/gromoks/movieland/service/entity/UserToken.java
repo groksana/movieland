@@ -1,34 +1,29 @@
 package com.gromoks.movieland.service.entity;
 
+import com.gromoks.movieland.entity.User;
+
+import java.time.LocalDateTime;
+
 public class UserToken {
     private String uuid;
-    private String nickname;
-    private String email;
-    private long expireTimeInMs;
+    private User user;
+    private LocalDateTime expireDateTime;
 
-    public UserToken() {}
+    public UserToken() {
+    }
 
-    public UserToken(String uuid, String nickname, String email, long expireTimeInMs) {
+    public UserToken(String uuid, User user, LocalDateTime expireDateTime) {
         this.uuid = uuid;
-        this.nickname = nickname;
-        this.email = email;
-        this.expireTimeInMs = expireTimeInMs;
+        this.user = user;
+        this.expireDateTime = expireDateTime;
     }
 
-    public String getEmail() {
-        return email;
+    public LocalDateTime getExpireDateTime() {
+        return expireDateTime;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public long getExpireTimeInMs() {
-        return expireTimeInMs;
-    }
-
-    public void setExpireTimeInMs(long expireTimeInMs) {
-        this.expireTimeInMs = expireTimeInMs;
+    public void setExpireDateTime(LocalDateTime expireDateTime) {
+        this.expireDateTime = expireDateTime;
     }
 
     public String getUuid() {
@@ -39,11 +34,11 @@ public class UserToken {
         this.uuid = uuid;
     }
 
-    public String getNickname() {
-        return nickname;
+    public User getUser() {
+        return user;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setUser(User user) {
+        this.user = user;
     }
 }
