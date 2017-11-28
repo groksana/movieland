@@ -1,10 +1,10 @@
 package com.gromoks.movieland.web.controller;
 
 import com.gromoks.movieland.entity.Review;
+import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.security.AuthenticationService;
 import com.gromoks.movieland.service.security.AuthorizationService;
 import com.gromoks.movieland.service.ReviewService;
-import com.gromoks.movieland.service.entity.UserToken;
 import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
+
+import static com.gromoks.movieland.web.util.JsonJacksonConverter.toJsonReview;
 
 @RestController
 @RequestMapping(value = "/review", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -36,21 +38,16 @@ public class ReviewController {
         log.info("Sending request to add new review {}", json);
         long startTime = System.currentTimeMillis();
 
-        UserToken userToken;
-        try {
-            userToken = authenticationService.getAuthenticationByUuid(uuid);
-        } catch (AuthenticationException e) {
-            log.error("Expired or invalid uuid");
-            throw new AuthenticationException("Expired or invalid uuid");
-        }
+        User user = authenticationService.getAuthenticatedUser();
 
-        authorizationService.authorizeToAddReview(userToken);
+        authorizationService.authorizeToAddReview(user);
         Review review = JsonJacksonConverter.parseReview(json);
-        review.setUser(userToken.getUser());
-        reviewService.addReview(review);
+        review.setUser(user);
+        Review addedReview = reviewService.addReview(review);
+        String reviewJson = toJsonReview(addedReview);
 
         log.info("Review has been added. It tooks {} ms", System.currentTimeMillis() - startTime);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(reviewJson,HttpStatus.OK);
     }
 
 }

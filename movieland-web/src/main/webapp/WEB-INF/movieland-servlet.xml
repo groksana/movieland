@@ -15,4 +15,9 @@
 
     <mvc:annotation-driven/>
 
+    <mvc:interceptors>
+        <bean id="securityInterceptor" class="com.gromoks.movieland.web.interceptor.SecurityInterceptor"/>
+        <bean id="loggerInterceptor" class="com.gromoks.movieland.web.interceptor.LoggerInterceptor"/>
+    </mvc:interceptors>
+
 </beans>

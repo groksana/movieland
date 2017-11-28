@@ -37,6 +37,10 @@ public class JsonJacksonConverter {
         return toJson(dtoUserToken, UserTokenViews.Normal.class);
     }
 
+    public static String toJsonReview(Review review) {
+        return toJson(review);
+    }
+
     public static Review parseReview(String json) {
         log.info("Start parsing review from json {}", json);
         long startTime = System.currentTimeMillis();

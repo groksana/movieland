@@ -36,7 +36,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.2.5.RELEASE</spring.version>
         <project.version>1.0-SNAPSHOT</project.version>
-        <spring.version>4.2.5.RELEASE</spring.version>
     </properties>
 
     <dependencyManagement>

@@ -1,7 +1,7 @@
 package com.gromoks.movieland.service.security;
 
-import com.gromoks.movieland.service.entity.UserToken;
+import com.gromoks.movieland.entity.User;
 
 public interface AuthorizationService {
-    void authorizeToAddReview(UserToken userToken);
+    void authorizeToAddReview(User user);
 }

@@ -1,5 +1,6 @@
 package com.gromoks.movieland.service.impl.security;
 
+import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.security.AuthenticationService;
 import com.gromoks.movieland.service.security.UserTokenService;
 import com.gromoks.movieland.service.entity.LoginRequest;
@@ -17,6 +18,8 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    private static final ThreadLocal<User> threadLocalScope = new  ThreadLocal<>();
+
     @Autowired
     private UserTokenService userTokenService;
 
@@ -24,6 +27,16 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     public AuthenticationServiceImpl(UserTokenService userTokenService) {
         this.userTokenService = userTokenService;
+    }
+
+    @Override
+    public void setAuthenticatedUser(User user) {
+        threadLocalScope.set(user);
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+        return threadLocalScope.get();
     }
 
     @Override
