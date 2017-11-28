@@ -7,15 +7,17 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MovieToReviewRowMapper implements RowMapper<MovieToReview>{
+public class MovieToReviewRowMapper implements RowMapper<MovieToReview> {
 
     @Override
     public MovieToReview mapRow(ResultSet resultSet, int i) throws SQLException {
+
         MovieToReview movieToReview = new MovieToReview();
         movieToReview.setId(resultSet.getInt("id"));
         movieToReview.setMovieId(resultSet.getInt("movieId"));
         movieToReview.setText(resultSet.getString("text"));
-        movieToReview.setUser(new User(resultSet.getInt("userId"),resultSet.getString("nickname")));
+        movieToReview.setUser(new User(resultSet.getInt("userId"), resultSet.getString("nickname")));
+
         return movieToReview;
     }
 }

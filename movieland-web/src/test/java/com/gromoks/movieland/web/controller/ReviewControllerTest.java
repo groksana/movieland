@@ -3,7 +3,6 @@ package com.gromoks.movieland.web.controller;
 import com.gromoks.movieland.entity.Review;
 import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.security.AuthenticationService;
-import com.gromoks.movieland.service.security.AuthorizationService;
 import com.gromoks.movieland.service.ReviewService;
 import com.gromoks.movieland.web.handler.GlobalControllerExceptionHandler;
 import com.gromoks.movieland.web.util.JsonJacksonConverter;
@@ -24,9 +23,6 @@ public class ReviewControllerTest {
 
     @Mock
     private AuthenticationService mockAuthenticationService;
-
-    @Mock
-    private AuthorizationService mockAuthorizationService;
 
     @Mock
     private ReviewService mockReviewService;

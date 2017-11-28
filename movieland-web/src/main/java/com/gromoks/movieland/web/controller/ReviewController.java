@@ -2,9 +2,10 @@ package com.gromoks.movieland.web.controller;
 
 import com.gromoks.movieland.entity.Review;
 import com.gromoks.movieland.entity.User;
+import com.gromoks.movieland.service.entity.UserRole;
 import com.gromoks.movieland.service.security.AuthenticationService;
-import com.gromoks.movieland.service.security.AuthorizationService;
 import com.gromoks.movieland.service.ReviewService;
+import com.gromoks.movieland.web.interceptor.Protected;
 import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,26 +29,23 @@ public class ReviewController {
     private AuthenticationService authenticationService;
 
     @Autowired
-    private AuthorizationService authorizationService;
-
-    @Autowired
     private ReviewService reviewService;
 
     @RequestMapping(method = RequestMethod.POST)
+    @Protected(UserRole.USER)
     public ResponseEntity<?> addReview(@RequestHeader(value = "uuid") String uuid, @RequestBody String json) throws AuthenticationException {
         log.info("Sending request to add new review {}", json);
         long startTime = System.currentTimeMillis();
 
         User user = authenticationService.getAuthenticatedUser();
 
-        authorizationService.authorizeToAddReview(user);
         Review review = JsonJacksonConverter.parseReview(json);
         review.setUser(user);
         Review addedReview = reviewService.addReview(review);
         String reviewJson = toJsonReview(addedReview);
 
         log.info("Review has been added. It tooks {} ms", System.currentTimeMillis() - startTime);
-        return new ResponseEntity<>(reviewJson,HttpStatus.OK);
+        return new ResponseEntity<>(reviewJson, HttpStatus.OK);
     }
 
 }

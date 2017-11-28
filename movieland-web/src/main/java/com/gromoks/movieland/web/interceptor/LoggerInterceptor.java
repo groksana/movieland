@@ -42,20 +42,4 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,Object handler, Exception e) throws Exception {
         MDC.clear();
     }
-
-   /* private String authenticate(String uuid) throws AuthenticationException {
-        if (uuid != null) {
-            UserToken userToken;
-            try {
-                userToken = authenticationService.getAuthenticationByUuid(uuid);
-            } catch (AuthenticationException e) {
-                log.error("Expired or invalid uuid");
-                throw new AuthenticationException("Expired or invalid uuid");
-            }
-            authenticationService.setAuthenticatedUser(userToken.getUser());
-            return userToken.getUser().getEmail();
-        } else {
-            return GUEST;
-        }
-    }*/
 }

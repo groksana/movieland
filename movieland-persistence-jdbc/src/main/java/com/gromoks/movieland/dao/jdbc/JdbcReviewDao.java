@@ -11,7 +11,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JdbcReviewDao implements ReviewDao{
+public class JdbcReviewDao implements ReviewDao {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -28,10 +28,10 @@ public class JdbcReviewDao implements ReviewDao{
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue("movieId",review.getMovieId());
-        parameterSource.addValue("userId",review.getUser().getId());
-        parameterSource.addValue("text",review.getText());
-        namedParameterJdbcTemplate.update(addReviewSQL,parameterSource,keyHolder, new String[]{"id"});
+        parameterSource.addValue("movieId", review.getMovieId());
+        parameterSource.addValue("userId", review.getUser().getId());
+        parameterSource.addValue("text", review.getText());
+        namedParameterJdbcTemplate.update(addReviewSQL, parameterSource, keyHolder, new String[]{"id"});
 
         review.setId(keyHolder.getKey().intValue());
         log.info("Finish query to add review {} to DB. It took {} ms", review, System.currentTimeMillis() - startTime);
