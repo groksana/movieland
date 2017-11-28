@@ -18,7 +18,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private static final ThreadLocal<User> threadLocalScope = new  ThreadLocal<>();
+    private static final ThreadLocal<User> THREAD_LOCAL_SCOPE = new  ThreadLocal<>();
 
     @Autowired
     private UserTokenService userTokenService;
@@ -31,12 +31,12 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     @Override
     public void setAuthenticatedUser(User user) {
-        threadLocalScope.set(user);
+        THREAD_LOCAL_SCOPE.set(user);
     }
 
     @Override
     public User getAuthenticatedUser() {
-        return threadLocalScope.get();
+        return THREAD_LOCAL_SCOPE.get();
     }
 
     @Override
