@@ -18,7 +18,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private static final ThreadLocal<User> THREAD_LOCAL_SCOPE = new ThreadLocal<>();
+    private final ThreadLocal<User> THREAD_LOCAL_SCOPE = new ThreadLocal<>();
 
     @Autowired
     private UserTokenService userTokenService;
@@ -59,7 +59,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public UserToken getAuthenticationByUuid(String uuid) throws AuthenticationException {
         log.info("Start to get authentication for uuid = {}", uuid);
 
-        if (!uuid.isEmpty()) {
+        if (uuid != null) {
             UserToken userToken = userTokenService.getUserTokenByUuid(uuid);
             log.info("Authentication has been passed for user {} with role {}", userToken.getUser().getNickname(), userToken.getUser().getRole());
             return userToken;

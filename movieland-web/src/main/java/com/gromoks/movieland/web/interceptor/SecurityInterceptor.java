@@ -4,6 +4,7 @@ import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.entity.UserRole;
 import com.gromoks.movieland.service.entity.UserToken;
 import com.gromoks.movieland.service.security.AuthenticationService;
+import com.gromoks.movieland.web.security.Protected;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,11 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 public class SecurityInterceptor extends HandlerInterceptorAdapter {
-    private static Logger log = LoggerFactory.getLogger(LoggerInterceptor.class);
+    private static Logger log = LoggerFactory.getLogger(SecurityInterceptor.class);
     private static final String GUEST = "guest";
 
     @Autowired
@@ -30,7 +32,8 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
 
-        if (method.isAnnotationPresent(Protected.class)) {
+        Annotation annotation = method.getAnnotation(Protected.class);
+        if (annotation != null) {
             userRole = method.getAnnotation(Protected.class).value();
         } else {
             userRole = UserRole.GUEST;
@@ -40,6 +43,11 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
         if (uuid != null) {
             User user = authenticate(uuid);
             authorize(user, userRole);
+        } else {
+            if (userRole != UserRole.GUEST) {
+                log.info("Authorization has not been passed");
+                throw new SecurityException("Authorization has not been passed");
+            }
         }
         return true;
     }
@@ -50,7 +58,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
             userToken = authenticationService.getAuthenticationByUuid(uuid);
         } catch (AuthenticationException e) {
             log.error("Expired or invalid uuid");
-            throw new AuthenticationException("Expired or invalid uuid");
+            throw e;
         }
         authenticationService.setAuthenticatedUser(userToken.getUser());
         return userToken.getUser();

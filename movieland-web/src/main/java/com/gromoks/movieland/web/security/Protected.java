@@ -1,4 +1,4 @@
-package com.gromoks.movieland.web.interceptor;
+package com.gromoks.movieland.web.security;
 
 import com.gromoks.movieland.service.entity.UserRole;
 

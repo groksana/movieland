@@ -5,7 +5,7 @@ import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.entity.UserRole;
 import com.gromoks.movieland.service.security.AuthenticationService;
 import com.gromoks.movieland.service.ReviewService;
-import com.gromoks.movieland.web.interceptor.Protected;
+import com.gromoks.movieland.web.security.Protected;
 import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.naming.AuthenticationException;
 
 import static com.gromoks.movieland.web.util.JsonJacksonConverter.toJsonReview;
 
@@ -33,7 +31,7 @@ public class ReviewController {
 
     @RequestMapping(method = RequestMethod.POST)
     @Protected(UserRole.USER)
-    public ResponseEntity<?> addReview(@RequestHeader(value = "uuid") String uuid, @RequestBody String json) throws AuthenticationException {
+    public ResponseEntity<?> addReview(@RequestBody String json) {
         log.info("Sending request to add new review {}", json);
         long startTime = System.currentTimeMillis();
 
