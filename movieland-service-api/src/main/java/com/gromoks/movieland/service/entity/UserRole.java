@@ -1,7 +1,7 @@
 package com.gromoks.movieland.service.entity;
 
 public enum UserRole {
-    USER("USER"), ADMIN("ADMIN");
+    USER("USER"), ADMIN("ADMIN"), GUEST("GUEST");
 
     private final String name;
 
@@ -10,11 +10,13 @@ public enum UserRole {
     }
 
     public static UserRole getByName(String name) {
-        for (UserRole userRole : values()) {
-            if (userRole.name.equalsIgnoreCase(name)) {
-                return userRole;
+        if (name != null) {
+            for (UserRole userRole : values()) {
+                if (userRole.name.equalsIgnoreCase(name)) {
+                    return userRole;
+                }
             }
-        }
+        } else {return GUEST;}
         throw new IllegalArgumentException("Conversion for UserRole is not supported. UserRole = " + name);
     }
 }

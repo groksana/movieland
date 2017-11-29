@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class JdbcGenreDao implements GenreDao{
+public class JdbcGenreDao implements GenreDao {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -27,7 +27,9 @@ public class JdbcGenreDao implements GenreDao{
     public List<Genre> getAll() {
         log.info("Start query to get all genre from db");
         long startTime = System.currentTimeMillis();
-        List<Genre> genres  = jdbcTemplate.query(getAllGenreSQL, genreRowMapper);
+
+        List<Genre> genres = jdbcTemplate.query(getAllGenreSQL, genreRowMapper);
+
         log.info("Finish query to get all genre from db. It took {} ms", System.currentTimeMillis() - startTime);
         return genres;
     }

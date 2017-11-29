@@ -18,15 +18,16 @@ public class JsonCurrencyConverter {
 
     public static List<CurrencyRate> convertJsonToCurrency(InputStream inputStream) {
         List<CurrencyRate> currencies = new ArrayList<>();
+
         try {
             JsonNode root = objectMapper.readTree(inputStream);
             String currencyJson;
 
-            for(JsonNode node : root) {
+            for (JsonNode node : root) {
                 currencyJson = node.get("cc").asText();
                 if (currencyJson.equalsIgnoreCase(Currency.EUR.name())
                         || currencyJson.equalsIgnoreCase(Currency.USD.name())) {
-                    currencies.add(new CurrencyRate(currencyJson,node.get("rate").asDouble()));
+                    currencies.add(new CurrencyRate(currencyJson, node.get("rate").asDouble()));
                 }
             }
             return currencies;

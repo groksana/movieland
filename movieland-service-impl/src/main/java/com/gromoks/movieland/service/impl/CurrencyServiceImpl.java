@@ -37,12 +37,14 @@ public class CurrencyServiceImpl implements CurrencyService{
     private Double getRateByName(String currencyName) {
         List<CurrencyRate> currencyRates = currencyCache.getAll();
         Currency currency = Currency.getByName(currencyName);
+
         for (CurrencyRate currencyRate : currencyRates) {
             Currency cachedCurrency = Currency.getByName(currencyRate.getCurrency());
             if (currency == cachedCurrency) {
                 return currencyRate.getRate();
             }
         }
+
         throw new IllegalArgumentException("Currency doesn't exists. Currency = " + currencyName);
     }
 }

@@ -1,5 +1,6 @@
 package com.gromoks.movieland.service.impl.security;
 
+import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.security.AuthenticationService;
 import com.gromoks.movieland.service.security.UserTokenService;
 import com.gromoks.movieland.service.entity.LoginRequest;
@@ -13,38 +14,54 @@ import org.springframework.stereotype.Service;
 import javax.naming.AuthenticationException;
 
 @Service
-public class AuthenticationServiceImpl implements AuthenticationService{
+public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
+
+    private final ThreadLocal<User> THREAD_LOCAL_SCOPE = new ThreadLocal<>();
 
     @Autowired
     private UserTokenService userTokenService;
 
-    public AuthenticationServiceImpl() {}
+    public AuthenticationServiceImpl() {
+    }
 
     public AuthenticationServiceImpl(UserTokenService userTokenService) {
         this.userTokenService = userTokenService;
     }
 
     @Override
+    public void setAuthenticatedUser(User user) {
+        THREAD_LOCAL_SCOPE.set(user);
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+        return THREAD_LOCAL_SCOPE.get();
+    }
+
+    @Override
     public UserToken getAuthentication(String loginRequest) throws AuthenticationException {
         log.info("Start to get authentication");
         LoginRequest convertedLoginRequest = JsonUserRequestConverter.convertJsonToUserRequest(loginRequest);
+
         if (convertedLoginRequest.getEmail().isEmpty() || convertedLoginRequest.getPassword().isEmpty()) {
             log.warn("One ot both provided request parameters are empty");
             throw new IllegalArgumentException("One ot both provided request parameters are empty");
         }
+
         UserToken userToken = userTokenService.getUserToken(convertedLoginRequest);
-        log.info("Authentication has been passed for user {} with role {}",userToken.getUser().getNickname(),userToken.getUser().getRole());
+        log.info("Authentication has been passed for user {} with role {}", userToken.getUser().getNickname(), userToken.getUser().getRole());
         return userToken;
     }
 
     @Override
     public UserToken getAuthenticationByUuid(String uuid) throws AuthenticationException {
-        log.info("Start to get authentication for uuid = {}",uuid);
-        if (!uuid.isEmpty()) {
+        log.info("Start to get authentication for uuid = {}", uuid);
+
+        if (uuid != null) {
             UserToken userToken = userTokenService.getUserTokenByUuid(uuid);
-            log.info("Authentication has been passed for user {} with role {}",userToken.getUser().getNickname(),userToken.getUser().getRole());
+            log.info("Authentication has been passed for user {} with role {}", userToken.getUser().getNickname(), userToken.getUser().getRole());
             return userToken;
         } else {
             log.warn("Uuid is empty");

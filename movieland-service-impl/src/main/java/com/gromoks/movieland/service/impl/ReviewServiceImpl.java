@@ -13,7 +13,8 @@ public class ReviewServiceImpl implements ReviewService{
     private ReviewDao reviewDao;
 
     @Override
-    public void addReview(Review review) {
+    public Review addReview(Review review) {
         reviewDao.addReview(review);
+        return review;
     }
 }

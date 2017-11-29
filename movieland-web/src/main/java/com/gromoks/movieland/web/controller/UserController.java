@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.naming.AuthenticationException;
 
 @Controller
-@RequestMapping(produces= MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class UserController {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -26,7 +26,7 @@ public class UserController {
     private AuthenticationService authenticationService;
 
     @ResponseBody
-    @RequestMapping(value="/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> login(@RequestBody String loginRequest) throws AuthenticationException {
         log.info("Sending request to login");
         long startTime = System.currentTimeMillis();

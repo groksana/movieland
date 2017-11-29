@@ -13,7 +13,7 @@ public class JsonUserRequestConverter {
 
     public static LoginRequest convertJsonToUserRequest(String jsonLoginRequest) {
         try {
-            return objectMapper.readValue(jsonLoginRequest,LoginRequest.class);
+            return objectMapper.readValue(jsonLoginRequest, LoginRequest.class);
         } catch (IOException e) {
             log.warn("Issue to get json for login request");
             throw new RuntimeException("Issue to get json for login request");

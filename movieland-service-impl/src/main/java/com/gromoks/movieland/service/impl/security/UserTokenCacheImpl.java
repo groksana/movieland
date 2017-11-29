@@ -40,7 +40,9 @@ public class UserTokenCacheImpl implements UserTokenCache {
     @Override
     public void removeCacheUserToken(String uuid) {
         log.info("Start to remove user token with uuid = {}", uuid);
+
         uuidToUserTokenMap.remove(uuid);
+
         log.info("Removed user token");
     }
 
@@ -49,6 +51,7 @@ public class UserTokenCacheImpl implements UserTokenCache {
     @Scheduled(fixedRateString = "${cache.fixedRate.user.token}", initialDelayString = "${cache.fixedRate.user.token}")
     public void invalidate() {
         log.info("Invalidate expired uuid");
+
         for (String key : uuidToUserTokenMap.keySet()) {
             UserToken userToken = uuidToUserTokenMap.get(key);
             if (userToken.getExpireDateTime().isBefore(now())) {
@@ -56,18 +59,22 @@ public class UserTokenCacheImpl implements UserTokenCache {
                 log.info("Remove expired uuid with key = {}", key);
             }
         }
+
     }
 
     @Override
     public void cacheUserToken(UserToken userToken) {
         log.info("Start to cache user token");
+
         uuidToUserTokenMap.put(userToken.getUuid(), userToken);
+
         log.info("User token has been cached for user: {}", userToken.getUser().getNickname());
     }
 
     @Override
     public UserToken getCacheUserTokenByUuid(String uuid) throws AuthenticationException {
         UserToken userToken = uuidToUserTokenMap.get(uuid);
+
         if (userToken != null) {
             return userToken;
         } else {
