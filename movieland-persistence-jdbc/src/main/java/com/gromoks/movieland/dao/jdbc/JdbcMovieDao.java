@@ -3,15 +3,10 @@ package com.gromoks.movieland.dao.jdbc;
 import com.gromoks.movieland.dao.entity.MovieToCountry;
 import com.gromoks.movieland.dao.entity.MovieToGenre;
 import com.gromoks.movieland.dao.entity.MovieToReview;
-import com.gromoks.movieland.dao.jdbc.mapper.MovieRowMapper;
-import com.gromoks.movieland.dao.jdbc.mapper.MovieToCountryRowMapper;
-import com.gromoks.movieland.dao.jdbc.mapper.MovieToGenreRowMapper;
-import com.gromoks.movieland.dao.jdbc.mapper.MovieToReviewRowMapper;
+import com.gromoks.movieland.dao.entity.MovieRatingCache;
+import com.gromoks.movieland.dao.jdbc.mapper.*;
 import com.gromoks.movieland.dao.jdbc.sqlbuilder.QueryBuilder;
-import com.gromoks.movieland.entity.Country;
-import com.gromoks.movieland.entity.Genre;
-import com.gromoks.movieland.entity.Movie;
-import com.gromoks.movieland.entity.Review;
+import com.gromoks.movieland.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -40,6 +35,8 @@ public class JdbcMovieDao implements MovieDao {
 
     private final MovieToReviewRowMapper movieToReviewRowMapper = new MovieToReviewRowMapper();
 
+    private final MovieRatingRowMapper movieRatingRowMapper = new MovieRatingRowMapper();
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -66,6 +63,12 @@ public class JdbcMovieDao implements MovieDao {
 
     @Autowired
     private String getMoviesByIdSQL;
+
+    @Autowired
+    private String addUserRatingSQL;
+
+    @Autowired
+    private String getMovieRatingSQL;
 
     public List<Movie> getAll(LinkedHashMap<String, String> requestParamMap) {
         log.info("Start query to get all movies from DB");
@@ -124,6 +127,35 @@ public class JdbcMovieDao implements MovieDao {
 
         log.info("Finish query to get movies by id from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return movie;
+    }
+
+    @Override
+    public void addMovieRating(List<Rating> ratings) {
+        log.info("Start query to add rating");
+        long startTime = System.currentTimeMillis();
+
+        List<Map<String, Object>> batchValues = new ArrayList<>(ratings.size());
+        for (Rating rating : ratings) {
+            batchValues.add(new MapSqlParameterSource("movieId", rating.getMovieId())
+                            .addValue("userId", rating.getUserId())
+                            .addValue("rating", rating.getRating())
+                            .getValues());
+        }
+
+        int[] updateCounts = namedParameterJdbcTemplate.batchUpdate(addUserRatingSQL,
+                batchValues.toArray(new Map[ratings.size()]));
+        log.info("Finish query to add rating list to DB. It took {} ms to insert {} rows", System.currentTimeMillis() - startTime, updateCounts.length);
+    }
+
+    @Override
+    public List<MovieRatingCache> getMovieRating() {
+        log.info("Start query to get movie rating from DB");
+        long startTime = System.currentTimeMillis();
+
+        List<MovieRatingCache> movieRatingCaches = jdbcTemplate.query(getMovieRatingSQL, movieRatingRowMapper);
+
+        log.info("Finish query to get movie rating from DB. It took {} ms", System.currentTimeMillis() - startTime);
+        return movieRatingCaches;
     }
 
     private List<MovieToCountry> getMovieToCountryList(List<Movie> movies) {

@@ -2,7 +2,7 @@ package com.gromoks.movieland.service.impl;
 
 import com.gromoks.movieland.service.entity.CurrencyRate;
 import com.gromoks.movieland.entity.Movie;
-import com.gromoks.movieland.service.CurrencyCache;
+import com.gromoks.movieland.service.cache.CurrencyCache;
 import com.gromoks.movieland.service.CurrencyService;
 import com.gromoks.movieland.service.entity.Currency;
 import org.springframework.beans.factory.annotation.Autowired;

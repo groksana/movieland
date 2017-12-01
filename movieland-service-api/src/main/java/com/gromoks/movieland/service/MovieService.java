@@ -1,6 +1,7 @@
 package com.gromoks.movieland.service;
 
 import com.gromoks.movieland.entity.Movie;
+import com.gromoks.movieland.entity.Rating;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,4 +14,8 @@ public interface MovieService {
     List<Movie> getByGenreId(int id, LinkedHashMap<String,String> requestParamMap);
 
     Movie getById(int id);
+
+    void addMovieRating(Rating rating);
+
+    void enrichMovieWithRating(Movie movie);
 }
