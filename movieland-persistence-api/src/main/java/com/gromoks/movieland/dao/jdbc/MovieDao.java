@@ -17,7 +17,7 @@ public interface MovieDao {
 
     Movie getById(int id);
 
-    void addMovieRating(ConcurrentLinkedQueue<Rating> ratings);
+    void addMovieRatings(ConcurrentLinkedQueue<Rating> ratings);
 
     List<CachedMovieRating> getMovieRating();
 }

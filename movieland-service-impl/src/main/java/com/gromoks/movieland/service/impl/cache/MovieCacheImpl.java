@@ -51,13 +51,12 @@ public class MovieCacheImpl implements MovieCache {
         log.debug("Get updated rateSum = {}", Double.longBitsToDouble(cachedMovieRating.getRateSum().longValue()));
         log.debug("Get updated voteCount = {}", cachedMovieRating.getVoteCount());
 
-        cachedMovieRatingMap.put(rating.getMovieId(), cachedMovieRating);
         log.info("Finish to add user rating for movie {} to cache", rating.getMovieId());
     }
 
     @Scheduled(fixedRateString = "${cache.fixedRate.rating}", initialDelayString = "${cache.fixedRate.rating}")
     private void loadUserMovieRatingToDb() {
-        movieDao.addMovieRating(cachedUserRatingQueue);
+        movieDao.addMovieRatings(cachedUserRatingQueue);
         cachedUserRatingQueue.clear();
     }
 
@@ -79,7 +78,7 @@ public class MovieCacheImpl implements MovieCache {
         CachedMovieRating cachedMovieRating = cachedMovieRatingMap.get(movie.getId());
 
         if (cachedMovieRating != null) {
-            double rating = new BigDecimal(Double.longBitsToDouble(cachedMovieRating.getRateSum().longValue()) / cachedMovieRating.getVoteCount().intValue()).setScale(2, RoundingMode.UP).doubleValue();
+            double rating = new BigDecimal(Double.longBitsToDouble(cachedMovieRating.getRateSum().longValue()) / cachedMovieRating.getVoteCount().intValue()).setScale(1, RoundingMode.UP).doubleValue();
             movie.setRating(rating);
             log.info("Movie with Id {} has been enriched", movie.getId());
         } else {

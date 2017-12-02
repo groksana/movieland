@@ -83,7 +83,7 @@ public class QueryConfig {
 
     @Bean
     public String getMovieRatingSQL() {
-        return "SELECT movieId, ROUND(SUM(rating),2) rateSum, count(*) voteCount\n" +
+        return "SELECT movieId, ROUND(SUM(rating),1) rateSum, count(*) voteCount\n" +
                 " FROM rating GROUP BY movieId;";
     }
 }

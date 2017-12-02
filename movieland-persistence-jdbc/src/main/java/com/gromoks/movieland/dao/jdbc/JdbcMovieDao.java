@@ -131,7 +131,7 @@ public class JdbcMovieDao implements MovieDao {
     }
 
     @Override
-    public void addMovieRating(ConcurrentLinkedQueue<Rating> ratings) {
+    public void addMovieRatings(ConcurrentLinkedQueue<Rating> ratings) {
         log.info("Start query to add rating");
         long startTime = System.currentTimeMillis();
 

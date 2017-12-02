@@ -4,11 +4,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class CachedMovieRating {
-    private AtomicInteger movieId;
+    private final AtomicInteger movieId;
     private AtomicLong rateSum;
     private AtomicInteger voteCount;
 
-    public CachedMovieRating() {}
+    public CachedMovieRating(AtomicInteger movieId) {
+        this.movieId = movieId;
+    }
 
     public CachedMovieRating(int movieId, double rateSum, int voteCount) {
         this.movieId = new AtomicInteger(movieId);
@@ -18,10 +20,6 @@ public class CachedMovieRating {
 
     public AtomicInteger getMovieId() {
         return movieId;
-    }
-
-    public void setMovieId(AtomicInteger movieId) {
-        this.movieId = movieId;
     }
 
     public AtomicLong getRateSum() {
