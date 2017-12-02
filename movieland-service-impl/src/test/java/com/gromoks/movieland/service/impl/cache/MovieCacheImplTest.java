@@ -44,7 +44,7 @@ public class MovieCacheImplTest {
         movieCache.addUserMovieRating(rating);
         movieCache.enrichMovieWithRating(movie);
 
-        assertEquals(movie.getRating(),7.8,0);
+        assertEquals(movie.getRating(), 7.8, 0);
     }
 
 }

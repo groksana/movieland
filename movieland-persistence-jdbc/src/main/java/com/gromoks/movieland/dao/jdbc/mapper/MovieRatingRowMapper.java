@@ -1,21 +1,22 @@
 package com.gromoks.movieland.dao.jdbc.mapper;
 
-import com.gromoks.movieland.dao.entity.MovieRatingCache;
-import com.gromoks.movieland.entity.Movie;
+import com.gromoks.movieland.dao.entity.CachedMovieRating;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
-public class MovieRatingRowMapper implements RowMapper<MovieRatingCache> {
+public class MovieRatingRowMapper implements RowMapper<CachedMovieRating> {
 
     @Override
-    public MovieRatingCache mapRow(ResultSet resultSet, int i) throws SQLException {
+    public CachedMovieRating mapRow(ResultSet resultSet, int i) throws SQLException {
 
-        MovieRatingCache movieRatingCache = new MovieRatingCache();
-        movieRatingCache.setMovieId(resultSet.getInt("movieId"));
-        movieRatingCache.setRateSum(resultSet.getDouble("rateSum"));
-        movieRatingCache.setVoteCount(resultSet.getInt("voteCount"));
-        return movieRatingCache;
+        CachedMovieRating cachedMovieRating = new CachedMovieRating();
+        cachedMovieRating.setMovieId(new AtomicInteger(resultSet.getInt("movieId")));
+        cachedMovieRating.setRateSum(new AtomicLong(Double.doubleToLongBits(resultSet.getDouble("rateSum"))));
+        cachedMovieRating.setVoteCount(new AtomicInteger(resultSet.getInt("voteCount")));
+        return cachedMovieRating;
     }
 }

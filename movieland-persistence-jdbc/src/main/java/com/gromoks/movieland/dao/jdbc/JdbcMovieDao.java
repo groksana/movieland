@@ -3,7 +3,7 @@ package com.gromoks.movieland.dao.jdbc;
 import com.gromoks.movieland.dao.entity.MovieToCountry;
 import com.gromoks.movieland.dao.entity.MovieToGenre;
 import com.gromoks.movieland.dao.entity.MovieToReview;
-import com.gromoks.movieland.dao.entity.MovieRatingCache;
+import com.gromoks.movieland.dao.entity.CachedMovieRating;
 import com.gromoks.movieland.dao.jdbc.mapper.*;
 import com.gromoks.movieland.dao.jdbc.sqlbuilder.QueryBuilder;
 import com.gromoks.movieland.entity.*;
@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Repository
 public class JdbcMovieDao implements MovieDao {
@@ -130,7 +131,7 @@ public class JdbcMovieDao implements MovieDao {
     }
 
     @Override
-    public void addMovieRating(List<Rating> ratings) {
+    public void addMovieRating(ConcurrentLinkedQueue<Rating> ratings) {
         log.info("Start query to add rating");
         long startTime = System.currentTimeMillis();
 
@@ -148,14 +149,14 @@ public class JdbcMovieDao implements MovieDao {
     }
 
     @Override
-    public List<MovieRatingCache> getMovieRating() {
+    public List<CachedMovieRating> getMovieRating() {
         log.info("Start query to get movie rating from DB");
         long startTime = System.currentTimeMillis();
 
-        List<MovieRatingCache> movieRatingCaches = jdbcTemplate.query(getMovieRatingSQL, movieRatingRowMapper);
+        List<CachedMovieRating> cachedMovieRatingCaches = jdbcTemplate.query(getMovieRatingSQL, movieRatingRowMapper);
 
         log.info("Finish query to get movie rating from DB. It took {} ms", System.currentTimeMillis() - startTime);
-        return movieRatingCaches;
+        return cachedMovieRatingCaches;
     }
 
     private List<MovieToCountry> getMovieToCountryList(List<Movie> movies) {
