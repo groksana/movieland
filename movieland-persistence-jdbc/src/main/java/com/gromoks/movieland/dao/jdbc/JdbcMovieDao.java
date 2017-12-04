@@ -13,11 +13,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -45,6 +52,9 @@ public class JdbcMovieDao implements MovieDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
+    private PlatformTransactionManager transactionManager;
+
+    @Autowired
     private String getAllMovieSQL;
 
     @Autowired
@@ -70,6 +80,24 @@ public class JdbcMovieDao implements MovieDao {
 
     @Autowired
     private String getMovieRatingSQL;
+
+    @Autowired
+    private String addMovieSQL;
+
+    @Autowired
+    private String addMovieToCountrySQL;
+
+    @Autowired
+    private String addMovieToGenreSQL;
+
+    @Autowired
+    private String updateMovieSQL;
+
+    @Autowired
+    private String deleteMovieToCountrySQL;
+
+    @Autowired
+    private String deleteMovieToGenreSQL;
 
     public List<Movie> getAll(LinkedHashMap<String, String> requestParamMap) {
         log.info("Start query to get all movies from DB");
@@ -138,9 +166,9 @@ public class JdbcMovieDao implements MovieDao {
         List<Map<String, Object>> batchValues = new ArrayList<>(ratings.size());
         for (Rating rating : ratings) {
             batchValues.add(new MapSqlParameterSource("movieId", rating.getMovieId())
-                            .addValue("userId", rating.getUserId())
-                            .addValue("rating", rating.getRating())
-                            .getValues());
+                    .addValue("userId", rating.getUserId())
+                    .addValue("rating", rating.getRating())
+                    .getValues());
         }
 
         int[] updateCounts = namedParameterJdbcTemplate.batchUpdate(addUserRatingSQL,
@@ -157,6 +185,144 @@ public class JdbcMovieDao implements MovieDao {
 
         log.info("Finish query to get movie rating from DB. It took {} ms", System.currentTimeMillis() - startTime);
         return cachedMovieRatingCaches;
+    }
+
+    @Override
+    public void addMovie(Movie movie) throws SQLException {
+        log.info("Start query to add movie {} to DB", movie);
+        long startTime = System.currentTimeMillis();
+
+        TransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        TransactionStatus transactionStatus = transactionManager.getTransaction(transactionDefinition);
+
+        try {
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+
+            parameterSource.addValue("nameRussian", movie.getNameRussian());
+            parameterSource.addValue("nameNative", movie.getNameNative());
+            parameterSource.addValue("yearOfRelease", movie.getYearOfRelease());
+            parameterSource.addValue("description", movie.getDescription());
+            parameterSource.addValue("rating", movie.getRating());
+            parameterSource.addValue("price", movie.getPrice());
+            parameterSource.addValue("picturePath", movie.getPicturePath());
+
+            namedParameterJdbcTemplate.update(addMovieSQL, parameterSource, keyHolder, new String[]{"id"});
+            int movieId = keyHolder.getKey().intValue();
+
+            addMovieToCountry(movieId, movie.getCountries());
+            addMovieToGenre(movieId, movie.getGenres());
+
+            transactionManager.commit(transactionStatus);
+
+            log.info("Finish query to add movie {} to DB. It took {} ms", movie, System.currentTimeMillis() - startTime);
+        } catch (Exception e) {
+            transactionManager.rollback(transactionStatus);
+            throw new SQLException("Transaction has been rolled back");
+        }
+    }
+
+    @Override
+    public void editMovie(Movie movie) throws SQLException {
+        log.info("Start query to update movie {} to DB", movie);
+        long startTime = System.currentTimeMillis();
+
+        TransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        TransactionStatus transactionStatus = transactionManager.getTransaction(transactionDefinition);
+
+        try {
+            MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+
+            parameterSource.addValue("nameRussian", movie.getNameRussian());
+            parameterSource.addValue("nameNative", movie.getNameNative());
+            parameterSource.addValue("picturePath", movie.getPicturePath());
+            parameterSource.addValue("id", movie.getId());
+
+            namedParameterJdbcTemplate.update(updateMovieSQL, parameterSource);
+
+            removeMovieToCountry(movie.getId());
+            removeMovieToGenre(movie.getId());
+            addMovieToCountry(movie.getId(), movie.getCountries());
+            addMovieToGenre(movie.getId(), movie.getGenres());
+
+            transactionManager.commit(transactionStatus);
+
+            log.info("Finish query to update movie {} to DB. It took {} ms", movie, System.currentTimeMillis() - startTime);
+        } catch (Exception e) {
+            transactionManager.rollback(transactionStatus);
+            throw new SQLException("Transaction has been rolled back");
+        }
+
+    }
+
+    private void removeMovieToCountry(int movieId) {
+        log.info("Start query to remove movie to country link");
+        long startTime = System.currentTimeMillis();
+
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("movieId", movieId);
+        namedParameterJdbcTemplate.update(deleteMovieToCountrySQL, parameterSource);
+
+        log.info("Finish query to remove movie to country link to DB. It took {} ms", System.currentTimeMillis() - startTime);
+    }
+
+    private void removeMovieToGenre(int movieId) {
+        log.info("Start query to remove movie to country link");
+        long startTime = System.currentTimeMillis();
+
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("movieId", movieId);
+        namedParameterJdbcTemplate.update(deleteMovieToGenreSQL, parameterSource);
+
+        log.info("Finish query to remove movie to country link to DB. It took {} ms", System.currentTimeMillis() - startTime);
+    }
+
+    private void addMovieToCountry(int movieId, List<Country> countries) {
+        log.info("Start query to add movie to country link");
+        long startTime = System.currentTimeMillis();
+
+        List<MovieToCountry> movieToCountries = new ArrayList<>();
+        for (Country country : countries) {
+            MovieToCountry movieToCountry = new MovieToCountry();
+            movieToCountry.setMovieId(movieId);
+            movieToCountry.setCountryId(country.getId());
+            movieToCountries.add(movieToCountry);
+        }
+
+        List<Map<String, Object>> batchValues = new ArrayList<>(movieToCountries.size());
+        for (MovieToCountry movieToCountry : movieToCountries) {
+            batchValues.add(new MapSqlParameterSource("movieId", movieToCountry.getMovieId())
+                    .addValue("countryId", movieToCountry.getCountryId())
+                    .getValues());
+        }
+
+        int[] updateCounts = namedParameterJdbcTemplate.batchUpdate(addMovieToCountrySQL,
+                batchValues.toArray(new Map[movieToCountries.size()]));
+        log.info("Finish query to add movie to country link to DB. It took {} ms to insert {} rows", System.currentTimeMillis() - startTime, updateCounts.length);
+    }
+
+    private void addMovieToGenre(int movieId, List<Genre> genres) {
+        log.info("Start query to add movie to genre link");
+        long startTime = System.currentTimeMillis();
+
+        List<MovieToGenre> movieToGenres = new ArrayList<>();
+        for (Genre genre : genres) {
+            MovieToGenre movieToGenre = new MovieToGenre();
+            movieToGenre.setMovieId(movieId);
+            movieToGenre.setGenreId(genre.getId());
+            movieToGenres.add(movieToGenre);
+        }
+
+        List<Map<String, Object>> batchValues = new ArrayList<>(movieToGenres.size());
+        for (MovieToGenre movieToGenre : movieToGenres) {
+            batchValues.add(new MapSqlParameterSource("movieId", movieToGenre.getMovieId())
+                    .addValue("genreId", movieToGenre.getGenreId())
+                    .getValues());
+        }
+
+        int[] updateCounts = namedParameterJdbcTemplate.batchUpdate(addMovieToGenreSQL,
+                batchValues.toArray(new Map[movieToGenres.size()]));
+        log.info("Finish query to add movie to genre link to DB. It took {} ms to insert {} rows", System.currentTimeMillis() - startTime, updateCounts.length);
     }
 
     private List<MovieToCountry> getMovieToCountryList(List<Movie> movies) {

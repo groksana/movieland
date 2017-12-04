@@ -8,6 +8,7 @@ import com.gromoks.movieland.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -76,6 +77,16 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public void enrichMovieWithRating(Movie movie) {
         movieCache.enrichMovieWithRating(movie);
+    }
+
+    @Override
+    public void addMovie(Movie movie) throws SQLException {
+        movieDao.addMovie(movie);
+    }
+
+    @Override
+    public void editMovie(Movie movie) throws SQLException {
+        movieDao.editMovie(movie);
     }
 }
 

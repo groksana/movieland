@@ -4,6 +4,7 @@ import com.gromoks.movieland.dao.entity.CachedMovieRating;
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.entity.Rating;
 
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -20,4 +21,8 @@ public interface MovieDao {
     void addMovieRatings(ConcurrentLinkedQueue<Rating> ratings);
 
     List<CachedMovieRating> getMovieRating();
+
+    void addMovie(Movie movie) throws SQLException;
+
+    void editMovie(Movie movie) throws SQLException;
 }

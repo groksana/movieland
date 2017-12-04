@@ -7,11 +7,15 @@ import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 
 @Configuration
+@EnableTransactionManagement
 @Import({QueryConfig.class, CacheConfig.class})
 @ComponentScan(basePackages = {"com.gromoks.movieland.dao"})
 @PropertySource("classpath:database.properties")
@@ -56,4 +60,12 @@ public class JdbcConfig {
     public static PropertySourcesPlaceholderConfigurer propertyConfig() {
         return new PropertySourcesPlaceholderConfigurer();
     }
+
+    @Bean
+    public PlatformTransactionManager transactionManager() throws IOException {
+        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
+        transactionManager.setDataSource(dataSource());
+        return transactionManager;
+    }
+
 }

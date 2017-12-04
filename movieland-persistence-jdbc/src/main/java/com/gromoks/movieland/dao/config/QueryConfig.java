@@ -86,5 +86,41 @@ public class QueryConfig {
         return "SELECT movieId, ROUND(SUM(rating),1) rateSum, count(*) voteCount\n" +
                 " FROM rating GROUP BY movieId;";
     }
+
+    @Bean
+    public String addMovieSQL() {
+        return "INSERT INTO movie(nameRussian, nameNative, yearOfRelease, description, rating, price, picturePath)" +
+                " VALUES(:nameRussian, :nameNative, :yearOfRelease, :description, :rating, :price, :picturePath);";
+    }
+
+    @Bean
+    public String addMovieToCountrySQL() {
+        return "INSERT INTO movie2country(movieId, countryId)" +
+                " VALUES(:movieId, :countryId);";
+    }
+
+    @Bean
+    public String addMovieToGenreSQL() {
+        return "INSERT INTO movie2genre(movieId, genreId)" +
+                " VALUES(:movieId, :genreId);";
+    }
+
+    @Bean
+    public String updateMovieSQL() {
+        return "UPDATE movie SET nameRussian = :nameRussian, " +
+                " nameNative = :nameNative, " +
+                " picturePath = :picturePath " +
+                "WHERE id = :id;";
+    }
+
+    @Bean
+    public String deleteMovieToCountrySQL() {
+        return "DELETE FROM movie2country WHERE movieId = :movieId;";
+    }
+
+    @Bean
+    public String deleteMovieToGenreSQL() {
+        return "DELETE FROM movie2genre WHERE movieId = :movieId;";
+    }
 }
 

@@ -3,8 +3,10 @@ package com.gromoks.movieland.web.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gromoks.movieland.entity.Genre;
+import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.entity.Rating;
 import com.gromoks.movieland.entity.Review;
+import com.gromoks.movieland.web.entity.MoviePostDto;
 import com.gromoks.movieland.web.entity.MovieViews;
 import com.gromoks.movieland.web.entity.UserTokenViews;
 import org.slf4j.Logger;
@@ -18,15 +20,15 @@ public class JsonJacksonConverter {
 
     final static Logger log = LoggerFactory.getLogger(JsonJacksonConverter.class);
 
-    public static <K>String toJsonNormalMovie(K dtoMovies) {
-       return toJson(dtoMovies, MovieViews.Normal.class);
+    public static <K> String toJsonNormalMovie(K dtoMovies) {
+        return toJson(dtoMovies, MovieViews.Normal.class);
     }
 
-    public static <K>String toJsonExtendedMovie(K dtoMovies) {
+    public static <K> String toJsonExtendedMovie(K dtoMovies) {
         return toJson(dtoMovies, MovieViews.Extended.class);
     }
 
-    public static <K>String toJsonFullMovie(K dtoMovies) {
+    public static <K> String toJsonFullMovie(K dtoMovies) {
         return toJson(dtoMovies, MovieViews.Full.class);
     }
 
@@ -34,7 +36,7 @@ public class JsonJacksonConverter {
         return toJson(genres);
     }
 
-    public static <K>String toJsonNormalUserToken(K dtoUserToken) {
+    public static <K> String toJsonNormalUserToken(K dtoUserToken) {
         return toJson(dtoUserToken, UserTokenViews.Normal.class);
     }
 
@@ -42,16 +44,18 @@ public class JsonJacksonConverter {
         return toJson(review);
     }
 
-    public static String toJsonRating(Rating rating) { return toJson(rating); }
+    public static String toJsonRating(Rating rating) {
+        return toJson(rating);
+    }
 
     public static Review parseReview(String json) {
         log.info("Start parsing review from json {}", json);
         long startTime = System.currentTimeMillis();
 
-        Review review = parseValue(json,Review.class);
+        Review review = parseValue(json, Review.class);
 
         long time = System.currentTimeMillis() - startTime;
-        log.info("Review {} is received. It took {} ms", review, time);
+        log.info("Review {} is received. It tooks {} ms", review, time);
 
         return review;
     }
@@ -60,37 +64,49 @@ public class JsonJacksonConverter {
         log.info("Start parsing rating from json {}", json);
         long startTime = System.currentTimeMillis();
 
-        Rating rating = parseValue(json,Rating.class);
+        Rating rating = parseValue(json, Rating.class);
 
         long time = System.currentTimeMillis() - startTime;
-        log.info("Review {} is received. It took {} ms", rating, time);
+        log.info("Rating {} is received. It tooks {} ms", rating, time);
 
         return rating;
     }
 
+    public static MoviePostDto parseMovie(String json) {
+        log.info("Start parsing movie json {}", json);
+        long startTime = System.currentTimeMillis();
+
+        MoviePostDto movie = parseValue(json, MoviePostDto.class);
+
+        long time = System.currentTimeMillis() - startTime;
+        log.info("Movie {} is received. It tooks {} ms", movie, time);
+
+        return movie;
+    }
+
     private static <T> T parseValue(String json, Class<T> clazz) {
         try {
-            return objectMapper.readValue(json,clazz);
+            return objectMapper.readValue(json, clazz);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static <T,K>String toJson(K list, Class<T> clazz){
+    private static <T, K> String toJson(K list, Class<T> clazz) {
         try {
             return objectMapper.writerWithView(clazz).writeValueAsString(list);
         } catch (JsonProcessingException e) {
             log.error("Error in Json convert based on view", e);
-            throw new RuntimeException("Error in Json convert based on view",e);
+            throw new RuntimeException("Error in Json convert based on view", e);
         }
     }
 
-    private static <K>String toJson(K list){
+    private static <K> String toJson(K list) {
         try {
             return objectMapper.writeValueAsString(list);
         } catch (JsonProcessingException e) {
             log.error("Error in Json converter", e);
-            throw new RuntimeException("Error in Json convert",e);
+            throw new RuntimeException("Error in Json convert", e);
         }
     }
 }
