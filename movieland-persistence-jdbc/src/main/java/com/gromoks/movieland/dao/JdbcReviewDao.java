@@ -1,4 +1,4 @@
-package com.gromoks.movieland.dao.jdbc;
+package com.gromoks.movieland.dao;
 
 import com.gromoks.movieland.entity.Review;
 import org.slf4j.Logger;

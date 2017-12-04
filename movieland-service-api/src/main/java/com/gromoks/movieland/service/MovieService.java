@@ -20,7 +20,7 @@ public interface MovieService {
 
     void enrichMovieWithRating(Movie movie);
 
-    void addMovie(Movie movie) throws SQLException;
+    void add(Movie movie);
 
-    void editMovie(Movie movie) throws SQLException;
+    void edit(Movie movie);
 }

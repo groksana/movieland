@@ -1,17 +1,15 @@
 package com.gromoks.movieland.dao.jdbc;
 
+import com.gromoks.movieland.dao.MovieDao;
 import com.gromoks.movieland.dao.config.JdbcConfig;
 import com.gromoks.movieland.entity.Country;
 import com.gromoks.movieland.entity.Genre;
 import com.gromoks.movieland.entity.Movie;
-import com.gromoks.movieland.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -113,7 +111,7 @@ public class JdbcMovieDaoITest {
     }
 
     @Test
-    public void testAddMovie() throws SQLException {
+    public void testAddMovie() {
         Movie movie = new Movie();
 
         movie.setNameNative("testMovie");
@@ -135,7 +133,7 @@ public class JdbcMovieDaoITest {
         genres.add(genre);
         movie.setGenres(genres);
 
-        movieDao.addMovie(movie);
+        movieDao.add(movie);
 
         String getTestDataSql = "SELECT id FROM movie WHERE nameNative = :nameNative";
         MapSqlParameterSource parameterSourceGetTest = new MapSqlParameterSource();

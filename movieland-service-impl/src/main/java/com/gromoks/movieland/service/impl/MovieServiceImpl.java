@@ -1,6 +1,6 @@
 package com.gromoks.movieland.service.impl;
 
-import com.gromoks.movieland.dao.jdbc.MovieDao;
+import com.gromoks.movieland.dao.MovieDao;
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.entity.Rating;
 import com.gromoks.movieland.service.cache.MovieCache;
@@ -8,7 +8,6 @@ import com.gromoks.movieland.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -80,13 +79,13 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public void addMovie(Movie movie) throws SQLException {
-        movieDao.addMovie(movie);
+    public void add(Movie movie) {
+        movieDao.add(movie);
     }
 
     @Override
-    public void editMovie(Movie movie) throws SQLException {
-        movieDao.editMovie(movie);
+    public void edit(Movie movie) {
+        movieDao.edit(movie);
     }
 }
 

@@ -1,5 +1,6 @@
 package com.gromoks.movieland.dao.jdbc;
 
+import com.gromoks.movieland.dao.UserDao;
 import com.gromoks.movieland.dao.config.JdbcConfig;
 import com.gromoks.movieland.entity.User;
 import org.junit.Test;

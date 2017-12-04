@@ -1,7 +1,7 @@
 package com.gromoks.movieland.service.impl.cache;
 
 import com.gromoks.movieland.dao.entity.CachedMovieRating;
-import com.gromoks.movieland.dao.jdbc.MovieDao;
+import com.gromoks.movieland.dao.MovieDao;
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.entity.Rating;
 import com.gromoks.movieland.service.cache.MovieCache;
@@ -26,7 +26,7 @@ public class MovieCacheImpl implements MovieCache {
 
     private final Map<Integer, CachedMovieRating> cachedMovieRatingMap = new ConcurrentHashMap<>();
 
-    private final ConcurrentLinkedQueue<Rating> cachedUserRatingQueue = new ConcurrentLinkedQueue<>();
+    private volatile ConcurrentLinkedQueue<Rating> cachedUserRatingQueue = new ConcurrentLinkedQueue<>();
 
     @Autowired
     private MovieDao movieDao;
@@ -56,8 +56,9 @@ public class MovieCacheImpl implements MovieCache {
 
     @Scheduled(fixedRateString = "${cache.fixedRate.rating}", initialDelayString = "${cache.fixedRate.rating}")
     private void loadUserMovieRatingToDb() {
-        movieDao.addMovieRatings(cachedUserRatingQueue);
-        cachedUserRatingQueue.clear();
+        ConcurrentLinkedQueue<Rating> copyCachedUserRatingQueue = cachedUserRatingQueue;
+        cachedUserRatingQueue = new ConcurrentLinkedQueue<>();
+        movieDao.addMovieRatings(copyCachedUserRatingQueue);
     }
 
     @PostConstruct

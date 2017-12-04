@@ -44,10 +44,6 @@ public class JsonJacksonConverter {
         return toJson(review);
     }
 
-    public static String toJsonRating(Rating rating) {
-        return toJson(rating);
-    }
-
     public static Review parseReview(String json) {
         log.info("Start parsing review from json {}", json);
         long startTime = System.currentTimeMillis();
@@ -58,30 +54,6 @@ public class JsonJacksonConverter {
         log.info("Review {} is received. It tooks {} ms", review, time);
 
         return review;
-    }
-
-    public static Rating parseRating(String json) {
-        log.info("Start parsing rating from json {}", json);
-        long startTime = System.currentTimeMillis();
-
-        Rating rating = parseValue(json, Rating.class);
-
-        long time = System.currentTimeMillis() - startTime;
-        log.info("Rating {} is received. It tooks {} ms", rating, time);
-
-        return rating;
-    }
-
-    public static MoviePostDto parseMovie(String json) {
-        log.info("Start parsing movie json {}", json);
-        long startTime = System.currentTimeMillis();
-
-        MoviePostDto movie = parseValue(json, MoviePostDto.class);
-
-        long time = System.currentTimeMillis() - startTime;
-        log.info("Movie {} is received. It tooks {} ms", movie, time);
-
-        return movie;
     }
 
     private static <T> T parseValue(String json, Class<T> clazz) {

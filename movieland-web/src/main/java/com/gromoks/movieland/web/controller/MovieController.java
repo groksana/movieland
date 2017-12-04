@@ -9,8 +9,6 @@ import com.gromoks.movieland.service.entity.UserRole;
 import com.gromoks.movieland.service.security.AuthenticationService;
 import com.gromoks.movieland.web.entity.*;
 import com.gromoks.movieland.web.security.Protected;
-import com.gromoks.movieland.web.util.DtoConverter;
-import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,16 +18,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.gromoks.movieland.web.util.DtoConverter.*;
 import static com.gromoks.movieland.web.util.JsonJacksonConverter.*;
-import static com.gromoks.movieland.web.util.JsonJacksonConverter.parseMovie;
-import static com.gromoks.movieland.web.util.JsonJacksonConverter.parseRating;
-
 
 @RestController
 @RequestMapping(value = "/movie", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -101,15 +95,14 @@ public class MovieController {
         return json;
     }
 
-    @RequestMapping(value = "/{movieId}/rate", method = RequestMethod.POST)
+    @RequestMapping(value = "/{movieId}/rate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @Protected(UserRole.USER)
-    public ResponseEntity<?> addMovieRating(@PathVariable int movieId, @RequestBody String json) {
-        log.info("Sending request to add movie rate {}", json);
+    public ResponseEntity<?> addMovieRating(@PathVariable int movieId, @RequestBody Rating rating) {
+        log.info("Sending request to add movie rate");
         long startTime = System.currentTimeMillis();
 
         User user = authenticationService.getAuthenticatedUser();
 
-        Rating rating = parseRating(json);
         rating.setMovieId(movieId);
         rating.setUserId(user.getId());
         movieService.addMovieRating(rating);
@@ -120,28 +113,26 @@ public class MovieController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @Protected(UserRole.ADMIN)
-    public ResponseEntity<?> addMovie(@RequestBody String json) throws SQLException {
+    public ResponseEntity<?> add(@RequestBody MoviePostDto moviePostDto) {
         log.info("Sending request to add movie");
         long startTime = System.currentTimeMillis();
 
-        MoviePostDto moviePostDto = parseMovie(json);
         Movie movie = parseMoviePostDto(moviePostDto);
-        movieService.addMovie(movie);
+        movieService.add(movie);
 
         log.info("Movie has been added. It tooks {} ms", System.currentTimeMillis() - startTime);
-        return new ResponseEntity<Object>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @Protected(UserRole.ADMIN)
-    public ResponseEntity<?> editMovie(@PathVariable int id, @RequestBody String json) throws SQLException {
+    public ResponseEntity<?> edit(@PathVariable int id, @RequestBody MoviePostDto moviePostDto) {
         log.info("Sending request to update movie");
         long startTime = System.currentTimeMillis();
 
-        MoviePostDto moviePostDto = parseMovie(json);
         Movie movie = parseMoviePostDto(moviePostDto);
         movie.setId(id);
-        movieService.editMovie(movie);
+        movieService.edit(movie);
 
         log.info("Movie has been updated. It tooks {} ms", System.currentTimeMillis() - startTime);
         return new ResponseEntity<Object>(HttpStatus.OK);

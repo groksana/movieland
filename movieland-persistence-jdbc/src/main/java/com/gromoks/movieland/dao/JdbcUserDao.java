@@ -1,6 +1,6 @@
-package com.gromoks.movieland.dao.jdbc;
+package com.gromoks.movieland.dao;
 
-import com.gromoks.movieland.dao.jdbc.mapper.UserRowMapper;
+import com.gromoks.movieland.dao.mapper.UserRowMapper;
 import com.gromoks.movieland.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

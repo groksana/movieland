@@ -37,10 +37,10 @@ public class GlobalControllerExceptionHandler {
         return getExceptionDto(HttpStatus.UNAUTHORIZED,e);
     }
 
-    @ExceptionHandler(SQLException.class)
+    @ExceptionHandler(RuntimeException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionDto handleException(SQLException e) {
+    public ExceptionDto handleException(RuntimeException e) {
         return getExceptionDto(HttpStatus.BAD_REQUEST,e);
     }
 

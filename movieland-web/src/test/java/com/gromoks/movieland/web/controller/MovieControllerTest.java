@@ -368,7 +368,8 @@ public class MovieControllerTest {
         String json = "{\"rating\":6}";
         String uuid = "12345";
 
-        Rating rating = JsonJacksonConverter.parseRating(json);
+        Rating rating = new Rating();
+        rating.setRating(6.0);
         rating.setMovieId(1);
         rating.setUserId(1);
         Review addedReview = new Review();
@@ -383,7 +384,8 @@ public class MovieControllerTest {
         mockMvc.perform(post("/movie/1/rate")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("uuid", uuid)
-                .content(json))
+                .content(json)
+                )
                 .andExpect(status().isOk());
 
 
@@ -398,10 +400,14 @@ public class MovieControllerTest {
                 "\"genres\":[1,2,3]}";
         String uuid = "12345";
 
-        MoviePostDto moviePostDto = JsonJacksonConverter.parseMovie(json);
+        MoviePostDto moviePostDto = new MoviePostDto();
+        moviePostDto.setNameRussian("Побег из Шоушенка");
+        moviePostDto.setNameNative("The Shawshank Redemption");
+        moviePostDto.setCountries(new Integer[] {1, 2});
+        moviePostDto.setGenres(new Integer[] {1, 2, 3});
         Movie movie = DtoConverter.parseMoviePostDto(moviePostDto);
 
-        doNothing().when(mockMovieService).addMovie(movie);
+        doNothing().when(mockMovieService).add(movie);
 
         mockMvc.perform(post("/movie")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -419,11 +425,15 @@ public class MovieControllerTest {
                 "\"genres\":[1,2,3]}";
         String uuid = "12345";
 
-        MoviePostDto moviePostDto = JsonJacksonConverter.parseMovie(json);
+        MoviePostDto moviePostDto = new MoviePostDto();
+        moviePostDto.setNameRussian("Побег из Шоушенка");
+        moviePostDto.setNameNative("The Shawshank Redemption");
+        moviePostDto.setCountries(new Integer[] {1, 2});
+        moviePostDto.setGenres(new Integer[] {1, 2, 3});
         Movie movie = DtoConverter.parseMoviePostDto(moviePostDto);
         movie.setId(1);
 
-        doNothing().when(mockMovieService).editMovie(movie);
+        doNothing().when(mockMovieService).edit(movie);
 
         mockMvc.perform(put("/movie/1")
                 .contentType(MediaType.APPLICATION_JSON)

@@ -1,4 +1,4 @@
-package com.gromoks.movieland.dao.jdbc;
+package com.gromoks.movieland.dao;
 
 import com.gromoks.movieland.dao.entity.CachedMovieRating;
 import com.gromoks.movieland.entity.Movie;
@@ -22,7 +22,7 @@ public interface MovieDao {
 
     List<CachedMovieRating> getMovieRating();
 
-    void addMovie(Movie movie) throws SQLException;
+    void add(Movie movie);
 
-    void editMovie(Movie movie) throws SQLException;
+    void edit(Movie movie);
 }

@@ -1,4 +1,4 @@
-package com.gromoks.movieland.dao.jdbc.sqlbuilder;
+package com.gromoks.movieland.dao.sqlbuilder;
 
 import java.util.HashMap;
 import java.util.Map;

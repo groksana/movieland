@@ -1,6 +1,6 @@
 package com.gromoks.movieland.dao.cache;
 
-import com.gromoks.movieland.dao.jdbc.GenreDao;
+import com.gromoks.movieland.dao.GenreDao;
 import com.gromoks.movieland.entity.Genre;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

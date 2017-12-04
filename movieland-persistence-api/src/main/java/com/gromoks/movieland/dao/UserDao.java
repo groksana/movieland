@@ -1,4 +1,4 @@
-package com.gromoks.movieland.dao.jdbc;
+package com.gromoks.movieland.dao;
 
 import com.gromoks.movieland.entity.User;
 

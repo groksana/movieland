@@ -1,4 +1,4 @@
-package com.gromoks.movieland.dao.jdbc.mapper;
+package com.gromoks.movieland.dao.mapper;
 
 import com.gromoks.movieland.dao.entity.MovieToGenre;
 import org.springframework.jdbc.core.RowMapper;

@@ -1,5 +1,6 @@
 package com.gromoks.movieland.dao.jdbc;
 
+import com.gromoks.movieland.dao.GenreDao;
 import com.gromoks.movieland.dao.config.JdbcConfig;
 import com.gromoks.movieland.entity.Genre;
 import org.junit.Test;

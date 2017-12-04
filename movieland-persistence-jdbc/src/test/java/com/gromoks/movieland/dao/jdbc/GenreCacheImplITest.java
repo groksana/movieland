@@ -1,5 +1,6 @@
 package com.gromoks.movieland.dao.jdbc;
 
+import com.gromoks.movieland.dao.JdbcGenreDao;
 import com.gromoks.movieland.dao.cache.GenericCache;
 import com.gromoks.movieland.entity.Genre;
 import org.junit.Before;
