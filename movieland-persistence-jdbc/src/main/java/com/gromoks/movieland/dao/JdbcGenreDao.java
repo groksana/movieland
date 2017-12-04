@@ -1,6 +1,6 @@
-package com.gromoks.movieland.dao.jdbc;
+package com.gromoks.movieland.dao;
 
-import com.gromoks.movieland.dao.jdbc.mapper.GenreRowMapper;
+import com.gromoks.movieland.dao.mapper.GenreRowMapper;
 import com.gromoks.movieland.entity.Genre;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

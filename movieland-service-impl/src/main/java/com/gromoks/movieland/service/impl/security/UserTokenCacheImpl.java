@@ -1,6 +1,6 @@
 package com.gromoks.movieland.service.impl.security;
 
-import com.gromoks.movieland.dao.jdbc.UserDao;
+import com.gromoks.movieland.dao.UserDao;
 import com.gromoks.movieland.service.security.UserTokenCache;
 import com.gromoks.movieland.service.entity.UserToken;
 import org.springframework.beans.factory.annotation.Autowired;

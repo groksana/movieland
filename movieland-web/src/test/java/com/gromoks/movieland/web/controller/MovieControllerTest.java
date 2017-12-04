@@ -5,7 +5,9 @@ import com.gromoks.movieland.entity.*;
 import com.gromoks.movieland.service.CurrencyService;
 import com.gromoks.movieland.service.MovieService;
 import com.gromoks.movieland.service.security.AuthenticationService;
+import com.gromoks.movieland.web.entity.MoviePostDto;
 import com.gromoks.movieland.web.handler.GlobalControllerExceptionHandler;
+import com.gromoks.movieland.web.util.DtoConverter;
 import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -365,7 +368,8 @@ public class MovieControllerTest {
         String json = "{\"rating\":6}";
         String uuid = "12345";
 
-        Rating rating = JsonJacksonConverter.parseRating(json);
+        Rating rating = new Rating();
+        rating.setRating(6.0);
         rating.setMovieId(1);
         rating.setUserId(1);
         Review addedReview = new Review();
@@ -380,10 +384,62 @@ public class MovieControllerTest {
         mockMvc.perform(post("/movie/1/rate")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("uuid", uuid)
-                .content(json))
+                .content(json)
+                )
                 .andExpect(status().isOk());
 
 
+    }
+
+    @Test
+    public void testAddMovie() throws Exception {
+
+        String json = "{\"nameRussian\":\"Побег из Шоушенка\"," +
+                "\"nameNative\":\"The Shawshank Redemption\"," +
+                "\"countries\":[1,2]," +
+                "\"genres\":[1,2,3]}";
+        String uuid = "12345";
+
+        MoviePostDto moviePostDto = new MoviePostDto();
+        moviePostDto.setNameRussian("Побег из Шоушенка");
+        moviePostDto.setNameNative("The Shawshank Redemption");
+        moviePostDto.setCountries(new Integer[] {1, 2});
+        moviePostDto.setGenres(new Integer[] {1, 2, 3});
+        Movie movie = DtoConverter.parseMoviePostDto(moviePostDto);
+
+        doNothing().when(mockMovieService).add(movie);
+
+        mockMvc.perform(post("/movie")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("uuid",uuid)
+                .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testEditMovie() throws Exception {
+
+        String json = "{\"nameRussian\":\"Побег из Шоушенка\"," +
+                "\"nameNative\":\"The Shawshank Redemption\"," +
+                "\"countries\":[1,2]," +
+                "\"genres\":[1,2,3]}";
+        String uuid = "12345";
+
+        MoviePostDto moviePostDto = new MoviePostDto();
+        moviePostDto.setNameRussian("Побег из Шоушенка");
+        moviePostDto.setNameNative("The Shawshank Redemption");
+        moviePostDto.setCountries(new Integer[] {1, 2});
+        moviePostDto.setGenres(new Integer[] {1, 2, 3});
+        Movie movie = DtoConverter.parseMoviePostDto(moviePostDto);
+        movie.setId(1);
+
+        doNothing().when(mockMovieService).edit(movie);
+
+        mockMvc.perform(put("/movie/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("uuid",uuid)
+                .content(json))
+                .andExpect(status().isOk());
     }
 
 }

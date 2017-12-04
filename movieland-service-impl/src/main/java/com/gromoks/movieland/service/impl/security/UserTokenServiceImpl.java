@@ -1,6 +1,6 @@
 package com.gromoks.movieland.service.impl.security;
 
-import com.gromoks.movieland.dao.jdbc.UserDao;
+import com.gromoks.movieland.dao.UserDao;
 import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.security.UserTokenCache;
 import com.gromoks.movieland.service.security.UserTokenService;

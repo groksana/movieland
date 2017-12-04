@@ -1,5 +1,6 @@
 package com.gromoks.movieland.dao.jdbc.sqlbuilder;
 
+import com.gromoks.movieland.dao.sqlbuilder.QueryBuilder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

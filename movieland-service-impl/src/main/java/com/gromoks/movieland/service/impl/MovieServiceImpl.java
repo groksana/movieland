@@ -1,6 +1,6 @@
 package com.gromoks.movieland.service.impl;
 
-import com.gromoks.movieland.dao.jdbc.MovieDao;
+import com.gromoks.movieland.dao.MovieDao;
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.entity.Rating;
 import com.gromoks.movieland.service.cache.MovieCache;
@@ -76,6 +76,16 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public void enrichMovieWithRating(Movie movie) {
         movieCache.enrichMovieWithRating(movie);
+    }
+
+    @Override
+    public void add(Movie movie) {
+        movieDao.add(movie);
+    }
+
+    @Override
+    public void edit(Movie movie) {
+        movieDao.edit(movie);
     }
 }
 

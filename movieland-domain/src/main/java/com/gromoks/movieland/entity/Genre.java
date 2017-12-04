@@ -6,6 +6,10 @@ public class Genre {
 
     public Genre() {}
 
+    public Genre(int id) {
+        this.id = id;
+    }
+
     public Genre(int id, String name) {
         this.id = id;
         this.name = name;

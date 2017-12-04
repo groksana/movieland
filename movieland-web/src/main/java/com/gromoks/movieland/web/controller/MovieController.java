@@ -9,8 +9,6 @@ import com.gromoks.movieland.service.entity.UserRole;
 import com.gromoks.movieland.service.security.AuthenticationService;
 import com.gromoks.movieland.web.entity.*;
 import com.gromoks.movieland.web.security.Protected;
-import com.gromoks.movieland.web.util.DtoConverter;
-import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,8 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.gromoks.movieland.web.util.JsonJacksonConverter.parseRating;
-
+import static com.gromoks.movieland.web.util.DtoConverter.*;
+import static com.gromoks.movieland.web.util.JsonJacksonConverter.*;
 
 @RestController
 @RequestMapping(value = "/movie", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -49,8 +47,8 @@ public class MovieController {
 
         validateMovieRequest(requestParamMap);
         List<Movie> movies = movieService.getAll(requestParamMap);
-        List<MovieDto> dtoMovies = DtoConverter.toMovieDtoList(movies);
-        String json = JsonJacksonConverter.toJsonNormalMovie(dtoMovies);
+        List<MovieDto> dtoMovies = toMovieDtoList(movies);
+        String json = toJsonNormalMovie(dtoMovies);
 
         log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
         return json;
@@ -62,8 +60,8 @@ public class MovieController {
         long startTime = System.currentTimeMillis();
 
         List<Movie> movies = movieService.getRandom();
-        List<MovieDto> dtoMovies = DtoConverter.toMovieDtoList(movies);
-        String json = JsonJacksonConverter.toJsonExtendedMovie(dtoMovies);
+        List<MovieDto> dtoMovies = toMovieDtoList(movies);
+        String json = toJsonExtendedMovie(dtoMovies);
 
         log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
         return json;
@@ -76,8 +74,8 @@ public class MovieController {
 
         validateMovieRequest(requestParamMap);
         List<Movie> movies = movieService.getByGenreId(genreId, requestParamMap);
-        List<MovieDto> dtoMovies = DtoConverter.toMovieDtoList(movies);
-        String json = JsonJacksonConverter.toJsonNormalMovie(dtoMovies);
+        List<MovieDto> dtoMovies = toMovieDtoList(movies);
+        String json = toJsonNormalMovie(dtoMovies);
 
         log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
         return json;
@@ -90,28 +88,54 @@ public class MovieController {
 
         Movie movie = movieService.getById(movieId);
         currencyService.convertPriceInMovie(movie, currency);
-        MovieDto dtoMovie = DtoConverter.toMovieDto(movie);
-        String json = JsonJacksonConverter.toJsonFullMovie(dtoMovie);
+        MovieDto dtoMovie = toMovieDto(movie);
+        String json = toJsonFullMovie(dtoMovie);
 
         log.info("Movies are received. It tooks {} ms", System.currentTimeMillis() - startTime);
         return json;
     }
 
-    @RequestMapping(value = "/{movieId}/rate", method = RequestMethod.POST)
+    @RequestMapping(value = "/{movieId}/rate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @Protected(UserRole.USER)
-    public ResponseEntity<?> addMovieRating(@PathVariable int movieId, @RequestBody String json) {
-        log.info("Sending request to modify movie rate {}", json);
+    public ResponseEntity<?> addMovieRating(@PathVariable int movieId, @RequestBody Rating rating) {
+        log.info("Sending request to add movie rate");
         long startTime = System.currentTimeMillis();
 
         User user = authenticationService.getAuthenticatedUser();
 
-        Rating rating = parseRating(json);
         rating.setMovieId(movieId);
         rating.setUserId(user.getId());
         movieService.addMovieRating(rating);
 
-        log.info("Rating has been modified. It tooks {} ms", System.currentTimeMillis() - startTime);
+        log.info("Rating has been added. It tooks {} ms", System.currentTimeMillis() - startTime);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Protected(UserRole.ADMIN)
+    public ResponseEntity<?> add(@RequestBody MoviePostDto moviePostDto) {
+        log.info("Sending request to add movie");
+        long startTime = System.currentTimeMillis();
+
+        Movie movie = parseMoviePostDto(moviePostDto);
+        movieService.add(movie);
+
+        log.info("Movie has been added. It tooks {} ms", System.currentTimeMillis() - startTime);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Protected(UserRole.ADMIN)
+    public ResponseEntity<?> edit(@PathVariable int id, @RequestBody MoviePostDto moviePostDto) {
+        log.info("Sending request to update movie");
+        long startTime = System.currentTimeMillis();
+
+        Movie movie = parseMoviePostDto(moviePostDto);
+        movie.setId(id);
+        movieService.edit(movie);
+
+        log.info("Movie has been updated. It tooks {} ms", System.currentTimeMillis() - startTime);
+        return new ResponseEntity<Object>(HttpStatus.OK);
     }
 
     private void validateMovieRequest(LinkedHashMap<String, String> requestParamMap) {
