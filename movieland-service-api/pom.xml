@@ -18,6 +18,11 @@
             <artifactId>movieland-domain</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.gromoks</groupId>
+            <artifactId>movieland-persistence-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 

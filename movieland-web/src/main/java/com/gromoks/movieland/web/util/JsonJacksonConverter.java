@@ -3,6 +3,7 @@ package com.gromoks.movieland.web.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gromoks.movieland.entity.Genre;
+import com.gromoks.movieland.entity.Rating;
 import com.gromoks.movieland.entity.Review;
 import com.gromoks.movieland.web.entity.MovieViews;
 import com.gromoks.movieland.web.entity.UserTokenViews;
@@ -41,13 +42,30 @@ public class JsonJacksonConverter {
         return toJson(review);
     }
 
+    public static String toJsonRating(Rating rating) { return toJson(rating); }
+
     public static Review parseReview(String json) {
         log.info("Start parsing review from json {}", json);
         long startTime = System.currentTimeMillis();
+
         Review review = parseValue(json,Review.class);
+
         long time = System.currentTimeMillis() - startTime;
         log.info("Review {} is received. It took {} ms", review, time);
+
         return review;
+    }
+
+    public static Rating parseRating(String json) {
+        log.info("Start parsing rating from json {}", json);
+        long startTime = System.currentTimeMillis();
+
+        Rating rating = parseValue(json,Rating.class);
+
+        long time = System.currentTimeMillis() - startTime;
+        log.info("Review {} is received. It took {} ms", rating, time);
+
+        return rating;
     }
 
     private static <T> T parseValue(String json, Class<T> clazz) {

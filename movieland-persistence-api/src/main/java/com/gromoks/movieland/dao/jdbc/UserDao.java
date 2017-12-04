@@ -6,4 +6,5 @@ import javax.naming.AuthenticationException;
 
 public interface UserDao {
     User getUserByEmailAndPassword(String email, String password) throws AuthenticationException;
+
 }

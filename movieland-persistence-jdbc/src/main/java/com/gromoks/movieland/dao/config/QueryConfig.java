@@ -9,7 +9,7 @@ public class QueryConfig {
     @Bean
     public String getAllMovieSQL() {
         return "SELECT m.id, m.nameRussian, m.nameNative, m.yearOfRelease, m.description,\n" +
-                "                                       m.rating, m.price, m.picturePath\n" +
+                "                                       m.price, m.picturePath\n" +
                 "        FROM movie m";
     }
 
@@ -37,7 +37,7 @@ public class QueryConfig {
     @Bean
     public String getRandomMovieSQL() {
         return " SELECT m.id, m.nameRussian, m.nameNative, m.yearOfRelease, m.description," +
-        " m.rating, m.price, m.picturePath" +
+        " m.price, m.picturePath" +
         " FROM movie m" +
         " ORDER BY RAND() LIMIT 3;";
     }
@@ -51,7 +51,7 @@ public class QueryConfig {
     @Bean
     public String getMoviesByGenreIdSQL() {
         return " SELECT m.id, m.nameRussian, m.nameNative, m.yearOfRelease, m.description," +
-        " m.rating, m.price, m.picturePath" +
+        " m.price, m.picturePath" +
         " FROM movie m, movie2genre mg" +
         " WHERE m.id = mg.movieId and mg.genreId = ?";
     }
@@ -59,7 +59,7 @@ public class QueryConfig {
     @Bean
     public String getMoviesByIdSQL() {
         return " SELECT m.id, m.nameRussian, m.nameNative, m.yearOfRelease, m.description," +
-                " m.rating, m.price, m.picturePath" +
+                " m.price, m.picturePath" +
                 " FROM movie m" +
                 " WHERE m.id = ?";
     }
@@ -74,6 +74,17 @@ public class QueryConfig {
     @Bean
     public String addReviewSQL() {
         return "INSERT INTO REVIEW(movieId, userId, text) VALUES(:movieId, :userId, :text)";
+    }
+
+    @Bean
+    public String addUserRatingSQL() {
+        return "INSERT INTO RATING(movieId, userId, rating) VALUES(:movieId, :userId, :rating)";
+    }
+
+    @Bean
+    public String getMovieRatingSQL() {
+        return "SELECT movieId, ROUND(SUM(rating),1) rateSum, count(*) voteCount\n" +
+                " FROM rating GROUP BY movieId;";
     }
 }
 

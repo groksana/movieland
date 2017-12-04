@@ -4,12 +4,15 @@ package com.gromoks.movieland.web.controller;
 import com.gromoks.movieland.entity.*;
 import com.gromoks.movieland.service.CurrencyService;
 import com.gromoks.movieland.service.MovieService;
+import com.gromoks.movieland.service.security.AuthenticationService;
 import com.gromoks.movieland.web.handler.GlobalControllerExceptionHandler;
+import com.gromoks.movieland.web.util.JsonJacksonConverter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -21,6 +24,7 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,6 +36,9 @@ public class MovieControllerTest {
 
     @Mock
     private CurrencyService mockCurrencyService;
+
+    @Mock
+    private AuthenticationService mockAuthenticationService;
 
     @InjectMocks
     private MovieController movieController;
@@ -59,16 +66,16 @@ public class MovieControllerTest {
         movie1.setPrice(1000000.5);
         movie1.setPicturePath("https");
         List<Country> countries = new ArrayList<>();
-        countries.add(new Country(1,"США"));
-        countries.add(new Country(2,"Украина"));
+        countries.add(new Country(1, "США"));
+        countries.add(new Country(2, "Украина"));
         movie1.setCountries(countries);
         List<Genre> genres = new ArrayList<>();
-        genres.add(new Genre(1,"детектив"));
-        genres.add(new Genre(2,"драма"));
+        genres.add(new Genre(1, "детектив"));
+        genres.add(new Genre(2, "драма"));
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
+        LinkedHashMap<String, String> requestParamMap = new LinkedHashMap<>();
         when(mockMovieService.getAll(requestParamMap)).thenReturn(movies);
 
         mockMvc.perform(get("/movie"))
@@ -95,17 +102,17 @@ public class MovieControllerTest {
         movie1.setPrice(1000000.5);
         movie1.setPicturePath("https");
         List<Country> countries = new ArrayList<>();
-        countries.add(new Country(1,"США"));
-        countries.add(new Country(2,"Украина"));
+        countries.add(new Country(1, "США"));
+        countries.add(new Country(2, "Украина"));
         movie1.setCountries(countries);
         List<Genre> genres = new ArrayList<>();
-        genres.add(new Genre(1,"детектив"));
-        genres.add(new Genre(2,"драма"));
+        genres.add(new Genre(1, "детектив"));
+        genres.add(new Genre(2, "драма"));
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
-        requestParamMap.put("price","asc");
+        LinkedHashMap<String, String> requestParamMap = new LinkedHashMap<>();
+        requestParamMap.put("price", "asc");
         when(mockMovieService.getAll(requestParamMap)).thenReturn(movies);
 
         MvcResult mvcResult = mockMvc.perform(get("/movie?price=asc"))
@@ -126,17 +133,17 @@ public class MovieControllerTest {
         movie1.setPrice(1000000.5);
         movie1.setPicturePath("https");
         List<Country> countries = new ArrayList<>();
-        countries.add(new Country(1,"США"));
-        countries.add(new Country(2,"Украина"));
+        countries.add(new Country(1, "США"));
+        countries.add(new Country(2, "Украина"));
         movie1.setCountries(countries);
         List<Genre> genres = new ArrayList<>();
-        genres.add(new Genre(1,"детектив"));
-        genres.add(new Genre(2,"драма"));
+        genres.add(new Genre(1, "детектив"));
+        genres.add(new Genre(2, "драма"));
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
-        requestParamMap.put("rating","asc");
+        LinkedHashMap<String, String> requestParamMap = new LinkedHashMap<>();
+        requestParamMap.put("rating", "asc");
         when(mockMovieService.getAll(requestParamMap)).thenReturn(movies);
 
         MvcResult mvcResult = mockMvc.perform(get("/movie?rating=asc"))
@@ -157,16 +164,16 @@ public class MovieControllerTest {
         movie1.setPrice(1000000.5);
         movie1.setPicturePath("https");
         List<Country> countries = new ArrayList<>();
-        countries.add(new Country(1,"США"));
-        countries.add(new Country(2,"Украина"));
+        countries.add(new Country(1, "США"));
+        countries.add(new Country(2, "Украина"));
         movie1.setCountries(countries);
         List<Genre> genres = new ArrayList<>();
-        genres.add(new Genre(1,"детектив"));
-        genres.add(new Genre(2,"драма"));
+        genres.add(new Genre(1, "детектив"));
+        genres.add(new Genre(2, "драма"));
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
+        LinkedHashMap<String, String> requestParamMap = new LinkedHashMap<>();
 
         when(mockMovieService.getRandom()).thenReturn(movies);
 
@@ -203,16 +210,16 @@ public class MovieControllerTest {
         movie1.setPrice(1000000.5);
         movie1.setPicturePath("https");
         List<Country> countries = new ArrayList<>();
-        countries.add(new Country(1,"США"));
-        countries.add(new Country(2,"Украина"));
+        countries.add(new Country(1, "США"));
+        countries.add(new Country(2, "Украина"));
         movie1.setCountries(countries);
         List<Genre> genres = new ArrayList<>();
-        genres.add(new Genre(1,"детектив"));
-        genres.add(new Genre(2,"драма"));
+        genres.add(new Genre(1, "детектив"));
+        genres.add(new Genre(2, "драма"));
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
+        LinkedHashMap<String, String> requestParamMap = new LinkedHashMap<>();
 
         when(mockMovieService.getByGenreId(1, requestParamMap)).thenReturn(movies);
 
@@ -240,17 +247,17 @@ public class MovieControllerTest {
         movie1.setPrice(1000000.5);
         movie1.setPicturePath("https");
         List<Country> countries = new ArrayList<>();
-        countries.add(new Country(1,"США"));
-        countries.add(new Country(2,"Украина"));
+        countries.add(new Country(1, "США"));
+        countries.add(new Country(2, "Украина"));
         movie1.setCountries(countries);
         List<Genre> genres = new ArrayList<>();
-        genres.add(new Genre(1,"детектив"));
-        genres.add(new Genre(2,"драма"));
+        genres.add(new Genre(1, "детектив"));
+        genres.add(new Genre(2, "драма"));
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
-        requestParamMap.put("price","asc");
+        LinkedHashMap<String, String> requestParamMap = new LinkedHashMap<>();
+        requestParamMap.put("price", "asc");
 
         when(mockMovieService.getByGenreId(1, requestParamMap)).thenReturn(movies);
 
@@ -278,17 +285,17 @@ public class MovieControllerTest {
         movie1.setPrice(1000000.5);
         movie1.setPicturePath("https");
         List<Country> countries = new ArrayList<>();
-        countries.add(new Country(1,"США"));
-        countries.add(new Country(2,"Украина"));
+        countries.add(new Country(1, "США"));
+        countries.add(new Country(2, "Украина"));
         movie1.setCountries(countries);
         List<Genre> genres = new ArrayList<>();
-        genres.add(new Genre(1,"детектив"));
-        genres.add(new Genre(2,"драма"));
+        genres.add(new Genre(1, "детектив"));
+        genres.add(new Genre(2, "драма"));
         movie1.setGenres(genres);
         movies.add(movie1);
 
-        LinkedHashMap<String,String> requestParamMap = new LinkedHashMap<>();
-        requestParamMap.put("rating","asc");
+        LinkedHashMap<String, String> requestParamMap = new LinkedHashMap<>();
+        requestParamMap.put("rating", "asc");
 
         when(mockMovieService.getByGenreId(1, requestParamMap)).thenReturn(movies);
 
@@ -309,16 +316,16 @@ public class MovieControllerTest {
         movie.setPrice(1000000.5);
         movie.setPicturePath("https");
         List<Country> countries = new ArrayList<>();
-        countries.add(new Country(1,"США"));
-        countries.add(new Country(2,"Украина"));
+        countries.add(new Country(1, "США"));
+        countries.add(new Country(2, "Украина"));
         movie.setCountries(countries);
         List<Genre> genres = new ArrayList<>();
-        genres.add(new Genre(1,"детектив"));
-        genres.add(new Genre(2,"драма"));
+        genres.add(new Genre(1, "детектив"));
+        genres.add(new Genre(2, "драма"));
         movie.setGenres(genres);
         List<Review> reviews = new ArrayList<>();
-        reviews.add(new Review(1,new User(1,"Robin"),"Cool"));
-        reviews.add(new Review(2,new User(2,"Kate"),"The best film"));
+        reviews.add(new Review(1, new User(1, "Robin"), "Cool"));
+        reviews.add(new Review(2, new User(2, "Kate"), "The best film"));
         movie.setReviews(reviews);
 
         when(mockMovieService.getById(1)).thenReturn(movie);
@@ -349,6 +356,34 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$.reviews[1].user.id", is(2)))
                 .andExpect(jsonPath("$.reviews[1].user.nickname", is("Kate")))
                 .andExpect(jsonPath("$.reviews[1].text", is("The best film")));
+    }
+
+    @Test
+    public void testAddMovieRating() throws Exception {
+        User user = new User(1, "TestNickname", "test@email.com", "USER");
+
+        String json = "{\"rating\":6}";
+        String uuid = "12345";
+
+        Rating rating = JsonJacksonConverter.parseRating(json);
+        rating.setMovieId(1);
+        rating.setUserId(1);
+        Review addedReview = new Review();
+        addedReview.setId(1);
+        addedReview.setMovieId(1);
+        addedReview.setUser(new User(1, "TestNickname", "test@email.com", "USER"));
+        addedReview.setText("testText");
+
+        when(mockAuthenticationService.getAuthenticatedUser()).thenReturn(user);
+        doNothing().when(mockMovieService).addMovieRating(rating);
+
+        mockMvc.perform(post("/movie/1/rate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("uuid", uuid)
+                .content(json))
+                .andExpect(status().isOk());
+
+
     }
 
 }

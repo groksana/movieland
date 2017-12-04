@@ -1,7 +1,7 @@
 package com.gromoks.movieland.service.impl.cache;
 
 import com.gromoks.movieland.service.entity.CurrencyRate;
-import com.gromoks.movieland.service.CurrencyCache;
+import com.gromoks.movieland.service.cache.CurrencyCache;
 import com.gromoks.movieland.service.impl.util.JsonCurrencyConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
@@ -11,8 +11,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
