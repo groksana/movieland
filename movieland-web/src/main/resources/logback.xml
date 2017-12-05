@@ -1,18 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-<appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>logs/movieland.log </file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-        <fileNamePattern>logs/archive/movieland-%d{yyyy-MM-dd}.log.%i</fileNamePattern>
-        <maxFileSize>5MB</maxFileSize>
-    </rollingPolicy>
-    <encoder>
-        <pattern>%d %-5level [%thread] %X{requestId} %X{email} %logger{0}: %msg%n</pattern>
-    </encoder>
-</appender>
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/movieland.log </file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/archive/movieland-%d{yyyy-MM-dd}.log.%i</fileNamePattern>
+            <maxFileSize>5MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d %-5level [%thread] %X{requestId} %X{email} %logger{0}: %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+        <smtpHost>smtp.gmail.com</smtpHost>
+        <smtpPort>587</smtpPort>
+        <STARTTLS>true</STARTTLS>
+        <username>groksana@gmail.com</username>
+        <password>xxx</password>
+
+        <from>groksana@gmail.com</from>
+        <to>groksana@gmail.com</to>
+        <subject>ErrorEmail: %m</subject>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d %-5level [%thread] %X{requestId} %X{email} %logger{0}: %msg%n</pattern>
+        </layout>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
 
 <root level="DEBUG">
     <appender-ref ref="ROLLING" />
+    <appender-ref ref="EMAIL" />
 </root>
 
 </configuration>
