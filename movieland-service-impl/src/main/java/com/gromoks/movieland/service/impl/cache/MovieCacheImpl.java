@@ -1,5 +1,6 @@
 package com.gromoks.movieland.service.impl.cache;
 
+import com.google.common.collect.MapMaker;
 import com.gromoks.movieland.dao.entity.CachedMovieRating;
 import com.gromoks.movieland.dao.MovieDao;
 import com.gromoks.movieland.entity.Movie;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
 
 @Service
 public class MovieCacheImpl implements MovieCache {
@@ -27,6 +29,8 @@ public class MovieCacheImpl implements MovieCache {
     private final Map<Integer, CachedMovieRating> cachedMovieRatingMap = new ConcurrentHashMap<>();
 
     private volatile ConcurrentLinkedQueue<Rating> cachedUserRatingQueue = new ConcurrentLinkedQueue<>();
+
+    private final ConcurrentMap<Integer, Movie> cachedMovie = new MapMaker().softValues().makeMap();
 
     @Autowired
     private MovieDao movieDao;
@@ -52,6 +56,17 @@ public class MovieCacheImpl implements MovieCache {
         log.debug("Get updated voteCount = {}", cachedMovieRating.getVoteCount());
 
         log.info("Finish to add user rating for movie {} to cache", rating.getMovieId());
+    }
+
+    @Override
+    public Movie getById(int id) {
+        log.debug("Start get movie by id from cache. Id = {}", id);
+        cachedMovie.computeIfAbsent(id, movieId -> {
+            log.debug("Add to cache if absent");
+            return movieDao.getById(movieId);
+        });
+        log.debug("Finish get movie by id from cache");
+        return cachedMovie.get(id);
     }
 
     @Scheduled(fixedRateString = "${cache.fixedRate.rating}", initialDelayString = "${cache.fixedRate.rating}")

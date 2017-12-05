@@ -62,7 +62,7 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Movie getById(int id) {
 
-        Movie movie = movieDao.getById(id);
+        Movie movie = movieCache.getById(id);
         enrichMovieWithRating(movie);
 
         return movie;
