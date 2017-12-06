@@ -61,12 +61,12 @@ public class MovieCacheImpl implements MovieCache {
     @Override
     public Movie getById(int id) {
         log.debug("Start get movie by id from cache. Id = {}", id);
-        cachedMovie.computeIfAbsent(id, movieId -> {
+        Movie movie = new Movie(cachedMovie.computeIfAbsent(id, movieId -> {
             log.debug("Add to cache if absent");
             return movieDao.getById(movieId);
-        });
+        }));
         log.debug("Finish get movie by id from cache");
-        return new Movie(cachedMovie.get(id));
+        return movie;
     }
 
     @Override

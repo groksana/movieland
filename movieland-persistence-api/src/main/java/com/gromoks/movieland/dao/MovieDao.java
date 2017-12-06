@@ -22,7 +22,7 @@ public interface MovieDao {
 
     List<CachedMovieRating> getMovieRating();
 
-    int add(Movie movie);
+    void add(Movie movie);
 
     void edit(Movie movie);
 }

@@ -186,7 +186,7 @@ public class JdbcMovieDao implements MovieDao {
     }
 
     @Override
-    public int add(Movie movie) {
+    public void add(Movie movie) {
         log.info("Start query to add movie {} to DB", movie);
         long startTime = System.currentTimeMillis();
 
@@ -214,7 +214,6 @@ public class JdbcMovieDao implements MovieDao {
             transactionManager.commit(transactionStatus);
 
             log.info("Finish query to add movie {} to DB. It took {} ms", movie, System.currentTimeMillis() - startTime);
-            return movieId;
         } catch (Exception e) {
             transactionManager.rollback(transactionStatus);
             throw new RuntimeException("Operation has not been done");
