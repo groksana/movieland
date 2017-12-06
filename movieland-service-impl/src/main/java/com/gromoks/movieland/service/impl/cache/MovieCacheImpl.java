@@ -66,7 +66,7 @@ public class MovieCacheImpl implements MovieCache {
             return movieDao.getById(movieId);
         });
         log.debug("Finish get movie by id from cache");
-        return cachedMovie.get(id);
+        return new Movie(cachedMovie.get(id));
     }
 
     @Override

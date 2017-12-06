@@ -14,6 +14,24 @@ public class Movie {
     private String picturePath;
     private List<Country> countries;
     private List<Review> reviews;
+    private List<Genre> genres;
+
+    public Movie() {
+    }
+
+    public Movie(Movie movie) {
+        this.id = movie.getId();
+        this.nameRussian = movie.getNameRussian();
+        this.nameNative = movie.getNameNative();
+        this.yearOfRelease = movie.getYearOfRelease();
+        this.description = movie.getDescription();
+        this.rating = movie.getRating();
+        this.price = movie.getPrice();
+        this.picturePath = movie.getPicturePath();
+        this.countries = movie.getCountries();
+        this.reviews = movie.getReviews();
+        this.genres = movie.getGenres();
+    }
 
     public String getDescription() {
         return description;
@@ -23,7 +41,6 @@ public class Movie {
         this.description = description;
     }
 
-    private List<Genre> genres;
     public List<Genre> getGenres() {
         return genres;
     }
