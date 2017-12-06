@@ -70,9 +70,9 @@ public class MovieCacheImpl implements MovieCache {
     }
 
     @Override
-    public void remove(Movie movie) {
+    public void removeById(int movieId) {
         log.debug("Remove movie from cache");
-        cachedMovie.remove(movie.getId());
+        cachedMovie.remove(movieId);
         log.debug("Finish to remove movie from cache");
     }
 
