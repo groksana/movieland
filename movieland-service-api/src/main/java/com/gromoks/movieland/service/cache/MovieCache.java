@@ -6,5 +6,6 @@ import com.gromoks.movieland.entity.Rating;
 public interface MovieCache {
     void addUserMovieRating(Rating rating);
     Movie getById(int id);
+    void removeById(int movieId);
     void enrichMovieWithRating(Movie movie);
 }

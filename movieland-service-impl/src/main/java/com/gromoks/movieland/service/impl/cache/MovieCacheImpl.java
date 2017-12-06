@@ -69,6 +69,13 @@ public class MovieCacheImpl implements MovieCache {
         return cachedMovie.get(id);
     }
 
+    @Override
+    public void remove(Movie movie) {
+        log.debug("Remove movie from cache");
+        cachedMovie.remove(movie.getId());
+        log.debug("Finish to remove movie from cache");
+    }
+
     @Scheduled(fixedRateString = "${cache.fixedRate.rating}", initialDelayString = "${cache.fixedRate.rating}")
     private void loadUserMovieRatingToDb() {
         ConcurrentLinkedQueue<Rating> copyCachedUserRatingQueue = cachedUserRatingQueue;

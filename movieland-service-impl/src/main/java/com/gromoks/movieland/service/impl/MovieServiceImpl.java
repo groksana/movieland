@@ -80,12 +80,14 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public void add(Movie movie) {
-        movieDao.add(movie);
+        int movieId = movieDao.add(movie);
+        movieCache.removeById(movieId);
     }
 
     @Override
     public void edit(Movie movie) {
         movieDao.edit(movie);
+        movieCache.removeById(movie.getId());
     }
 }
 
