@@ -51,8 +51,6 @@ public class JdbcMovieDaoITest {
             assertNotNull(movie.getNameRussian());
             assertNotNull(movie.getNameNative());
             assertNotNull(movie.getPicturePath());
-            assertNotNull(movie.getCountries());
-            assertNotNull(movie.getGenres());
         }
     }
 
@@ -105,9 +103,6 @@ public class JdbcMovieDaoITest {
         assertNotNull(movie.getNameRussian());
         assertNotNull(movie.getNameNative());
         assertNotNull(movie.getPicturePath());
-        assertNotNull(movie.getCountries());
-        assertNotNull(movie.getGenres());
-        assertNotNull(movie.getReviews());
     }
 
     @Test

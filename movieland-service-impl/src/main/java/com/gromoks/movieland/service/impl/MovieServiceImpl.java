@@ -3,8 +3,8 @@ package com.gromoks.movieland.service.impl;
 import com.gromoks.movieland.dao.MovieDao;
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.entity.Rating;
+import com.gromoks.movieland.service.*;
 import com.gromoks.movieland.service.cache.MovieCache;
-import com.gromoks.movieland.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +19,12 @@ public class MovieServiceImpl implements MovieService {
 
     @Autowired
     private MovieCache movieCache;
+
+    @Autowired
+    private CountryService countryService;
+
+    @Autowired
+    private GenreService genreService;
 
     public MovieServiceImpl() {}
 
@@ -41,6 +47,9 @@ public class MovieServiceImpl implements MovieService {
     public List<Movie> getRandom() {
 
         List<Movie> movies = movieDao.getRandom();
+        countryService.enrichMoviesByCountries(movies);
+        genreService.enrichMoviesByGenres(movies);
+
         for (Movie movie : movies) {
             enrichMovieWithRating(movie);
         }

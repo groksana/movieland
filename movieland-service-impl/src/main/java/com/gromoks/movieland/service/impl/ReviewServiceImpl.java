@@ -1,6 +1,7 @@
 package com.gromoks.movieland.service.impl;
 
 import com.gromoks.movieland.dao.ReviewDao;
+import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.entity.Review;
 import com.gromoks.movieland.service.ReviewService;
 import com.gromoks.movieland.service.cache.MovieCache;
@@ -21,5 +22,10 @@ public class ReviewServiceImpl implements ReviewService{
         reviewDao.addReview(review);
         movieCache.removeById(review.getMovieId());
         return review;
+    }
+
+    @Override
+    public void enrichSingleMovieByReviewes(Movie movie) {
+        reviewDao.enrichSingleMovieByReview(movie);
     }
 }

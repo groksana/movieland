@@ -5,7 +5,11 @@ import com.gromoks.movieland.dao.entity.CachedMovieRating;
 import com.gromoks.movieland.dao.MovieDao;
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.entity.Rating;
+import com.gromoks.movieland.service.CountryService;
+import com.gromoks.movieland.service.GenreService;
+import com.gromoks.movieland.service.ReviewService;
 import com.gromoks.movieland.service.cache.MovieCache;
+import com.gromoks.movieland.service.concurrent.ConcurrentEnrichmentMovieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,9 @@ public class MovieCacheImpl implements MovieCache {
     @Autowired
     private MovieDao movieDao;
 
+    @Autowired
+    private ConcurrentEnrichmentMovieService concurrentEnrichmentMovieService;
+
     @Override
     public void addUserMovieRating(Rating rating) {
         log.info("Start to add user rating for movie {} to cache", rating.getMovieId());
@@ -63,7 +70,9 @@ public class MovieCacheImpl implements MovieCache {
         log.debug("Start get movie by id from cache. Id = {}", id);
         Movie movie = new Movie(cachedMovie.computeIfAbsent(id, movieId -> {
             log.debug("Add to cache if absent");
-            return movieDao.getById(movieId);
+            Movie refreshedMovie = movieDao.getById(movieId);
+            concurrentEnrichmentMovieService.enrichMovie(refreshedMovie);
+            return refreshedMovie;
         }));
         log.debug("Finish get movie by id from cache");
         return movie;
@@ -97,13 +106,13 @@ public class MovieCacheImpl implements MovieCache {
 
     @Override
     public void enrichMovieWithRating(Movie movie) {
-        log.info("Start to enrich movie with Id {}", movie.getId());
+        log.info("Start to enrich movie by rating with Id {}", movie.getId());
         CachedMovieRating cachedMovieRating = cachedMovieRatingMap.get(movie.getId());
 
         if (cachedMovieRating != null) {
             double rating = new BigDecimal(Double.longBitsToDouble(cachedMovieRating.getRateSum().longValue()) / cachedMovieRating.getVoteCount().intValue()).setScale(1, RoundingMode.UP).doubleValue();
             movie.setRating(rating);
-            log.info("Movie with Id {} has been enriched", movie.getId());
+            log.info("Movie with Id {} has been enriched by rating", movie.getId());
         } else {
             log.info("Rating for movie {} is absent", movie.getId());
         }
