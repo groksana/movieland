@@ -1,6 +1,7 @@
 package com.gromoks.movieland.dao.cache;
 
 import com.gromoks.movieland.dao.GenreDao;
+import com.gromoks.movieland.dao.entity.MovieToGenre;
 import com.gromoks.movieland.entity.Genre;
 import com.gromoks.movieland.entity.Movie;
 import org.slf4j.Logger;
@@ -29,13 +30,13 @@ public class GenreCacheImpl implements GenericCache<Genre>, GenreDao {
     }
 
     @Override
-    public void enrichSingleMovieByGenres(Movie movie) {
-        genreDao.enrichSingleMovieByGenres(movie);
+    public List<Genre> getGenreListByMovie(Movie movie) {
+        return genreDao.getGenreListByMovie(movie);
     }
 
     @Override
-    public void enrichMoviesByGenres(List<Movie> movies) {
-        genreDao.enrichMoviesByGenres(movies);
+    public List<MovieToGenre> getMovieToGenreList(List<Movie> movies) {
+        return genreDao.getMovieToGenreList(movies);
     }
 
     @Override

@@ -21,9 +21,9 @@ public class JdbcCountryDao implements CountryDao {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final MovieToCountryRowMapper movieToCountryRowMapper = new MovieToCountryRowMapper();
+    private final MovieToCountryRowMapper MOVIE_TO_COUNTRY_ROW_MAPPER = new MovieToCountryRowMapper();
 
-    private final CountryRowMapper countryRowMapper = new CountryRowMapper();
+    private final CountryRowMapper COUNTRY_ROW_MAPPER = new CountryRowMapper();
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -32,54 +32,32 @@ public class JdbcCountryDao implements CountryDao {
     private String getAllMovieToCountrySQL;
 
     @Override
-    public void enrichSingleMovieByCountries(Movie movie) {
-        log.info("Start to enrich single movie by countries");
+    public List<MovieToCountry> getMovieToCountryList(List<Movie> movies) {
+        log.debug("Start to get movie to country link");
 
-        List<Country> countries = getCountryListByMovie(movie);
-
-        if (!Thread.currentThread().isInterrupted()) {
-            movie.setCountries(countries);
-            log.info("Finish to enrich single movie by countries");
-        }
-    }
-
-    @Override
-    public void enrichMoviesByCountries(List<Movie> movies) {
-        log.info("Start to enrich movies by countries");
-
-        List<MovieToCountry> movieToCountries = getMovieToCountryList(movies);
-        for (Movie movie : movies) {
-            List<Country> countries = new ArrayList<>();
-            for (MovieToCountry movieToCountry : movieToCountries) {
-                if (movieToCountry.getMovieId() == movie.getId()) {
-                    countries.add(new Country(movieToCountry.getCountryId(), movieToCountry.getCountry()));
-                }
-            }
-            movie.setCountries(countries);
-        }
-
-        log.info("Finish to enrich movies by countries");
-    }
-
-    private List<MovieToCountry> getMovieToCountryList(List<Movie> movies) {
         List<Integer> movieIds = new ArrayList<>();
         for (Movie movie : movies) {
             movieIds.add(movie.getId());
         }
 
         SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
-        List<MovieToCountry> movieToCountries = namedParameterJdbcTemplate.query(getAllMovieToCountrySQL, namedParameters, movieToCountryRowMapper);
+        List<MovieToCountry> movieToCountries = namedParameterJdbcTemplate.query(getAllMovieToCountrySQL, namedParameters, MOVIE_TO_COUNTRY_ROW_MAPPER);
 
+        log.debug("Finish to get movie to country link");
         return movieToCountries;
     }
 
-    private List<Country> getCountryListByMovie(Movie movie) {
+    @Override
+    public List<Country> getCountryListByMovie(Movie movie) {
+        log.debug("Start to get country list for movie");
+
         List<Integer> movieIds = new ArrayList<>();
         movieIds.add(movie.getId());
 
         SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
-        List<Country> countries = namedParameterJdbcTemplate.query(getAllMovieToCountrySQL, namedParameters, countryRowMapper);
+        List<Country> countries = namedParameterJdbcTemplate.query(getAllMovieToCountrySQL, namedParameters, COUNTRY_ROW_MAPPER);
 
+        log.debug("Finish to get country list for movie");
         return countries;
     }
 }

@@ -55,22 +55,15 @@ public class JdbcReviewDao implements ReviewDao {
     }
 
     @Override
-    public void enrichSingleMovieByReview(Movie movie) {
-        log.info("Start to enrich single movie by reviews");
+    public List<Review> getReviewListByMovie(Movie movie) {
+        log.debug("Start to get review list for movie");
 
-        List<Review> reviews = getReviewListByMovie(movie);
-        if (!Thread.currentThread().isInterrupted()) {
-            movie.setReviews(reviews);
-            log.info("Finish to enrich single movie by reviews");
-        }
-    }
-
-    private List<Review> getReviewListByMovie(Movie movie) {
         List<Integer> movieIds = new ArrayList<>();
         movieIds.add(movie.getId());
 
         List<Review> reviews = jdbcTemplate.query(getMovieToReviewSQL, REVIEW_ROW_MAPPER, movie.getId());
 
+        log.debug("Finish to get review list for movie");
         return reviews;
     }
 }

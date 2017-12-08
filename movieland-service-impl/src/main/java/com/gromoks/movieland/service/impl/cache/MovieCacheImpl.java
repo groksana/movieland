@@ -39,8 +39,14 @@ public class MovieCacheImpl implements MovieCache {
     @Autowired
     private MovieDao movieDao;
 
-    @Autowired
-    private ConcurrentEnrichmentMovieService concurrentEnrichmentMovieService;
+    @Override
+    public void add(Movie movie) {
+        log.debug("Start to add movie to cache with id = {}", movie.getId());
+
+        cachedMovie.putIfAbsent(movie.getId(),movie);
+
+        log.debug("Finish to add movie to cache");
+    }
 
     @Override
     public void addUserMovieRating(Rating rating) {
@@ -67,15 +73,8 @@ public class MovieCacheImpl implements MovieCache {
 
     @Override
     public Movie getById(int id) {
-        log.debug("Start get movie by id from cache. Id = {}", id);
-        Movie movie = new Movie(cachedMovie.computeIfAbsent(id, movieId -> {
-            log.debug("Add to cache if absent");
-            Movie refreshedMovie = movieDao.getById(movieId);
-            concurrentEnrichmentMovieService.enrichMovie(refreshedMovie);
-            return refreshedMovie;
-        }));
-        log.debug("Finish get movie by id from cache");
-        return movie;
+        log.debug("Try to get movie by id from cache. Id = {}", id);
+        return cachedMovie.get(id);
     }
 
     @Override

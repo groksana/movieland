@@ -1,5 +1,6 @@
 package com.gromoks.movieland.dao;
 
+import com.gromoks.movieland.dao.entity.MovieToGenre;
 import com.gromoks.movieland.entity.Genre;
 import com.gromoks.movieland.entity.Movie;
 
@@ -8,8 +9,8 @@ import java.util.List;
 public interface GenreDao {
     List<Genre> getAll();
 
-    void enrichSingleMovieByGenres(Movie movie);
+    List<Genre> getGenreListByMovie(Movie movie);
 
-    void enrichMoviesByGenres(List<Movie> movies);
+    List<MovieToGenre> getMovieToGenreList(List<Movie> movies);
 
 }

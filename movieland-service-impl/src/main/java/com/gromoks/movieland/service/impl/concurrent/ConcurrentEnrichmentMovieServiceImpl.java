@@ -20,6 +20,8 @@ public class ConcurrentEnrichmentMovieServiceImpl implements ConcurrentEnrichmen
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    private final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+
     @Autowired
     private CountryService countryService;
 
@@ -34,9 +36,6 @@ public class ConcurrentEnrichmentMovieServiceImpl implements ConcurrentEnrichmen
 
     @Override
     public void enrichMovie(Movie movie) {
-
-        ExecutorService executorService = Executors.newCachedThreadPool();
-
         List<Future<?>> futureList = new ArrayList<>();
 
         Runnable refreshWithCountries = () -> {
@@ -51,9 +50,9 @@ public class ConcurrentEnrichmentMovieServiceImpl implements ConcurrentEnrichmen
             reviewService.enrichSingleMovieByReviewes(movie);
         };
 
-        futureList.add(executorService.submit(refreshWithCountries));
-        futureList.add(executorService.submit(refreshWithGenres));
-        futureList.add(executorService.submit(refreshWithReviews));
+        futureList.add(EXECUTOR_SERVICE.submit(refreshWithCountries));
+        futureList.add(EXECUTOR_SERVICE.submit(refreshWithGenres));
+        futureList.add(EXECUTOR_SERVICE.submit(refreshWithReviews));
 
         long remainTime = timeout;
         long elapsedTime;
@@ -69,8 +68,8 @@ public class ConcurrentEnrichmentMovieServiceImpl implements ConcurrentEnrichmen
                     remainTime = remainTime - elapsedTime;
                 }
             } catch (InterruptedException | TimeoutException | ExecutionException e) {
-                log.info("Thread {} was interrupted", Thread.currentThread().getName());
-                Thread.currentThread().interrupt();
+                log.info("Thread was interrupted");
+                future.cancel(true);
             }
         }
     }

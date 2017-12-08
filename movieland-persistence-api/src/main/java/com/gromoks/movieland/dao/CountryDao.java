@@ -1,11 +1,13 @@
 package com.gromoks.movieland.dao;
 
+import com.gromoks.movieland.dao.entity.MovieToCountry;
+import com.gromoks.movieland.entity.Country;
 import com.gromoks.movieland.entity.Movie;
 
 import java.util.List;
 
 public interface CountryDao {
-    void enrichSingleMovieByCountries(Movie movie);
+    List<Country> getCountryListByMovie(Movie movie);
 
-    void enrichMoviesByCountries(List<Movie> movies);
+    List<MovieToCountry> getMovieToCountryList(List<Movie> movies);
 }

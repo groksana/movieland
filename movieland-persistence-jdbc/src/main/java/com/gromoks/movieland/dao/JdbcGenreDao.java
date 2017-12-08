@@ -22,9 +22,9 @@ public class JdbcGenreDao implements GenreDao {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final GenreRowMapper genreRowMapper = new GenreRowMapper();
+    private final GenreRowMapper GENRE_ROW_MAPPER = new GenreRowMapper();
 
-    private final MovieToGenreRowMapper movieToGenreRowMapper = new MovieToGenreRowMapper();
+    private final MovieToGenreRowMapper MOVIE_TO_GENRE_ROW_MAPPER = new MovieToGenreRowMapper();
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -43,60 +43,39 @@ public class JdbcGenreDao implements GenreDao {
         log.info("Start query to get all genre from db");
         long startTime = System.currentTimeMillis();
 
-        List<Genre> genres = jdbcTemplate.query(getAllGenreSQL, genreRowMapper);
+        List<Genre> genres = jdbcTemplate.query(getAllGenreSQL, GENRE_ROW_MAPPER);
 
         log.info("Finish query to get all genre from db. It took {} ms", System.currentTimeMillis() - startTime);
         return genres;
     }
 
     @Override
-    public void enrichSingleMovieByGenres(Movie movie) {
-        log.info("Start to enrich single movie by genres");
+    public List<Genre> getGenreListByMovie(Movie movie) {
+        log.debug("Start to get genre list for movie");
 
-        List<Genre> genres = getGenreListByMovie(movie);
-        if (!Thread.currentThread().isInterrupted()) {
-            movie.setGenres(genres);
-            log.info("Finish to enrich single movie by genres");
-        }
-    }
-
-    @Override
-    public void enrichMoviesByGenres(List<Movie> movies) {
-        log.info("Start to enrich movies by genres");
-
-        List<MovieToGenre> movieToGenres = getMovieToGenreList(movies);
-        for (Movie movie : movies) {
-            List<Genre> genres = new ArrayList<>();
-            for (MovieToGenre movieToGenre : movieToGenres) {
-                if (movieToGenre.getMovieId() == movie.getId()) {
-                    genres.add(new Genre(movieToGenre.getGenreId(), movieToGenre.getGenre()));
-                }
-            }
-            movie.setGenres(genres);
-        }
-
-        log.info("Finish to enrich movies by genres");
-    }
-
-    private List<Genre> getGenreListByMovie(Movie movie) {
         List<Integer> movieIds = new ArrayList<>();
         movieIds.add(movie.getId());
 
         SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
-        List<Genre> genres = namedParameterJdbcTemplate.query(getAllMovieToGenreSQL, namedParameters, genreRowMapper);
+        List<Genre> genres = namedParameterJdbcTemplate.query(getAllMovieToGenreSQL, namedParameters, GENRE_ROW_MAPPER);
 
+        log.debug("Finish to get genre list for movie");
         return genres;
     }
 
-    private List<MovieToGenre> getMovieToGenreList(List<Movie> movies) {
+    @Override
+    public List<MovieToGenre> getMovieToGenreList(List<Movie> movies) {
+        log.debug("Start to get movie to genre link");
+
         List<Integer> movieIds = new ArrayList<>();
         for (Movie movie : movies) {
             movieIds.add(movie.getId());
         }
 
         SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
-        List<MovieToGenre> movieToGenres = namedParameterJdbcTemplate.query(getAllMovieToGenreSQL, namedParameters, movieToGenreRowMapper);
+        List<MovieToGenre> movieToGenres = namedParameterJdbcTemplate.query(getAllMovieToGenreSQL, namedParameters, MOVIE_TO_GENRE_ROW_MAPPER);
 
+        log.debug("Finish to get movie to genre link");
         return movieToGenres;
     }
 }
