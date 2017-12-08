@@ -30,12 +30,12 @@ public class GenreCacheImpl implements GenericCache<Genre>, GenreDao {
 
     @Override
     public void enrichSingleMovieByGenres(Movie movie) {
-
+        genreDao.enrichSingleMovieByGenres(movie);
     }
 
     @Override
     public void enrichMoviesByGenres(List<Movie> movies) {
-
+        genreDao.enrichMoviesByGenres(movies);
     }
 
     @Override

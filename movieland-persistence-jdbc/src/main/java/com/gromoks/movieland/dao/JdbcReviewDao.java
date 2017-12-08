@@ -22,7 +22,7 @@ public class JdbcReviewDao implements ReviewDao {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final ReviewRowMapper reviewRowMapper = new ReviewRowMapper();
+    private final ReviewRowMapper REVIEW_ROW_MAPPER = new ReviewRowMapper();
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -69,7 +69,7 @@ public class JdbcReviewDao implements ReviewDao {
         List<Integer> movieIds = new ArrayList<>();
         movieIds.add(movie.getId());
 
-        List<Review> reviews = jdbcTemplate.query(getMovieToReviewSQL, reviewRowMapper, movie.getId());
+        List<Review> reviews = jdbcTemplate.query(getMovieToReviewSQL, REVIEW_ROW_MAPPER, movie.getId());
 
         return reviews;
     }
