@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CountryServiceImpl implements CountryService {
@@ -37,15 +38,9 @@ public class CountryServiceImpl implements CountryService {
     public void enrichMoviesByCountries(List<Movie> movies) {
         log.info("Start to enrich movies by countries");
 
-        List<MovieToCountry> movieToCountries = countryDao.getMovieToCountryList(movies);
+        Map<Integer, List<Country>> movieToCountries = countryDao.getMovieCountryLink(movies);
         for (Movie movie : movies) {
-            List<Country> countries = new ArrayList<>();
-            for (MovieToCountry movieToCountry : movieToCountries) {
-                if (movieToCountry.getMovieId() == movie.getId()) {
-                    countries.add(new Country(movieToCountry.getCountryId(), movieToCountry.getCountry()));
-                }
-            }
-            movie.setCountries(countries);
+            movie.setCountries(movieToCountries.get(movie.getId()));
         }
 
         log.info("Finish to enrich movies by countries");

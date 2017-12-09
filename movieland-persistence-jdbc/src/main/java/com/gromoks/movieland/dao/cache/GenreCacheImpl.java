@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class GenreCacheImpl implements GenericCache<Genre>, GenreDao {
@@ -35,8 +36,8 @@ public class GenreCacheImpl implements GenericCache<Genre>, GenreDao {
     }
 
     @Override
-    public List<MovieToGenre> getMovieToGenreList(List<Movie> movies) {
-        return genreDao.getMovieToGenreList(movies);
+    public Map<Integer, List<Genre>> getMovieGenreLink(List<Movie> movies) {
+        return genreDao.getMovieGenreLink(movies);
     }
 
     @Override

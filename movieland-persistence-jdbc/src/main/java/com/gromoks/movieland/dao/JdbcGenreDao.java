@@ -15,7 +15,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class JdbcGenreDao implements GenreDao {
@@ -64,9 +66,10 @@ public class JdbcGenreDao implements GenreDao {
     }
 
     @Override
-    public List<MovieToGenre> getMovieToGenreList(List<Movie> movies) {
+    public Map<Integer, List<Genre>> getMovieGenreLink(List<Movie> movies) {
         log.debug("Start to get movie to genre link");
 
+        Map<Integer, List<Genre>> movieGenreMap = new HashMap<>();
         List<Integer> movieIds = new ArrayList<>();
         for (Movie movie : movies) {
             movieIds.add(movie.getId());
@@ -74,8 +77,17 @@ public class JdbcGenreDao implements GenreDao {
 
         SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
         List<MovieToGenre> movieToGenres = namedParameterJdbcTemplate.query(getAllMovieToGenreSQL, namedParameters, MOVIE_TO_GENRE_ROW_MAPPER);
+        for (Movie movie : movies) {
+            List<Genre> genres = new ArrayList<>();
+            for (MovieToGenre movieToGenre : movieToGenres) {
+                if (movieToGenre.getMovieId() == movie.getId()) {
+                    genres.add(new Genre(movieToGenre.getGenreId(), movieToGenre.getGenre()));
+                }
+            }
+            movieGenreMap.put(movie.getId(), genres);
+        }
 
         log.debug("Finish to get movie to genre link");
-        return movieToGenres;
+        return movieGenreMap;
     }
 }

@@ -9,7 +9,6 @@ import java.sql.SQLException;
 public class MovieToGenreRowMapper implements RowMapper<MovieToGenre> {
     @Override
     public MovieToGenre mapRow(ResultSet resultSet, int i) throws SQLException {
-
         MovieToGenre movieToGenre = new MovieToGenre();
         movieToGenre.setMovieId(resultSet.getInt("movieId"));
         movieToGenre.setGenreId(resultSet.getInt("id"));

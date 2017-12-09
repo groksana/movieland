@@ -14,7 +14,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class JdbcCountryDao implements CountryDao {
@@ -32,8 +34,10 @@ public class JdbcCountryDao implements CountryDao {
     private String getAllMovieToCountrySQL;
 
     @Override
-    public List<MovieToCountry> getMovieToCountryList(List<Movie> movies) {
+    public Map<Integer, List<Country>> getMovieCountryLink(List<Movie> movies) {
         log.debug("Start to get movie to country link");
+
+        Map<Integer, List<Country>> movieCountryMap = new HashMap<>();
 
         List<Integer> movieIds = new ArrayList<>();
         for (Movie movie : movies) {
@@ -43,8 +47,18 @@ public class JdbcCountryDao implements CountryDao {
         SqlParameterSource namedParameters = new MapSqlParameterSource("ids", movieIds);
         List<MovieToCountry> movieToCountries = namedParameterJdbcTemplate.query(getAllMovieToCountrySQL, namedParameters, MOVIE_TO_COUNTRY_ROW_MAPPER);
 
+        for (Movie movie : movies) {
+            List<Country> countries = new ArrayList<>();
+            for (MovieToCountry movieToCountry : movieToCountries) {
+                if (movieToCountry.getMovieId() == movie.getId()) {
+                    countries.add(new Country(movieToCountry.getCountryId(), movieToCountry.getCountry()));
+                }
+            }
+            movieCountryMap.put(movie.getId(), countries);
+        }
+
         log.debug("Finish to get movie to country link");
-        return movieToCountries;
+        return movieCountryMap;
     }
 
     @Override

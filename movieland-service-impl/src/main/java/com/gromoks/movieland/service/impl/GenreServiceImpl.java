@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GenreServiceImpl implements GenreService {
@@ -47,15 +48,9 @@ public class GenreServiceImpl implements GenreService {
     public void enrichMoviesByGenres(List<Movie> movies) {
         log.info("Start to enrich movies by genres");
 
-        List<MovieToGenre> movieToGenres = genreDaoJdbc.getMovieToGenreList(movies);
+        Map<Integer, List<Genre>> movieToGenres = genreDaoJdbc.getMovieGenreLink(movies);
         for (Movie movie : movies) {
-            List<Genre> genres = new ArrayList<>();
-            for (MovieToGenre movieToGenre : movieToGenres) {
-                if (movieToGenre.getMovieId() == movie.getId()) {
-                    genres.add(new Genre(movieToGenre.getGenreId(), movieToGenre.getGenre()));
-                }
-            }
-            movie.setGenres(genres);
+            movie.setGenres(movieToGenres.get(movie.getId()));
         }
 
         log.info("Finish to enrich movies by genres");

@@ -43,7 +43,7 @@ public class MovieCacheImpl implements MovieCache {
     public void add(Movie movie) {
         log.debug("Start to add movie to cache with id = {}", movie.getId());
 
-        cachedMovie.putIfAbsent(movie.getId(),movie);
+        cachedMovie.putIfAbsent(movie.getId(), movie);
 
         log.debug("Finish to add movie to cache");
     }
@@ -54,9 +54,7 @@ public class MovieCacheImpl implements MovieCache {
 
         cachedUserRatingQueue.add(rating);
         CachedMovieRating cachedMovieRating = cachedMovieRatingMap.computeIfAbsent(rating.getMovieId(),
-                k -> {
-                    return new CachedMovieRating(rating.getMovieId(), 0, 0);
-                });
+                k -> { return new CachedMovieRating(rating.getMovieId(), 0, 0); });
 
         log.debug("Start to update rating for movie {}", rating.getMovieId());
         cachedMovieRating.getMovieId().updateAndGet(k -> {

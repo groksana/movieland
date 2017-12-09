@@ -20,7 +20,7 @@ public class ConcurrentEnrichmentMovieServiceImpl implements ConcurrentEnrichmen
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+    private final ExecutorService ENRICH_EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
     @Autowired
     private CountryService countryService;
@@ -54,22 +54,30 @@ public class ConcurrentEnrichmentMovieServiceImpl implements ConcurrentEnrichmen
             reviewService.enrichSingleMovieByReviewes(movie);
         };
 
-        futureList.add(EXECUTOR_SERVICE.submit(refreshWithCountries));
-        futureList.add(EXECUTOR_SERVICE.submit(refreshWithGenres));
-        futureList.add(EXECUTOR_SERVICE.submit(refreshWithReviews));
+        futureList.add(ENRICH_EXECUTOR_SERVICE.submit(refreshWithCountries));
+        futureList.add(ENRICH_EXECUTOR_SERVICE.submit(refreshWithGenres));
+        futureList.add(ENRICH_EXECUTOR_SERVICE.submit(refreshWithReviews));
 
         for (Future<?> future : futureList) {
             try {
                 future.get(remainTime, TimeUnit.MILLISECONDS);
                 elapsedTime = System.currentTimeMillis() - startTime;
-                if (remainTime - elapsedTime <= 0) {
-                    remainTime = 1;
+                if (remainTime - elapsedTime < 0) {
+                    remainTime = 0;
                 } else {
                     remainTime = remainTime - elapsedTime;
                 }
-            } catch (InterruptedException | TimeoutException | ExecutionException e) {
-                log.info("Thread was interrupted");
+            } catch (TimeoutException e) {
+                log.info("One of parallel threads was interrupted due timeout");
                 future.cancel(true);
+            } catch (InterruptedException e) {
+                log.error("The main thread was interrupted");
+                for (Future<?> futureResult : futureList) {
+                    futureResult.cancel(true);
+                }
+            } catch (ExecutionException e) {
+                log.error("The result of movie enrichment can't be received");
+                throw new RuntimeException("The result of movie enrichment can't be received");
             }
         }
     }

@@ -5,7 +5,6 @@ import java.util.Map;
 
 public class QueryBuilder {
     public static String enrichQueryWithOrderRequestParam(String initialQuery, HashMap<String, String> requestParamMap) {
-
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append(initialQuery);
         int rowNumber = 0;

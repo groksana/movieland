@@ -43,7 +43,6 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<Movie> getAll(LinkedHashMap<String, String> requestParamMap) {
-
         List<Movie> movies = movieDao.getAll(requestParamMap);
         for (Movie movie : movies) {
             enrichMovieWithRating(movie);
@@ -54,7 +53,6 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<Movie> getRandom() {
-
         List<Movie> movies = movieDao.getRandom();
         countryService.enrichMoviesByCountries(movies);
         genreService.enrichMoviesByGenres(movies);
@@ -68,7 +66,6 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<Movie> getByGenreId(int id, LinkedHashMap<String, String> requestParamMap) {
-
         List<Movie> movies = movieDao.getByGenreId(id, requestParamMap);
         for (Movie movie : movies) {
             enrichMovieWithRating(movie);
