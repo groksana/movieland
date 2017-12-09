@@ -36,6 +36,10 @@ public class ConcurrentEnrichmentMovieServiceImpl implements ConcurrentEnrichmen
 
     @Override
     public void enrichMovie(Movie movie) {
+        long remainTime = timeout;
+        long elapsedTime;
+        long startTime = System.currentTimeMillis();
+
         List<Future<?>> futureList = new ArrayList<>();
 
         Runnable refreshWithCountries = () -> {
@@ -53,10 +57,6 @@ public class ConcurrentEnrichmentMovieServiceImpl implements ConcurrentEnrichmen
         futureList.add(EXECUTOR_SERVICE.submit(refreshWithCountries));
         futureList.add(EXECUTOR_SERVICE.submit(refreshWithGenres));
         futureList.add(EXECUTOR_SERVICE.submit(refreshWithReviews));
-
-        long remainTime = timeout;
-        long elapsedTime;
-        long startTime = System.currentTimeMillis();
 
         for (Future<?> future : futureList) {
             try {
