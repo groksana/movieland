@@ -20,17 +20,17 @@ public class Movie {
     }
 
     public Movie(Movie movie) {
-        this.id = movie.getId();
-        this.nameRussian = movie.getNameRussian();
-        this.nameNative = movie.getNameNative();
-        this.yearOfRelease = movie.getYearOfRelease();
-        this.description = movie.getDescription();
-        this.rating = movie.getRating();
-        this.price = movie.getPrice();
-        this.picturePath = movie.getPicturePath();
-        this.countries = movie.getCountries();
-        this.reviews = movie.getReviews();
-        this.genres = movie.getGenres();
+        id = movie.id;
+        nameRussian = movie.nameRussian;
+        nameNative = movie.nameNative;
+        yearOfRelease = movie.yearOfRelease;
+        description = movie.description;
+        rating = movie.rating;
+        price = movie.price;
+        picturePath = movie.picturePath;
+        countries = movie.countries;
+        reviews = movie.reviews;
+        genres = movie.genres;
     }
 
     public String getDescription() {
