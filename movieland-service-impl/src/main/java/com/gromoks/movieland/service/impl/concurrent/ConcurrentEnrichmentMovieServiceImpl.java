@@ -68,16 +68,16 @@ public class ConcurrentEnrichmentMovieServiceImpl implements ConcurrentEnrichmen
                     remainTime = remainTime - elapsedTime;
                 }
             } catch (TimeoutException e) {
-                log.info("One of parallel threads was interrupted due timeout");
+                log.warn("One of parallel threads was interrupted due timeout");
                 future.cancel(true);
             } catch (InterruptedException e) {
                 log.error("The main thread was interrupted");
                 for (Future<?> futureResult : futureList) {
                     futureResult.cancel(true);
                 }
+                throw new RuntimeException("The main thread was interrupted");
             } catch (ExecutionException e) {
-                log.error("The result of movie enrichment can't be received");
-                throw new RuntimeException("The result of movie enrichment can't be received");
+                log.warn("The result of movie enrichment can't be received");
             }
         }
     }
