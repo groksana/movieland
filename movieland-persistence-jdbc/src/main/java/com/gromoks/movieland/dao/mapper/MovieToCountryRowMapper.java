@@ -10,7 +10,6 @@ public class MovieToCountryRowMapper implements RowMapper<MovieToCountry> {
 
     @Override
     public MovieToCountry mapRow(ResultSet resultSet, int i) throws SQLException {
-
         MovieToCountry movieToCountry = new MovieToCountry();
         movieToCountry.setMovieId(resultSet.getInt("movieId"));
         movieToCountry.setCountryId(resultSet.getInt("id"));

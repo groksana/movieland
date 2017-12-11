@@ -5,7 +5,11 @@ import com.gromoks.movieland.dao.entity.CachedMovieRating;
 import com.gromoks.movieland.dao.MovieDao;
 import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.entity.Rating;
+import com.gromoks.movieland.service.CountryService;
+import com.gromoks.movieland.service.GenreService;
+import com.gromoks.movieland.service.ReviewService;
 import com.gromoks.movieland.service.cache.MovieCache;
+import com.gromoks.movieland.service.concurrent.ConcurrentEnrichmentMovieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +40,21 @@ public class MovieCacheImpl implements MovieCache {
     private MovieDao movieDao;
 
     @Override
+    public void add(Movie movie) {
+        log.debug("Start to add movie to cache with id = {}", movie.getId());
+
+        cachedMovie.putIfAbsent(movie.getId(), movie);
+
+        log.debug("Finish to add movie to cache");
+    }
+
+    @Override
     public void addUserMovieRating(Rating rating) {
         log.info("Start to add user rating for movie {} to cache", rating.getMovieId());
 
         cachedUserRatingQueue.add(rating);
         CachedMovieRating cachedMovieRating = cachedMovieRatingMap.computeIfAbsent(rating.getMovieId(),
-                k -> {
-                    return new CachedMovieRating(rating.getMovieId(), 0, 0);
-                });
+                k -> { return new CachedMovieRating(rating.getMovieId(), 0, 0); });
 
         log.debug("Start to update rating for movie {}", rating.getMovieId());
         cachedMovieRating.getMovieId().updateAndGet(k -> {
@@ -60,13 +71,8 @@ public class MovieCacheImpl implements MovieCache {
 
     @Override
     public Movie getById(int id) {
-        log.debug("Start get movie by id from cache. Id = {}", id);
-        Movie movie = new Movie(cachedMovie.computeIfAbsent(id, movieId -> {
-            log.debug("Add to cache if absent");
-            return movieDao.getById(movieId);
-        }));
-        log.debug("Finish get movie by id from cache");
-        return movie;
+        log.debug("Try to get movie by id from cache. Id = {}", id);
+        return cachedMovie.get(id);
     }
 
     @Override
@@ -97,13 +103,13 @@ public class MovieCacheImpl implements MovieCache {
 
     @Override
     public void enrichMovieWithRating(Movie movie) {
-        log.info("Start to enrich movie with Id {}", movie.getId());
+        log.info("Start to enrich movie by rating with Id {}", movie.getId());
         CachedMovieRating cachedMovieRating = cachedMovieRatingMap.get(movie.getId());
 
         if (cachedMovieRating != null) {
             double rating = new BigDecimal(Double.longBitsToDouble(cachedMovieRating.getRateSum().longValue()) / cachedMovieRating.getVoteCount().intValue()).setScale(1, RoundingMode.UP).doubleValue();
             movie.setRating(rating);
-            log.info("Movie with Id {} has been enriched", movie.getId());
+            log.info("Movie with Id {} has been enriched by rating", movie.getId());
         } else {
             log.info("Rating for movie {} is absent", movie.getId());
         }

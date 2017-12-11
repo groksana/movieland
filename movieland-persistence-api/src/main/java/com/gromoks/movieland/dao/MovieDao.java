@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public interface MovieDao {
-    List<Movie> getAll(LinkedHashMap<String,String> requestParamMap);
+    List<Movie> getAll(LinkedHashMap<String, String> requestParamMap);
 
     List<Movie> getRandom();
 
-    List<Movie> getByGenreId(int id, LinkedHashMap<String,String> requestParamMap);
+    List<Movie> getByGenreId(int id, LinkedHashMap<String, String> requestParamMap);
 
     Movie getById(int id);
 

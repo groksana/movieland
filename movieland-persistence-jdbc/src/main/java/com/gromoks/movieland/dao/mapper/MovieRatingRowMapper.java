@@ -12,10 +12,10 @@ public class MovieRatingRowMapper implements RowMapper<CachedMovieRating> {
 
     @Override
     public CachedMovieRating mapRow(ResultSet resultSet, int i) throws SQLException {
-
         CachedMovieRating cachedMovieRating = new CachedMovieRating(new AtomicInteger(resultSet.getInt("movieId")));
         cachedMovieRating.setRateSum(new AtomicLong(Double.doubleToLongBits(resultSet.getDouble("rateSum"))));
         cachedMovieRating.setVoteCount(new AtomicInteger(resultSet.getInt("voteCount")));
+
         return cachedMovieRating;
     }
 }

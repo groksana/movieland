@@ -11,7 +11,6 @@ public class MovieToReviewRowMapper implements RowMapper<MovieToReview> {
 
     @Override
     public MovieToReview mapRow(ResultSet resultSet, int i) throws SQLException {
-
         MovieToReview movieToReview = new MovieToReview();
         movieToReview.setId(resultSet.getInt("id"));
         movieToReview.setMovieId(resultSet.getInt("movieId"));
