@@ -37,7 +37,8 @@ public class ReportServiceImpl implements ReportService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public static final String FONT = "fonts/OpenSans-Italic.ttf";
+    @Value("${report.font}")
+    private String reportFont;
 
     @Value("${report.directory}")
     private String reportDirectory;
@@ -187,7 +188,7 @@ public class ReportServiceImpl implements ReportService {
     private void generatePDFReport(ReportRequest reportRequest) throws DocumentException, IOException {
         log.info("Start to generate pdf report for request = {}", reportRequest.getRequestUuid());
 
-        Font font = FontFactory.getFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        Font font = FontFactory.getFont(reportFont, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
         List<ReportMovie> reportMovies = jdbcReportDao.getAllReportMovie();
 

@@ -61,7 +61,7 @@ public class IoReportDao implements ReportDao {
     public void removeFile(String filename) {
         log.info("Start to remove file with name {}", filename);
 
-        File file = new File(reportDirectory + "/" + filename);
+        File file = new File(reportDirectory, filename);
 
         if (file.exists()) {
             file.delete();
