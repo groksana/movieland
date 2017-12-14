@@ -103,4 +103,9 @@ public class JdbcReportDao implements ReportDao {
         log.info("Finish query to get report link by email from db. It took {} ms", System.currentTimeMillis() - startTime);
         return reportInfos;
     }
+
+    @Override
+    public void removeFile(String filename) {
+        reportDao.removeFile(filename);
+    }
 }

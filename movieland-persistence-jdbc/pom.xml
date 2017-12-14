@@ -39,6 +39,12 @@
             <artifactId>commons-dbcp</artifactId>
         </dependency>
 
+        <!-- Apache. IO -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
         <!-- Tests -->
         <dependency>
             <groupId>org.springframework</groupId>

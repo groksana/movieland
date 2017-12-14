@@ -5,6 +5,15 @@ public class ReportInfo {
     private String recipient;
     private String reportLink;
 
+    public ReportInfo() {
+    }
+
+    public ReportInfo(String reportType, String recipient, String reportLink) {
+        this.reportType = reportType;
+        this.recipient = recipient;
+        this.reportLink = reportLink;
+    }
+
     public String getReportType() {
         return reportType;
     }

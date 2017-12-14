@@ -14,4 +14,6 @@ public interface ReportDao {
     void insertReportInfo(ReportInfo reportInfo);
 
     List<ReportInfo> getReportLinkByEmail(String email);
+
+    void removeFile(String filename);
 }

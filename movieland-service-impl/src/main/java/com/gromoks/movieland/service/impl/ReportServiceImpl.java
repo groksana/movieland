@@ -1,7 +1,6 @@
 package com.gromoks.movieland.service.impl;
 
 import com.gromoks.movieland.dao.ReportDao;
-import com.gromoks.movieland.entity.Movie;
 import com.gromoks.movieland.entity.ReportInfo;
 import com.gromoks.movieland.entity.ReportMovie;
 import com.gromoks.movieland.entity.User;
@@ -23,15 +22,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
@@ -40,6 +38,9 @@ public class ReportServiceImpl implements ReportService {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     public static final String FONT = "fonts/OpenSans-Italic.ttf";
+
+    @Value("${report.directory}")
+    private String reportDirectory;
 
     @Autowired
     private MovieService movieService;
@@ -72,42 +73,16 @@ public class ReportServiceImpl implements ReportService {
         for (ReportRequest reportRequest : reportRequests) {
             boolean changeResult = reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), reportRequest.getStatus(), ReportStatus.IN_PROGRESS);
             if (changeResult) {
-                if (reportRequest.getReportOutputType() == ReportOutputType.XLSX) {
-                    try {
-                        generateXLSXReport(reportRequest);
-                    } catch (IOException e) {
-                        log.warn("Report can't be generated for user {}", reportRequest.getRequestedUser().getNickname());
-                        reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.IN_PROGRESS, ReportStatus.REJECTED);
-                        break;
-                    }
-                } else if (reportRequest.getReportOutputType() == ReportOutputType.PDF) {
-                    try {
-                        generatePDFReport(reportRequest);
-                    } catch (DocumentException | IOException e) {
-                        log.warn("Report can't be generated for user {}", reportRequest.getRequestedUser().getNickname());
-                        reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.IN_PROGRESS, ReportStatus.REJECTED);
-                        break;
-                    }
-                } else {
-                    log.warn("Report output type is not supported");
-                    reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.IN_PROGRESS, ReportStatus.REJECTED);
-                    break;
-                }
+                generateReport(reportRequest);
 
-                String reportLink = reportRequest.getRequestUrl() + "/" + reportRequest.getRequestUuid() + "." + reportRequest.getReportOutputType();
-
-                StringBuilder stringBuilder = new StringBuilder(
-                        "Dear " + reportRequest.getRequestedUser().getNickname() + "," +
-                                "\n\nPlease find link by requested report:" +
-                                "\n" + reportLink);
-                String text = stringBuilder.toString();
+                String text = createReportEmailMessage(reportRequest);
                 emailService.sendMail(reportRequest.getRequestedUser().getEmail(), text);
 
-                ReportInfo reportInfo = new ReportInfo();
-                reportInfo.setReportType(reportRequest.getReportType().toString());
-                reportInfo.setRecipient(reportRequest.getRequestedUser().getEmail());
-                reportInfo.setReportLink(reportLink);
-                jdbcReportDao.insertReportInfo(reportInfo);
+                String reportLink = reportRequest.getRequestUrl() + "/" + getFileNameFromRequest(reportRequest);
+                String reportType = reportRequest.getReportType().toString();
+                String email = reportRequest.getRequestedUser().getEmail();
+                jdbcReportDao.insertReportInfo(new ReportInfo(reportType, email, reportLink));
+
                 reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.IN_PROGRESS, ReportStatus.COMPLETED);
             }
         }
@@ -129,6 +104,32 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public void generateReport(ReportRequest reportRequest) {
+        log.info("Start to generate report by report request {}", reportRequest.getRequestUuid());
+
+        if (reportRequest.getReportOutputType() == ReportOutputType.XLSX) {
+            try {
+                generateXLSXReport(reportRequest);
+            } catch (IOException e) {
+                log.warn("Report can't be generated for user {}", reportRequest.getRequestedUser().getNickname());
+                reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.IN_PROGRESS, ReportStatus.REJECTED);
+            }
+        } else if (reportRequest.getReportOutputType() == ReportOutputType.PDF) {
+            try {
+                generatePDFReport(reportRequest);
+            } catch (DocumentException | IOException e) {
+                log.warn("Report can't be generated for user {}", reportRequest.getRequestedUser().getNickname());
+                reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.IN_PROGRESS, ReportStatus.REJECTED);
+            }
+        } else {
+            log.warn("Report output type is not supported");
+            reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.IN_PROGRESS, ReportStatus.REJECTED);
+        }
+
+        log.info("Finish to generate report by report request");
+    }
+
+    @Override
     public List<ReportRequest> getReportRequestStatusByUser(User user) {
         return reportCache.getReportRequestStatusByUser(user);
     }
@@ -136,6 +137,16 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public List<ReportInfo> getReportLinkByEmail(String email) {
         return jdbcReportDao.getReportLinkByEmail(email);
+    }
+
+    @Override
+    public void removeReport(ReportRequest reportRequest) {
+        log.debug("Start to remove report and report request");
+
+        reportCache.removeReportRequest(reportRequest);
+        reportDao.removeFile(getFileNameFromRequest(reportRequest));
+
+        log.debug("Finish to remove report and report request");
     }
 
     private void generateXLSXReport(ReportRequest reportRequest) throws IOException {
@@ -166,7 +177,7 @@ public class ReportServiceImpl implements ReportService {
             row.createCell(6).setCellValue(reportMovie.getReviewCount());
         }
 
-        FileOutputStream fileOut = new FileOutputStream("reports\\" + reportRequest.getRequestUuid() + ".xlsx");
+        FileOutputStream fileOut = new FileOutputStream(reportDirectory + "/" + getFileNameFromRequest(reportRequest));
         workbook.write(fileOut);
         fileOut.close();
 
@@ -181,7 +192,7 @@ public class ReportServiceImpl implements ReportService {
         List<ReportMovie> reportMovies = jdbcReportDao.getAllReportMovie();
 
         Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream("reports\\" + reportRequest.getRequestUuid() + "." + reportRequest.getReportOutputType().toString()));
+        PdfWriter.getInstance(document, new FileOutputStream(reportDirectory + "/" + getFileNameFromRequest(reportRequest)));
         document.open();
 
         Paragraph paragraph = new Paragraph("Список фильмов", font);
@@ -200,5 +211,19 @@ public class ReportServiceImpl implements ReportService {
         document.close();
 
         log.info("Finish to generate pdf report for request = {}", reportRequest.getRequestUuid());
+    }
+
+    private String getFileNameFromRequest(ReportRequest reportRequest) {
+        return reportRequest.getRequestUuid() + "." + reportRequest.getReportOutputType().toString();
+    }
+
+    private String createReportEmailMessage(ReportRequest reportRequest) {
+        String reportLink = reportRequest.getRequestUrl() + "/" + getFileNameFromRequest(reportRequest);
+        StringBuilder stringBuilder = new StringBuilder(
+                "Dear " + reportRequest.getRequestedUser().getNickname() + "," +
+                        "\n\nPlease find link by requested report:" +
+                        "\n" + reportLink);
+        String text = stringBuilder.toString();
+        return text;
     }
 }

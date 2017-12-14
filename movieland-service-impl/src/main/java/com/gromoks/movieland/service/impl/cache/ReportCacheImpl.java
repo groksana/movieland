@@ -80,5 +80,14 @@ public class ReportCacheImpl implements ReportCache {
         return reportRequests;
     }
 
+    @Override
+    public void removeReportRequest(ReportRequest reportRequest) {
+        log.info("Start to remove report request from cache with name {}", reportRequest.getRequestUuid());
+
+        CACHED_REPORT_REQUEST_MAP.remove(reportRequest.getRequestUuid());
+
+        log.info("Finish to remove report request from cache with name {}", reportRequest.getRequestUuid());
+    }
+
 
 }

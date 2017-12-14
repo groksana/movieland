@@ -14,7 +14,11 @@ public interface ReportService {
 
     byte[] getReport(String filename);
 
+    void generateReport(ReportRequest reportRequest);
+
     List<ReportRequest> getReportRequestStatusByUser(User user);
 
     List<ReportInfo> getReportLinkByEmail(String email);
+
+    void removeReport(ReportRequest reportRequest);
 }

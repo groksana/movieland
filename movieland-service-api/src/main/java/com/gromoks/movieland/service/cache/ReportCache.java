@@ -14,4 +14,6 @@ public interface ReportCache {
     boolean changeReportRequestStatus(String reportRequestUuid, ReportStatus currentReportStatus, ReportStatus newReportStatus);
 
     List<ReportRequest> getReportRequestStatusByUser(User user);
+
+    void removeReportRequest(ReportRequest reportRequest);
 }
