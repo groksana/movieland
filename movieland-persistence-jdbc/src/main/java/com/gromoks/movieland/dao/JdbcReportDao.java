@@ -46,9 +46,6 @@ public class JdbcReportDao implements ReportDao {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    @Autowired
-    private PlatformTransactionManager transactionManager;
-
     @Override
     public File getFile(String filename) {
         return reportDao.getFile(filename);
@@ -71,26 +68,14 @@ public class JdbcReportDao implements ReportDao {
         log.info("Start query to add report info {} to DB", reportInfo);
         long startTime = System.currentTimeMillis();
 
-        TransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
-        TransactionStatus transactionStatus = transactionManager.getTransaction(transactionDefinition);
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
-        try {
-            MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("reportType", reportInfo.getReportType());
+        parameterSource.addValue("recipient", reportInfo.getRecipient());
+        parameterSource.addValue("reportLink", reportInfo.getReportLink());
 
-            parameterSource.addValue("reportType", reportInfo.getReportType());
-            parameterSource.addValue("recipient", reportInfo.getRecipient());
-            parameterSource.addValue("reportLink", reportInfo.getReportLink());
-
-            namedParameterJdbcTemplate.update(insertReportInfoSQL, parameterSource);
-
-            transactionManager.commit(transactionStatus);
-
-            log.info("Finish query to add report info {} to DB. It took {} ms", reportInfo, System.currentTimeMillis() - startTime);
-        } catch (Exception e) {
-            transactionManager.rollback(transactionStatus);
-            throw new RuntimeException("Operation has not been done");
-        }
-
+        namedParameterJdbcTemplate.update(insertReportInfoSQL, parameterSource);
+        log.info("Finish query to add report info {} to DB. It took {} ms", reportInfo, System.currentTimeMillis() - startTime);
     }
 
     @Override

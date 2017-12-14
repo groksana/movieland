@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
@@ -67,6 +68,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     @Scheduled(fixedRateString = "${report.fixedRate}", initialDelayString = "${report.fixedRate}")
+    @Transactional
     public void processReportRequest() {
         log.info("Start to process report requests");
         List<ReportRequest> reportRequests = reportCache.getNewRequests();
