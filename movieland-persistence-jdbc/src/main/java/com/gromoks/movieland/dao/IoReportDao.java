@@ -32,7 +32,7 @@ public class IoReportDao implements ReportDao {
     public File getFile(String filename) {
         log.info("Start to get file {}", filename);
 
-        File file = new File(reportDirectory + "/" + filename);
+        File file = new File(reportDirectory, filename);
         if (!file.exists()) {
             log.error("File with path: {}/{} was not found.", reportDirectory, filename);
             throw new RuntimeException("File with path: " + reportDirectory + "/" + filename + " was not found.");
