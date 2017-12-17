@@ -29,9 +29,6 @@ public class JdbcReportDao implements ReportDao {
     private final ReportInfoRowMapper REPORT_INFO_ROW_MAPPER = new ReportInfoRowMapper();
 
     @Autowired
-    private ReportDao reportDao;
-
-    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -45,11 +42,6 @@ public class JdbcReportDao implements ReportDao {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    @Override
-    public File getFile(String filename) {
-        return reportDao.getFile(filename);
-    }
 
     @Override
     public List<ReportMovie> getAllReportMovie() {
@@ -70,7 +62,7 @@ public class JdbcReportDao implements ReportDao {
 
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
-        parameterSource.addValue("reportType", reportInfo.getReportType());
+        parameterSource.addValue("reportType", reportInfo.getReportType().toString());
         parameterSource.addValue("recipient", reportInfo.getRecipient());
         parameterSource.addValue("reportLink", reportInfo.getReportLink());
 
@@ -87,10 +79,5 @@ public class JdbcReportDao implements ReportDao {
 
         log.info("Finish query to get report link by email from db. It took {} ms", System.currentTimeMillis() - startTime);
         return reportInfos;
-    }
-
-    @Override
-    public void removeFile(String filename) {
-        reportDao.removeFile(filename);
     }
 }

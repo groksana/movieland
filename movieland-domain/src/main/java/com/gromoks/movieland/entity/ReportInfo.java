@@ -1,24 +1,24 @@
 package com.gromoks.movieland.entity;
 
 public class ReportInfo {
-    private String reportType;
+    private ReportType reportType;
     private String recipient;
     private String reportLink;
 
     public ReportInfo() {
     }
 
-    public ReportInfo(String reportType, String recipient, String reportLink) {
+    public ReportInfo(ReportType reportType, String recipient, String reportLink) {
         this.reportType = reportType;
         this.recipient = recipient;
         this.reportLink = reportLink;
     }
 
-    public String getReportType() {
+    public ReportType getReportType() {
         return reportType;
     }
 
-    public void setReportType(String reportType) {
+    public void setReportType(ReportType reportType) {
         this.reportType = reportType;
     }
 
@@ -36,5 +36,14 @@ public class ReportInfo {
 
     public void setReportLink(String reportLink) {
         this.reportLink = reportLink;
+    }
+
+    @Override
+    public String toString() {
+        return "ReportInfo{" +
+                "reportType=" + reportType +
+                ", recipient='" + recipient + '\'' +
+                ", reportLink='" + reportLink + '\'' +
+                '}';
     }
 }

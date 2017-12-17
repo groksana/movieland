@@ -17,11 +17,12 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.List;
 import java.util.UUID;
 
-@RestController
+@Controller
 @RequestMapping(value = "/report")
 public class ReportController {
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -32,6 +33,7 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
+    @ResponseBody
     @Protected(UserRole.ADMIN)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> addReportRequest(@RequestBody ReportRequest reportRequest, HttpServletRequest request) {
@@ -51,20 +53,19 @@ public class ReportController {
 
     @Protected(UserRole.ADMIN)
     @RequestMapping(value = "/{filename:.+}", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> download(@PathVariable String filename) throws IOException {
+    public void download(@PathVariable String filename, HttpServletResponse response) throws IOException {
         log.info("Sending request to get report");
         long startTime = System.currentTimeMillis();
 
-        byte[] document = reportService.getReport(filename);
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(new MediaType("application", "octet-stream"));
-        header.set("Content-Disposition", "inline; filename=" + filename);
-        header.setContentLength(document.length);
+        response.addHeader("Content-Disposition", "inline; filename=" + filename);
+        String mimeType = "application/octet-stream";
+        response.setContentType(mimeType);
+        FileCopyUtils.copy(reportService.getReport(filename), response.getOutputStream());
 
         log.info("Report has been got. It tooks {} ms", System.currentTimeMillis() - startTime);
-        return new ResponseEntity<>(document, header, HttpStatus.OK);
     }
 
+    @ResponseBody
     @Protected(UserRole.ADMIN)
     @RequestMapping(value = "/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> getReportStatusByUser() {
@@ -78,6 +79,7 @@ public class ReportController {
         return new ResponseEntity<>(reportRequests, HttpStatus.OK);
     }
 
+    @ResponseBody
     @Protected(UserRole.ADMIN)
     @RequestMapping(value = "/link", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> getReportLinkByEmail() {
@@ -91,6 +93,7 @@ public class ReportController {
         return new ResponseEntity<>(reportInfos, HttpStatus.OK);
     }
 
+    @ResponseBody
     @Protected(UserRole.ADMIN)
     @RequestMapping(method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> removeReport(@RequestBody ReportRequest reportRequest) {

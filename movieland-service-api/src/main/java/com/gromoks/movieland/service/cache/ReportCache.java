@@ -9,7 +9,7 @@ import java.util.List;
 public interface ReportCache {
     void addRequest(ReportRequest reportRequest);
 
-    List<ReportRequest> getNewRequests();
+    List<ReportRequest> getRequestsForProcessing();
 
     boolean changeReportRequestStatus(String reportRequestUuid, ReportStatus currentReportStatus, ReportStatus newReportStatus);
 

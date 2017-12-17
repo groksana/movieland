@@ -1,5 +1,6 @@
 package com.gromoks.movieland.service.entity;
 
+import com.gromoks.movieland.entity.ReportType;
 import com.gromoks.movieland.entity.User;
 
 public class ReportRequest {

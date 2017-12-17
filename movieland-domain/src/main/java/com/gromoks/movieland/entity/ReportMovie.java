@@ -64,4 +64,17 @@ public class ReportMovie {
     public void setReviewCount(int reviewCount) {
         this.reviewCount = reviewCount;
     }
+
+    @Override
+    public String toString() {
+        return "ReportMovie{" +
+                "movieId=" + movieId +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", genres='" + genres + '\'' +
+                ", price=" + price +
+                ", rating=" + rating +
+                ", reviewCount=" + reviewCount +
+                '}';
+    }
 }

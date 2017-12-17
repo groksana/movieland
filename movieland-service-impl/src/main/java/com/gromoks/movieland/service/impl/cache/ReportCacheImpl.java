@@ -29,12 +29,13 @@ public class ReportCacheImpl implements ReportCache {
     }
 
     @Override
-    public List<ReportRequest> getNewRequests() {
+    public List<ReportRequest> getRequestsForProcessing() {
         log.debug("Start to get new request for processing from cached map");
 
         List<ReportRequest> reportRequests = new ArrayList<>();
         for (Map.Entry<String, ReportRequest> entry : CACHED_REPORT_REQUEST_MAP.entrySet()) {
             if (entry.getValue().getStatus() == ReportStatus.NEW) {
+                entry.getValue().setStatus(ReportStatus.IN_PROGRESS);
                 reportRequests.add(entry.getValue());
             }
         }
@@ -54,6 +55,7 @@ public class ReportCacheImpl implements ReportCache {
                     entry.getValue().setStatus(newReportStatus);
                     changeResult = true;
                     log.debug("Status has been changed");
+                    break;
                 } else {
                     log.debug("Current status in map doesn't match with provided status {}", currentReportStatus);
                 }

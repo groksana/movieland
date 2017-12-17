@@ -7,13 +7,9 @@ import java.io.File;
 import java.util.List;
 
 public interface ReportDao {
-    File getFile(String filename);
-
     List<ReportMovie> getAllReportMovie();
 
     void insertReportInfo(ReportInfo reportInfo);
 
     List<ReportInfo> getReportLinkByEmail(String email);
-
-    void removeFile(String filename);
 }

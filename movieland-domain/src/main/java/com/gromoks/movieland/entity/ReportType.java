@@ -1,4 +1,4 @@
-package com.gromoks.movieland.service.entity;
+package com.gromoks.movieland.entity;
 
 public enum ReportType {
     ALL_MOVIES("ALL_MOVIES"), ADDED_DURING_PERIOD("ADDED_DURING_PERIOD"), TOP_ACTIVE_USERS("TOP_ACTIVE_USERS");

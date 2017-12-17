@@ -5,16 +5,15 @@ import com.gromoks.movieland.entity.User;
 import com.gromoks.movieland.service.entity.ReportRequest;
 import com.gromoks.movieland.service.entity.ReportStatus;
 
+import java.io.InputStream;
 import java.util.List;
 
 public interface ReportService {
     void addReportRequest(ReportRequest reportRequest);
 
-    void processReportRequest();
+    void processReportRequests();
 
-    byte[] getReport(String filename);
-
-    void generateReport(ReportRequest reportRequest);
+    InputStream getReport(String filename);
 
     List<ReportRequest> getReportRequestStatusByUser(User user);
 
