@@ -11,8 +11,6 @@ import java.util.List;
 public interface ReportService {
     void addReportRequest(ReportRequest reportRequest);
 
-    void processReportRequests();
-
     InputStream getReport(String filename);
 
     List<ReportRequest> getReportRequestStatusByUser(User user);

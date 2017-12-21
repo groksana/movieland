@@ -1,6 +1,6 @@
 package com.gromoks.movieland.service.impl;
 
-import com.gromoks.movieland.dao.ReportDao;
+import com.gromoks.movieland.dao.InfoReportDao;
 import com.gromoks.movieland.entity.ReportMovie;
 import com.gromoks.movieland.service.GenerateReportService;
 import com.gromoks.movieland.service.cache.ReportCache;
@@ -13,7 +13,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class GenerateReportServiceImpl implements GenerateReportService {
     private ReportCache reportCache;
 
     @Autowired
-    private ReportDao reportDao;
+    private InfoReportDao infoReportDao;
 
     @Override
     public void generateReport(ReportRequest reportRequest) {
@@ -52,18 +52,18 @@ public class GenerateReportServiceImpl implements GenerateReportService {
                 generateXLSXReport(reportRequest);
             } catch (IOException e) {
                 log.warn("Report can't be generated for user {}", reportRequest.getRequestedUser().getNickname());
-                reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.IN_PROGRESS, ReportStatus.REJECTED);
+                reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.REJECTED);
             }
         } else if (reportRequest.getReportOutputType() == ReportOutputType.PDF) {
             try {
                 generatePDFReport(reportRequest);
             } catch (DocumentException | IOException e) {
                 log.warn("Report can't be generated for user {}", reportRequest.getRequestedUser().getNickname());
-                reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.IN_PROGRESS, ReportStatus.REJECTED);
+                reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.REJECTED);
             }
         } else {
             log.warn("Report output type is not supported");
-            reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.IN_PROGRESS, ReportStatus.REJECTED);
+            reportCache.changeReportRequestStatus(reportRequest.getRequestUuid(), ReportStatus.REJECTED);
         }
 
         log.info("Finish to generate report by report request");
@@ -72,11 +72,11 @@ public class GenerateReportServiceImpl implements GenerateReportService {
     private void generateXLSXReport(ReportRequest reportRequest) throws IOException {
         log.info("Start to generate xlsx report for request = {}", reportRequest.getRequestUuid());
 
-        List<ReportMovie> reportMovies = reportDao.getAllReportMovie();
+        List<ReportMovie> reportMovies = infoReportDao.getAllReportMovie();
 
-        Workbook workbook = new XSSFWorkbook();
+        Workbook workbook = new SXSSFWorkbook();
         Sheet sheet = workbook.createSheet(reportRequest.getReportType().toString());
-        Row row = sheet.createRow((short) 0);
+        Row row = sheet.createRow(0);
         row.createCell(0).setCellValue("MovieId");
         row.createCell(1).setCellValue("Title");
         row.createCell(2).setCellValue("Description");
@@ -85,9 +85,9 @@ public class GenerateReportServiceImpl implements GenerateReportService {
         row.createCell(5).setCellValue("Rating");
         row.createCell(6).setCellValue("ReviewCount");
 
-        for (int i = 0; i < reportMovies.size(); i++) {
-            row = sheet.createRow(i + 1);
-            ReportMovie reportMovie = reportMovies.get(i);
+        int index = 0;
+        for (ReportMovie reportMovie : reportMovies) {
+            row = sheet.createRow(index + 1);
             row.createCell(0).setCellValue(reportMovie.getMovieId());
             row.createCell(1).setCellValue(reportMovie.getTitle());
             row.createCell(2).setCellValue(reportMovie.getDescription());
@@ -95,17 +95,13 @@ public class GenerateReportServiceImpl implements GenerateReportService {
             row.createCell(4).setCellValue(reportMovie.getPrice());
             row.createCell(5).setCellValue(reportMovie.getRating());
             row.createCell(6).setCellValue(reportMovie.getReviewCount());
+            index++;
         }
 
-        FileOutputStream fileOut = null;
-        try {
-            File outputFile = new File(reportDirectory, getReportNameFromRequest(reportRequest));
-            fileOut = new FileOutputStream(outputFile);
+        File outputFile = new File(reportDirectory, getReportNameFromRequest(reportRequest));
+        try (FileOutputStream fileOut = new FileOutputStream(outputFile)) {
             workbook.write(fileOut);
-        } finally {
-            fileOut.close();
         }
-
 
         log.info("Finish to generate xlsx report for request = {}", reportRequest.getRequestUuid());
     }
@@ -115,7 +111,7 @@ public class GenerateReportServiceImpl implements GenerateReportService {
 
         Font font = FontFactory.getFont(reportFont, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
-        List<ReportMovie> reportMovies = reportDao.getAllReportMovie();
+        List<ReportMovie> reportMovies = infoReportDao.getAllReportMovie();
 
         Document document = null;
         try {
@@ -137,7 +133,9 @@ public class GenerateReportServiceImpl implements GenerateReportService {
                 document.add(new Paragraph("***"));
             }
         } finally {
-            document.close();
+            if (document != null) {
+                document.close();
+            }
         }
 
         log.info("Finish to generate pdf report for request = {}", reportRequest.getRequestUuid());

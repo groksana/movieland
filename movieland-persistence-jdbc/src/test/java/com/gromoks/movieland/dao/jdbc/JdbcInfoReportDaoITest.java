@@ -1,6 +1,6 @@
 package com.gromoks.movieland.dao.jdbc;
 
-import com.gromoks.movieland.dao.ReportDao;
+import com.gromoks.movieland.dao.InfoReportDao;
 import com.gromoks.movieland.dao.config.JdbcConfig;
 import com.gromoks.movieland.entity.ReportInfo;
 import org.junit.Test;
@@ -16,17 +16,16 @@ import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration(classes = {JdbcConfig.class})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class JdbcReportDaoITest {
+public class JdbcInfoReportDaoITest {
 
     @Autowired
-    @Qualifier("jdbcReportDao")
-    private ReportDao reportDao;
+    private InfoReportDao infoReportDao;
 
     @Test
     public void testGetUserByEmailAndPassword() {
         String email = "travis.wright36@example.com";
 
-        List<ReportInfo> reportInfos = reportDao.getReportLinkByEmail(email);
+        List<ReportInfo> reportInfos = infoReportDao.getReportLinkByEmail(email);
 
         assertEquals(reportInfos.get(0).getRecipient(),email);
     }

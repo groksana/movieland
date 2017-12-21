@@ -6,12 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
 
 @Repository
-public class IoReportDaoImpl implements IoReportDao {
+public class IoDataReportDao implements DataReportDao {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Value("${report.directory}")
@@ -27,8 +26,8 @@ public class IoReportDaoImpl implements IoReportDao {
         try {
             inputStream = new BufferedInputStream(new FileInputStream(file));
         } catch (FileNotFoundException e) {
-            log.error("File with path: {} was not found.", file.getName());
-            throw new RuntimeException("File with path: " + file.getName() + " was not found.");
+            log.error("File with path: {} was not found.", file.getPath());
+            throw new RuntimeException("File with path: " + file.getPath() + " was not found.");
         }
 
         log.info("Finish to get report {}", filename);

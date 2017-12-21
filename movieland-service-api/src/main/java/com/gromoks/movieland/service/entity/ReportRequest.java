@@ -58,4 +58,16 @@ public class ReportRequest {
     public void setRequestUrl(String requestUrl) {
         this.requestUrl = requestUrl;
     }
+
+    @Override
+    public String toString() {
+        return "ReportRequest{" +
+                "requestUuid='" + requestUuid + '\'' +
+                ", reportType=" + reportType +
+                ", reportOutputType=" + reportOutputType +
+                ", requestedUser=" + requestedUser +
+                ", status=" + status +
+                ", requestUrl='" + requestUrl + '\'' +
+                '}';
+    }
 }

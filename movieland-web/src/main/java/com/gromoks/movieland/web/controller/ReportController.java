@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +37,7 @@ public class ReportController {
     @Protected(UserRole.ADMIN)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> addReportRequest(@RequestBody ReportRequest reportRequest, HttpServletRequest request) {
-        log.info("Sending request to generate report");
+        log.info("Sending request to generate report: {}", reportRequest);
         long startTime = System.currentTimeMillis();
 
         User user = authenticationService.getAuthenticatedUser();
@@ -51,7 +51,7 @@ public class ReportController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Protected(UserRole.ADMIN)
+    //@Protected(UserRole.ADMIN)
     @RequestMapping(value = "/{filename:.+}", method = RequestMethod.GET)
     public void download(@PathVariable String filename, HttpServletResponse response) throws IOException {
         log.info("Sending request to get report");
@@ -60,7 +60,7 @@ public class ReportController {
         response.addHeader("Content-Disposition", "inline; filename=" + filename);
         String mimeType = "application/octet-stream";
         response.setContentType(mimeType);
-        FileCopyUtils.copy(reportService.getReport(filename), response.getOutputStream());
+        StreamUtils.copy(reportService.getReport(filename), response.getOutputStream());
 
         log.info("Report has been got. It tooks {} ms", System.currentTimeMillis() - startTime);
     }

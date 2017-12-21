@@ -11,16 +11,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import java.io.File;
 import java.util.List;
 
 @Repository
-public class JdbcReportDao implements ReportDao {
+public class JdbcInfoReportDao implements InfoReportDao {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -62,7 +57,7 @@ public class JdbcReportDao implements ReportDao {
 
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
-        parameterSource.addValue("reportType", reportInfo.getReportType().toString());
+        parameterSource.addValue("reportType", reportInfo.getReportType().getName());
         parameterSource.addValue("recipient", reportInfo.getRecipient());
         parameterSource.addValue("reportLink", reportInfo.getReportLink());
 

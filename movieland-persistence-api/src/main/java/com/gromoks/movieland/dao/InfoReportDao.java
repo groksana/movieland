@@ -6,7 +6,7 @@ import com.gromoks.movieland.entity.ReportMovie;
 import java.io.File;
 import java.util.List;
 
-public interface ReportDao {
+public interface InfoReportDao {
     List<ReportMovie> getAllReportMovie();
 
     void insertReportInfo(ReportInfo reportInfo);

@@ -17,4 +17,8 @@ public enum ReportType {
         }
         throw new IllegalArgumentException("Report type is not supported: " + name);
     }
+
+    public String getName() {
+        return name;
+    }
 }

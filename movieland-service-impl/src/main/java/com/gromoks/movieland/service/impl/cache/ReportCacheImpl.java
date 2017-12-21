@@ -29,41 +29,18 @@ public class ReportCacheImpl implements ReportCache {
     }
 
     @Override
-    public List<ReportRequest> getRequestsForProcessing() {
-        log.debug("Start to get new request for processing from cached map");
-
-        List<ReportRequest> reportRequests = new ArrayList<>();
-        for (Map.Entry<String, ReportRequest> entry : CACHED_REPORT_REQUEST_MAP.entrySet()) {
-            if (entry.getValue().getStatus() == ReportStatus.NEW) {
-                entry.getValue().setStatus(ReportStatus.IN_PROGRESS);
-                reportRequests.add(entry.getValue());
-            }
-        }
-
-        log.debug("Finish to get new request for processing from cached map. Request count = {}", reportRequests.size());
-        return reportRequests;
-    }
-
-    @Override
-    public boolean changeReportRequestStatus(String reportRequestUuid, ReportStatus currentReportStatus, ReportStatus newReportStatus) {
+    public void changeReportRequestStatus(String reportRequestUuid, ReportStatus newReportStatus) {
         log.debug("Start to change report request status for request = {}", reportRequestUuid);
 
-        boolean changeResult = false;
         for (Map.Entry<String, ReportRequest> entry : CACHED_REPORT_REQUEST_MAP.entrySet()) {
             if (entry.getKey().equals(reportRequestUuid)) {
-                if (entry.getValue().getStatus() == currentReportStatus) {
-                    entry.getValue().setStatus(newReportStatus);
-                    changeResult = true;
-                    log.debug("Status has been changed");
-                    break;
-                } else {
-                    log.debug("Current status in map doesn't match with provided status {}", currentReportStatus);
-                }
+                entry.getValue().setStatus(newReportStatus);
+                log.debug("Status has been changed");
+                break;
             }
         }
 
         log.debug("Finish to change report request status for request = {}", reportRequestUuid);
-        return changeResult;
     }
 
     @Override
@@ -72,7 +49,7 @@ public class ReportCacheImpl implements ReportCache {
 
         List<ReportRequest> reportRequests = new ArrayList<>();
 
-        for (Map.Entry<String,ReportRequest> entry : CACHED_REPORT_REQUEST_MAP.entrySet()) {
+        for (Map.Entry<String, ReportRequest> entry : CACHED_REPORT_REQUEST_MAP.entrySet()) {
             if (entry.getValue().getRequestedUser().getEmail().equals(user.getEmail())) {
                 reportRequests.add(entry.getValue());
             }
@@ -89,6 +66,17 @@ public class ReportCacheImpl implements ReportCache {
         CACHED_REPORT_REQUEST_MAP.remove(reportRequest.getRequestUuid());
 
         log.info("Finish to remove report request from cache with name {}", reportRequest.getRequestUuid());
+    }
+
+    @Override
+    public ReportRequest poll() {
+        for (Map.Entry<String, ReportRequest> entry : CACHED_REPORT_REQUEST_MAP.entrySet()) {
+            if (entry.getValue().getStatus() == ReportStatus.NEW) {
+                entry.getValue().setStatus(ReportStatus.IN_PROGRESS);
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 
 
