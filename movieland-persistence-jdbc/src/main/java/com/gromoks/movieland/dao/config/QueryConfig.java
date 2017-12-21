@@ -122,5 +122,39 @@ public class QueryConfig {
     public String deleteMovieToGenreSQL() {
         return "DELETE FROM movie2genre WHERE movieId = :movieId;";
     }
+
+    @Bean
+    public String getAllReportMovieSQL() {
+        return "SELECT " +
+                "    m.id movieId," +
+                "    m.nameRussian title," +
+                "    m.description," +
+                "    m.price," +
+                "    GROUP_CONCAT(DISTINCT g.genre SEPARATOR ', ') genres," +
+                "    ROUND(AVG(r.rating), 1) rating," +
+                "    COUNT(rw.text) reviewCount" +
+                " FROM" +
+                "    movie m" +
+                "        JOIN" +
+                "    movie2genre mg ON m.id = mg.movieId" +
+                "        JOIN" +
+                "    genre g ON mg.genreId = g.id" +
+                "        LEFT JOIN" +
+                "    rating r ON m.id = r.movieId" +
+                "        LEFT JOIN" +
+                "    review rw ON m.id = rw.movieId" +
+                " GROUP BY m.id , m.nameRussian , m.description , m.price";
+    }
+
+    @Bean
+    public String insertReportInfoSQL() {
+        return "INSERT INTO reportInfo(reportType, recipient, reportLink) " +
+                "VALUES(:reportType, :recipient, :reportLink);";
+    }
+
+    @Bean
+    public String getReportLinkByEmailSQL() {
+        return "SELECT reportType, recipient, reportLink FROM reportInfo WHERE recipient = ? ";
+    }
 }
 

@@ -1,10 +1,9 @@
 package com.gromoks.movieland.dao.sqlbuilder;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class QueryBuilder {
-    public static String enrichQueryWithOrderRequestParam(String initialQuery, HashMap<String, String> requestParamMap) {
+    public static String enrichQueryWithOrderRequestParam(String initialQuery, Map<String, String> requestParamMap) {
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append(initialQuery);
         int rowNumber = 0;
